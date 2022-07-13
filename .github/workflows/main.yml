@@ -34,8 +34,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
-        env:
+        with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BRANCH: gh-pages
           FOLDER: build
-          BUILD_SCRIPT: npm install && npm run build
