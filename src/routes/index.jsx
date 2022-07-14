@@ -19,9 +19,9 @@ class DSRoutes extends Component {
         });
         const pathname = new URL(window.location.href).pathname;
         const currentIndex = menus.findIndex(e=>{
-            return e.path == pathname;
+            return e.path === pathname;
         });
-        const pageNo = currentIndex==-1?1:menus[currentIndex].key;
+        const pageNo = currentIndex===-1?1:menus[currentIndex].key;
         return (
             <BrowserRouter>
                 <Routes>
