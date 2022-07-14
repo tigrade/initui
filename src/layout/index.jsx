@@ -4,11 +4,11 @@ import 'antd/dist/antd.less';
 import { Layout,Menu,Row, Col} from 'antd';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import { Button,Divider } from 'antd';
+import { Button } from 'antd';
 import { LoginOutlined } from '@ant-design/icons';
 
 import './index.less'
-import {Link,Outlet,Navigate,Location } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 const { Header, Footer, Content } = Layout;
 
 
