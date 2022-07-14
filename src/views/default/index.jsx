@@ -3,15 +3,13 @@ import './index.less'
 
 
 
-class DefaultView extends Component{
-    constructor(){
-    }    
+class DefaultView extends Component{   
     componentDidMount=()=>{
     }
     render(){
         return (
         <Fragment>
-             111
+             <div/>
         </Fragment>
         );
     }
