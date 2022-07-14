@@ -4,8 +4,7 @@ import './index.less'
 
 
 class DefaultView extends Component{
-    constructor(props){
-        super(props);
+    constructor(){
     }    
     componentDidMount=()=>{
     }
