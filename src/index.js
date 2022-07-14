@@ -31,12 +31,12 @@ axios.defaults.timeout = 100000;
 axios.interceptors.response.use(
   (response) => {
     if (response.data.errCode === 2) {
-      console.log("过期");
+      // console.log("过期");
     }
     return response;
   },
   (error) => {
-    console.log("请求出错：", error);
+    // console.log("请求出错：", error);
   }
 );
 

@@ -17,7 +17,7 @@ export function get(url, params = {}) {
             }
             return reject(_res);
         }).catch((error) => {
-            console.log(error);
+            // console.log(error);
             reject(error);
         });
     });
@@ -40,7 +40,7 @@ export function post(url, data) {
             }
             return reject(_res);
         }).catch((error) => {
-            console.log(error);
+            // console.log(error);
             reject(error);
         });
     });
