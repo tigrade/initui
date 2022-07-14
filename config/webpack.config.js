@@ -1,5 +1,5 @@
 'use strict';
-
+const { getThemeVariables } = require('antd/dist/theme');
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
@@ -27,6 +27,7 @@ const ForkTsCheckerWebpackPlugin =
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
+const { options } = require('less');
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -71,6 +72,8 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
+const lessRegex = /\.less$/; //这一句和下一句是新增的less的配置
+const lessModuleRegex = /\.module\.less$/;
 
 const hasJsxRuntime = (() => {
   if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
@@ -105,7 +108,7 @@ module.exports = function (webpackEnv) {
   const shouldUseReactRefresh = env.raw.FAST_REFRESH;
 
   // common function to get style loaders
-  const getStyleLoaders = (cssOptions, preProcessor) => {
+  const getStyleLoaders = (cssOptions, preProcessor,newOptions) => {
     const loaders = [
       isEnvDevelopment && require.resolve('style-loader'),
       isEnvProduction && {
@@ -177,9 +180,13 @@ module.exports = function (webpackEnv) {
         },
         {
           loader: require.resolve(preProcessor),
-          options: {
-            sourceMap: true,
-          },
+          // options: {
+          //   sourceMap: true,
+          // },
+          options:{
+            ...newOptions,
+            sourceMap:true
+          }
         }
       );
     }
@@ -541,6 +548,53 @@ module.exports = function (webpackEnv) {
                   },
                 },
                 'sass-loader'
+              ),
+            },
+
+            {
+              test: lessRegex,
+              exclude: lessModuleRegex,
+              use: getStyleLoaders(
+                {
+                  importLoaders: 2,
+                  sourceMap: isEnvProduction
+                    ? shouldUseSourceMap
+                    : isEnvDevelopment,
+                },
+                'less-loader',
+                {
+                  lessOptions:{
+                    javascriptEnabled: true,
+                    modifyVars: getThemeVariables({
+                      // ligh: false, // 开启暗黑模式
+                      compact: true, // 开启紧凑模式
+                    })
+                  }
+                }
+              ),
+              sideEffects: true,
+            },
+            {
+              test: lessModuleRegex,
+              use: getStyleLoaders(
+                {
+                  importLoaders: 2,
+                  sourceMap: isEnvProduction && shouldUseSourceMap,
+                  modules: {
+                    mode: 'local',
+                    getLocalIdent: getCSSModuleLocalIdent,
+                  }
+                },
+                'less-loader',
+                {
+                  lessOptions:{
+                    javascriptEnabled: true,
+                    // modifyVars: getThemeVariables({
+                    //   // dark: false, // 开启暗黑模式
+                    //   // compact: true, // 开启紧凑模式
+                    // })
+                  }
+                }
               ),
             },
             // "file" loader makes sure those assets get served by WebpackDevServer.
