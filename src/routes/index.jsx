@@ -7,18 +7,17 @@ import DefaultView from 'views/default/index';
 import CaseView from 'views/case/index';
 function Layout(props){
     let items = props.items;
-    // let pageNo = props.pageNo;
-    // const menus = props.menus;
     const menus = useRef(props.menus);
     const location = useLocation();
     const [pageNo, setPageNo] = useState(props.pageNo);
 
     useEffect(() => {
         const pathname = location.pathname;
-        const currentIndex = menus.findIndex(e=>{
+        console.log(menus.current);
+        const currentIndex = menus.current.findIndex(e=>{
             return e.path === pathname;
         });
-        const _pageNo = currentIndex===-1?1:menus[currentIndex].key;
+        const _pageNo = currentIndex===-1?1:menus.current[currentIndex].key;
         setPageNo(_pageNo);
      }, [location]);
     return (<DSLayout items={items} pageNo={pageNo}/>);
