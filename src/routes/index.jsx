@@ -5,7 +5,7 @@ import DSLayout from 'layout/index'
 
 import DefaultView from 'views/default/index';
 import CaseView from 'views/case/index';
-function USE_Layout(props){
+function Layout(props){
     let items = props.items;
     // let pageNo = props.pageNo;
     const menus = props.menus;
@@ -45,7 +45,7 @@ class DSRoutes extends Component {
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<USE_Layout items={items} pageNo={pageNo} menus={menus}/>}>
+                    <Route path="/" element={<Layout items={items} pageNo={pageNo} menus={menus}/>}>
                         {
                             menus.filter(e=>{
                                 return e.el!==undefined;
