@@ -13,9 +13,28 @@ const { Header, Footer, Content } = Layout;
 
 
 class DSLayout extends Component { 
+    constructor(props){
+        super(props);
+        this.state = {pageNo:props.pageNo};
+    }
+    componentWillReceiveProps=(nextProps,nextContext)=>{
+        if(nextProps.pageNo !== this.state.pageNo) {
+            // this.props.pageNo = nextProps.pageNo;
+            this.setState(state=>{
+                state.pageNo = nextProps.pageNo;
+                return state;
+            });
+        }
+    }
+    handleClick=(e)=>{
+        this.setState((state)=>{
+            state.pageNo = Number(e.key);
+            return state;
+        });
+    }
     render() {
         const items = this.props.items;
-        const pageNo = this.props.pageNo;
+        const selectedKeys = [`${this.state.pageNo}`];
         return (
             <Layout>
                 <Header className='ds-theme-header'>
@@ -26,7 +45,12 @@ class DSLayout extends Component {
                                 <div className="logo" />
                             </Col>
                             <Col flex="auto">
-                                <Menu className='ds-theme-nav' mode="horizontal" defaultSelectedKeys={[`${pageNo}`]} items={items}></Menu>
+                                <Menu 
+                                    selectedKeys={selectedKeys} 
+                                    onClick={this.handleClick}
+                                    className='ds-theme-nav' mode="horizontal" 
+                                    defaultSelectedKeys={[`${this.state.pageNo}`]} 
+                                    items={items}></Menu>
                             </Col>
                         </Row>
                     </Col>

@@ -1,18 +1,35 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Routes, Route,Link,Navigate } from "react-router-dom";
+import React, { Component,useEffect } from 'react';
+import { BrowserRouter, Routes, Route,Link,Navigate,useLocation } from "react-router-dom";
 
 import DSLayout from 'layout/index'
 
 import DefaultView from 'views/default/index';
-
+import CaseView from 'views/case/index';
+function _Layout(props){
+    let items = props.items;
+    let pageNo = props.pageNo;
+    const menus = props.menus;
+    const location = useLocation();
+    useEffect(() => {
+        const pathname = location.pathname;
+        const currentIndex = menus.findIndex(e=>{
+            return e.path === pathname;
+        });
+        pageNo = currentIndex===-1?1:menus[currentIndex].key;
+     }, [location]);
+    return (<DSLayout items={items} pageNo={pageNo}/>);
+}
 class DSRoutes extends Component {
     componentDidMount=()=>{
-        
+        console.log("componentDidUpdate");
+    }
+    componentDidUpdate=()=>{
+        console.log("componentDidUpdate");
     }
     render() {
         const menus = [
             {"path":"/","name":"首页",key:1,el:<DefaultView/>},
-            {"path":"/case","name":"案件",key:2,el:<DefaultView/>}
+            {"path":"/case","name":"案件",key:2,el:<CaseView/>}
         ];
         const items = menus.map(e=>{
             return { label: (<Link to={`${e.path}`}><span>{e.name}</span></Link>),key:e.key};
@@ -25,7 +42,7 @@ class DSRoutes extends Component {
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<DSLayout items={items} pageNo={pageNo}/>}>
+                    <Route path="/" element={<_Layout items={items} pageNo={pageNo} menus={menus}/>}>
                         {
                             menus.filter(e=>{
                                 return e.el!==undefined;
@@ -37,7 +54,7 @@ class DSRoutes extends Component {
                         {/* <Route path='/quote/dataMining' element={<QuotesDataMiningView/>} /> */}
                         
                         <Route path="*"
-                            element={<Navigate to='/' />
+                            element={<Navigate to='/' replace={true}/>
                                 // <main style={{ padding: "1rem" }}>
                                 //     <p>There's nothing here!</p>
                                 // </main>
