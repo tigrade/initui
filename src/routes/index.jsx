@@ -1,4 +1,4 @@
-import React, { Component,useEffect,useState } from 'react';
+import React, { Component,useEffect,useState,useRef } from 'react';
 import { BrowserRouter, Routes, Route,Link,Navigate,useLocation } from "react-router-dom";
 
 import DSLayout from 'layout/index'
@@ -8,7 +8,8 @@ import CaseView from 'views/case/index';
 function Layout(props){
     let items = props.items;
     // let pageNo = props.pageNo;
-    const menus = props.menus;
+    // const menus = props.menus;
+    const menus = useRef(props.menus);
     const location = useLocation();
     const [pageNo, setPageNo] = useState(props.pageNo);
 
