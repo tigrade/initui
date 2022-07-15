@@ -1,21 +1,24 @@
-import React, { Component,useEffect } from 'react';
+import React, { Component,useEffect,useState } from 'react';
 import { BrowserRouter, Routes, Route,Link,Navigate,useLocation } from "react-router-dom";
 
 import DSLayout from 'layout/index'
 
 import DefaultView from 'views/default/index';
 import CaseView from 'views/case/index';
-function _Layout(props){
+function USE_Layout(props){
     let items = props.items;
-    let pageNo = props.pageNo;
+    // let pageNo = props.pageNo;
     const menus = props.menus;
     const location = useLocation();
+    const [pageNo, setPageNo] = useState(props.pageNo);
+
     useEffect(() => {
         const pathname = location.pathname;
         const currentIndex = menus.findIndex(e=>{
             return e.path === pathname;
         });
-        pageNo = currentIndex===-1?1:menus[currentIndex].key;
+        const _pageNo = currentIndex===-1?1:menus[currentIndex].key;
+        setPageNo(_pageNo);
      }, [location]);
     return (<DSLayout items={items} pageNo={pageNo}/>);
 }
@@ -42,7 +45,7 @@ class DSRoutes extends Component {
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<_Layout items={items} pageNo={pageNo} menus={menus}/>}>
+                    <Route path="/" element={<USE_Layout items={items} pageNo={pageNo} menus={menus}/>}>
                         {
                             menus.filter(e=>{
                                 return e.el!==undefined;
