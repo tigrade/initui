@@ -72,7 +72,7 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
-const lessRegex = /\.less$/; //这一句和下一句是新增的less的配置
+const lessRegex = /\.less$/; 
 const lessModuleRegex = /\.module\.less$/;
 
 const hasJsxRuntime = (() => {
@@ -326,6 +326,8 @@ module.exports = function (webpackEnv) {
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
         ...(modules.webpackAliases || {}),
+        //鏂囦欢鍒悕
+        // 'pub/':path.resolve(__dirname, '../public/*'),
       },
       plugins: [
         // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -566,8 +568,8 @@ module.exports = function (webpackEnv) {
                   lessOptions:{
                     javascriptEnabled: true,
                     modifyVars: getThemeVariables({
-                      // ligh: false, // 开启暗黑模式
-                      compact: true, // 开启紧凑模式
+                      ligh: false,
+                      // compact: true, 
                     })
                   }
                 }
@@ -590,8 +592,8 @@ module.exports = function (webpackEnv) {
                   lessOptions:{
                     javascriptEnabled: true,
                     // modifyVars: getThemeVariables({
-                    //   // dark: false, // 开启暗黑模式
-                    //   // compact: true, // 开启紧凑模式
+                    //   // dark: false, 
+                    //   // compact: true, 
                     // })
                   }
                 }

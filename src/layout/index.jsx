@@ -41,7 +41,7 @@ class DSLayout extends Component {
                 <Row>
                     <Col flex="auto">
                         <Row>
-                            <Col flex="120px">
+                            <Col flex="0px">
                                 <div className="logo" />
                             </Col>
                             <Col flex="auto">

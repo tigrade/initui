@@ -5,6 +5,9 @@ import DSLayout from 'layout/index'
 
 import DefaultView from 'views/default/index';
 import CaseView from 'views/case/index';
+import LoginView from 'views/login/index'
+
+
 function Layout(props){
     let items = props.items;
     const menus = useRef(props.menus);
@@ -45,6 +48,7 @@ class DSRoutes extends Component {
         return (
             <BrowserRouter>
                 <Routes>
+                    <Route path="/login" element={<LoginView/>}/>
                     <Route path="/" element={<Layout items={items} pageNo={pageNo} menus={menus}/>}>
                         {
                             menus.filter(e=>{

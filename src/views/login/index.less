@@ -1,0 +1,141 @@
+.wall-bg{
+  position: fixed;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  // overflow: hidden;
+  background: url('~/public/bg.png') #2b7ddb no-repeat;
+  background-size:cover;
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  z-index: -1;
+  // background: linear-gradient(var(--angle, 45deg), var(--bottom, #7ec1ff) 4.5%, var(--top, #096dd9) 95.5%);
+}
+
+.site-footer{
+  width: 100%;
+  margin: 0 auto;
+  position:fixed;
+  bottom: 0px;
+  z-index: 1;
+  .banner{
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    line-height: 40px;
+    text-align: center;
+    a{
+      color: rgb(255, 255, 255);
+      margin-right: 30px;
+    }
+  }
+}
+
+.main-wrap{
+  position: absolute;
+  overflow: auto;
+  max-height: 700px;
+  left: 50%;
+  top: 50%;
+  margin-top: -315px;
+  margin-left: -200px;
+  width: 400px;
+  // height: 630px;
+  background: #FFFFFF;
+  box-shadow: 0 0 10px 0 rgb(0 33 79 / 11%);
+  border-radius: 6px;
+  padding-top: 50px;
+  z-index: 2;
+
+  .login{
+    position: relative;
+    top: 0px;
+    & > .login-title{
+      text-align: center;
+      & > H1{
+        font-family:"Microsoft YaHei";
+        font-size: 32px;
+        line-height: 38px;
+        // padding-right: 20px;
+        color: #00BFFF !important;
+        margin: 0px auto;
+        font-weight: bold;
+        letter-spacing: 3px;
+        // text-indent:-3px;
+      }
+      & > H5{
+        letter-spacing: 2px;
+        // font-size: 16px;
+        line-height: 28px;
+      }
+    }
+    .login-wrap{
+      padding: 8px 32px;
+      .login-form-forgot {
+        float: right;
+      }
+      .login-form-button {
+        width: 100%;
+      }
+      .login-to-regedit{
+        line-height: 32px;
+        text-indent: 16px;
+      }
+      .ant-form-item-label{
+        & > Label{
+          letter-spacing: 2px;
+        }
+      }
+      
+    }
+    .regedit-wrap{
+      padding: 8px 32px;
+      .login-form-forgot {
+        float: right;
+      }
+      .login-form-button {
+        width: 100%;
+      }
+      .regedit-to-login{
+        line-height: 32px;
+        text-indent: 16px;
+      }
+      .ant-form-item-label{
+        & > Label{
+          letter-spacing: 2px;
+        }
+      }
+    }
+    .forget-wrap{
+      padding: 8px 32px;
+      .login-form-forgot {
+        float: right;
+      }
+      .login-form-button {
+        width: 100%;
+      }
+      .regedit-to-login{
+        line-height: 32px;
+        text-indent: 16px;
+      }
+      .ant-form-item-label{
+        & > Label{
+          letter-spacing: 2px;
+        }
+      }
+    }
+  }
+}
+
+.security-title{
+  display: block;
+  text-align: center;
+  font-weight: bold;
+}
+
+// .login-bg > div{
+//   position: relative;
+//   top: 200px;
+// }
+// .login > .login-warp{
+  
+// }
