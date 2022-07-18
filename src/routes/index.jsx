@@ -1,4 +1,4 @@
-import React, { Component,useEffect,useState,useRef } from 'react';
+import React, { Component,useEffect,useState } from 'react';
 import { BrowserRouter, Routes, Route,Link,Navigate,useLocation } from "react-router-dom";
 
 import { nanoid } from 'nanoid'; 
@@ -33,8 +33,8 @@ class DSRoutes extends Component {
         const keyList = Object.keys(_init.list);
         const componentsList = keyList.map(e=>{
             const x = _init.list[e];
-            const _class = _componentList[x.code];
-            const data = Object.assign({},{el:<_class key={nanoid()}/>},{"path":x.path,"only":x.only});
+            const DsClass = _componentList[x.code];
+            const data = Object.assign({},{el:<DsClass key={nanoid()}/>},{"path":x.path,"only":x.only});
             return data;
         });
 

@@ -4,9 +4,6 @@ import './index.less'
 import DSNavigate from 'comp/nav/index'
 
 class DefaultView extends Component{   
-    constructor(props){
-        super(props);
-    }
     componentDidMount=()=>{
     }
     render(){

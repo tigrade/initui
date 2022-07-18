@@ -72,7 +72,7 @@ class DSLayout extends Component {
                 </Content>
                 <Footer plain='true'>
                     <div className={'banner'}>Copyright © 2018至今 鱼律（厦门）网络科技有限公司 All rights reserved.
-                        <a href="//beian.miit.gov.cn" target="_blank">闽ICP备18004543号-1</a>
+                        <a href="//beian.miit.gov.cn" target="_blank" rel="noreferrer">闽ICP备18004543号-1</a>
                     </div>
                 </Footer>
             </Layout>

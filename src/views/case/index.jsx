@@ -1,8 +1,8 @@
 import React, { Component, Fragment,useId } from 'react';
 import { nanoid } from 'nanoid'; 
-import { Form, Input, Select, Button, PageHeader, Divider, DatePicker,BackTop,Row,Col,Tag,Space,Table } from 'antd';
+import { Input, Button, PageHeader, Divider,Row,Col,Tag,Space,Table } from 'antd';
 import './index.less';
-import { typeList } from 'antd/lib/message';
+
 const {Search} = Input;
 const { CheckableTag } = Tag;
 
