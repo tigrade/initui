@@ -1,4 +1,4 @@
-import React, { Component,useEffect,useState } from 'react';
+import React, { Component,useEffect,useState,useRef } from 'react';
 import { BrowserRouter, Routes, Route,Link,Navigate,useLocation } from "react-router-dom";
 
 import { nanoid } from 'nanoid'; 
@@ -9,16 +9,16 @@ import _init from 'views/index'
 
 function Layout(props){
     let items = props.items;
-    const menus = props.menus;//useRef()
+    const menus = useRef(props.menus);//useRef()
     const location = useLocation();
     const [pageNo, setPageNo] = useState();
 
     useEffect(() => {
         const pathname = location.pathname;
-        const currentIndex = menus.findIndex(e=>{
+        const currentIndex = menus.current.findIndex(e=>{
             return e.path === pathname;
         });
-        const _pageNo = currentIndex===-1?1:menus[currentIndex].key;
+        const _pageNo = currentIndex===-1?1:menus.current[currentIndex].key;
         setPageNo(_pageNo);
      }, [location]);
     return (<DSLayout items={items} pageNo={pageNo}/>);

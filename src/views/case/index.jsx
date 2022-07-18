@@ -1,21 +1,10 @@
-import React, { Component, Fragment,useId } from 'react';
+import React, { Component, Fragment } from 'react';
 import { nanoid } from 'nanoid'; 
 import { Input, Button, PageHeader, Divider,Row,Col,Tag,Space,Table } from 'antd';
 import './index.less';
 
 const {Search} = Input;
 const { CheckableTag } = Tag;
-
-const style = {
-    height: 40,
-    width: 40,
-    lineHeight: '40px',
-    borderRadius: 4,
-    backgroundColor: '#1088e9',
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 14,
-  };
 
   const sharedOnCell = (_, index) => {
     return {};
@@ -80,8 +69,6 @@ class CaseView extends Component {
     componentDidMount = () => {
     }
     render() {
-        const type = [""];
-
         return (
             <Fragment>
                 {/*搜索板块 */}
