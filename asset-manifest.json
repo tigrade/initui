@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/initui/static/css/main.a557060e.css",
-    "main.js": "/initui/static/js/main.4290c7ee.js",
+    "main.js": "/initui/static/js/main.f80be91b.js",
     "static/js/787.b5576a9b.chunk.js": "/initui/static/js/787.b5576a9b.chunk.js",
     "static/media/bg.png": "/initui/static/media/bg.f3e5529dd33918fef914.png",
     "index.html": "/initui/index.html",
     "main.a557060e.css.map": "/initui/static/css/main.a557060e.css.map",
-    "main.4290c7ee.js.map": "/initui/static/js/main.4290c7ee.js.map",
+    "main.f80be91b.js.map": "/initui/static/js/main.f80be91b.js.map",
     "787.b5576a9b.chunk.js.map": "/initui/static/js/787.b5576a9b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a557060e.css",
-    "static/js/main.4290c7ee.js"
+    "static/js/main.f80be91b.js"
   ]
 }
