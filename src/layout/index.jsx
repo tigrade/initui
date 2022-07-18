@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
+import {Outlet} from 'react-router-dom';
 
 import 'antd/dist/antd.less';
-import { Layout,Menu,Row, Col} from 'antd';
-import { Avatar } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import { LoginOutlined } from '@ant-design/icons';
+import { Layout,Menu,Row, Col,Avatar,Button} from 'antd';
+import { UserOutlined,LoginOutlined } from '@ant-design/icons';
 
 import './index.less'
-import {Outlet} from 'react-router-dom';
-const { Header, Footer, Content } = Layout;
+import DSNavigate from 'comp/nav/index'
 
+const { Header, Footer, Content } = Layout;
 
 class DSLayout extends Component { 
     constructor(props){
@@ -32,6 +30,7 @@ class DSLayout extends Component {
             return state;
         });
     }
+
     render() {
         const items = this.props.items;
         const selectedKeys = [`${this.state.pageNo}`];
@@ -54,13 +53,13 @@ class DSLayout extends Component {
                             </Col>
                         </Row>
                     </Col>
-                    <Col flex="130px">
-                        <Row>
+                    <Col flex="150px">
+                        <Row align='middle'>
                             <Col flex="50px">
-                                <Avatar size="large" icon={<UserOutlined />} gap="8"/>
+                                <Avatar icon={<UserOutlined />} gap="8"/>
                             </Col>
                             <Col flex="auto">
-                                <Button type="primary" icon={<LoginOutlined />} >退出</Button>
+                                <DSNavigate url="/login" element={<Button type="primary" icon={<LoginOutlined />} >退出</Button>}/>
                             </Col>
                         </Row>
                     </Col>
@@ -71,7 +70,11 @@ class DSLayout extends Component {
                         <Outlet/>
                     </div>
                 </Content>
-                <Footer plain='true'>Footer</Footer>
+                <Footer plain='true'>
+                    <div className={'banner'}>Copyright © 2018至今 鱼律（厦门）网络科技有限公司 All rights reserved.
+                        <a href="//beian.miit.gov.cn" target="_blank">闽ICP备18004543号-1</a>
+                    </div>
+                </Footer>
             </Layout>
         );
     }

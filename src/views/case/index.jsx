@@ -1,4 +1,5 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment,useId } from 'react';
+import { nanoid } from 'nanoid'; 
 import { Form, Input, Select, Button, PageHeader, Divider, DatePicker,BackTop,Row,Col,Tag,Space,Table } from 'antd';
 import './index.less';
 import { typeList } from 'antd/lib/message';
@@ -67,7 +68,7 @@ const style = {
     {
         title: '关注',
         dataIndex: 'q6',
-        width: 50,
+        width: 80,
         onCell: sharedOnCell,
     },
   ];
@@ -85,43 +86,31 @@ class CaseView extends Component {
             <Fragment>
                 {/*搜索板块 */}
                 <PageHeader className="site-page-header" title="案件管理" subTitle="根据下列条件检索" extra={[
-                    <Button key="3" size="large">新增案件</Button>,
-                    <Search placeholder="请输入案件名称" allowClear enterButton="搜索" size="large" onSearch={null}/>]}>,
+                    <Button key={nanoid()} size="large">新增案件</Button>,
+                    <Search key={nanoid()} placeholder="请输入案件名称" allowClear enterButton="搜索" size="large" onSearch={null}/>]}>
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                         <Row>
                             <Col flex="100px">案件类型</Col>
                             <Col flex="auto">:
-                                <CheckableTag color="default" key={"3"}>全部</CheckableTag>
-                                <CheckableTag color="default" key={"1"}>诉讼</CheckableTag>
-                                <CheckableTag color="default" key={"2"} checked={true}>仲裁</CheckableTag>
-                                <CheckableTag color="default" key={"3"}>顾问</CheckableTag>
-                                <CheckableTag color="default" key={"4"}>非诉</CheckableTag>
-                                <CheckableTag color="default" key={"5"}>其他</CheckableTag>
+                                <CheckableTag color="default" >全部</CheckableTag>
+                                <CheckableTag color="default" >诉讼</CheckableTag>
+                                <CheckableTag color="default"  checked={true}>仲裁</CheckableTag>
+                                <CheckableTag color="default" >顾问</CheckableTag>
+                                <CheckableTag color="default" >非诉</CheckableTag>
+                                <CheckableTag color="default" >其他</CheckableTag>
                             </Col>
                         </Row>
 
                         <Row wrap={false}>
                             <Col flex="100px">客户名称</Col>
                             <Col flex="auto">:
-                                <CheckableTag color="default" key={"3"}>全部</CheckableTag>
-                                <CheckableTag color="default" key={"1"}>幸福地产</CheckableTag>
-                                <CheckableTag color="default" key={"2"} checked={true}>世贸国际</CheckableTag>
-                                <CheckableTag color="default" key={"3"}>恒大地产</CheckableTag>
-                                <CheckableTag color="default" key={"4"}>中国移动</CheckableTag>
-                                <CheckableTag color="default" key={"5"}>中国电信</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
-                                <CheckableTag color="default" key={"6"}>厦门国贸</CheckableTag>
+                                <CheckableTag color="default" >全部</CheckableTag>
+                                <CheckableTag color="default" >幸福地产</CheckableTag>
+                                <CheckableTag color="default"  checked={true}>世贸国际</CheckableTag>
+                                <CheckableTag color="default" >恒大地产</CheckableTag>
+                                <CheckableTag color="default" >中国移动</CheckableTag>
+                                <CheckableTag color="default" >中国电信</CheckableTag>
+                                <CheckableTag color="default" >厦门国贸</CheckableTag>
                                
                             </Col>
                         </Row>
@@ -129,19 +118,19 @@ class CaseView extends Component {
                         <Row wrap={false}>
                             <Col flex="100px">进度</Col>
                             <Col flex="auto">:
-                                <CheckableTag color="default" key={"3"}>全部</CheckableTag>
-                                <CheckableTag color="default" key={"1"}>开盘前</CheckableTag>
-                                <CheckableTag color="default" key={"2"} checked={true}>收集证据</CheckableTag>
-                                <CheckableTag color="default" key={"3"}>结案</CheckableTag>
+                                <CheckableTag color="default" >全部</CheckableTag>
+                                <CheckableTag color="default" >开盘前</CheckableTag>
+                                <CheckableTag color="default"  checked={true}>收集证据</CheckableTag>
+                                <CheckableTag color="default" >结案</CheckableTag>
                             </Col>
                         </Row>
 
                         <Row wrap={false}>
                             <Col flex="100px">状态</Col>
                             <Col flex="auto">:
-                                <CheckableTag color="default" key={"3"}>全部</CheckableTag>
-                                <CheckableTag color="default" key={"1"}>进行中</CheckableTag>
-                                <CheckableTag color="default" key={"2"} checked={true}>已完结</CheckableTag>
+                                <CheckableTag color="default" >全部</CheckableTag>
+                                <CheckableTag color="default" >进行中</CheckableTag>
+                                <CheckableTag color="default"  checked={true}>已完结</CheckableTag>
                             </Col>
                         </Row>
 
@@ -151,11 +140,6 @@ class CaseView extends Component {
                 <Divider />
 
                 <Table columns={columns} dataSource={data} bordered />
-
-                {/*图板块 */}
-                <BackTop>
-                <div style={style}>UP</div>
-                </BackTop>
             </Fragment>
         );
     }

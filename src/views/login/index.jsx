@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { nanoid } from 'nanoid'; 
 import './index.less'
 
 import * as THREE from "three";
@@ -158,7 +159,8 @@ class LoginView extends Component{
         animate();
     }
 
-    onChangeType=(formType)=>{
+    onChangeType=(formType,e)=>{
+        e.preventDefault();
         this.setState(state=>{
             state.formType = formType;
             return state;
@@ -255,13 +257,13 @@ class LoginView extends Component{
                             </Form.Item>
                             <Form.Item label="验证码"  required tooltip={{ title: '请输入有效验证码', icon: <InfoCircleOutlined /> }}>
                                 <Row gutter={8}>
-                                    <Col flex={'auto'}>
+                                    <Col flex="180px">
                                         <Form.Item name="captcha" noStyle>
-                                            <Input size="large" autoComplete="off"/>
+                                            <Input size="large" autoComplete="off" style={{"width":180}} key={nanoid()}/>
                                         </Form.Item>
                                     </Col>
-                                    <Col flex="80px">
-                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
+                                    <Col flex={'auto'}>
+                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
                                     </Col>
                                 </Row>
                             </Form.Item>
@@ -273,7 +275,7 @@ class LoginView extends Component{
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" className={'login-form-button'} size="large">登录</Button>
-                                <span className={'login-to-regedit'}>或 <a href='' onClick={this.onChangeType.bind(this,"Regedit")}>立即注册</a></span>
+                                <span className={'login-to-regedit'}>或 <Button type="link" onClick={this.onChangeType.bind(this,"Regedit")}>立即注册</Button></span>
                             </Form.Item>
                         </Form>
                     </div>
@@ -291,13 +293,13 @@ class LoginView extends Component{
                             </Form.Item>
                             <Form.Item label="验证码"  required tooltip={{ title: '请输入有效验证码', icon: <InfoCircleOutlined /> }}>
                                 <Row gutter={8}>
-                                    <Col flex={'auto'}>
+                                    <Col flex="180px">
                                         <Form.Item name="captcha" noStyle>
-                                            <Input size="large" autoComplete="off"/>
+                                            <Input size="large" autoComplete="off" style={{"width":180}} key={nanoid()}/>
                                         </Form.Item>
                                     </Col>
-                                    <Col flex="80px">
-                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true}>获取验证码</Button>
+                                    <Col flex={'auto'}>
+                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
                                     </Col>
                                 </Row>
                             </Form.Item>
@@ -310,31 +312,34 @@ class LoginView extends Component{
                     
 
                     <div className={'regedit-wrap'} style={{"display":formType==="Regedit"?"block":"none"}}>
-                        <Form layout="vertical" size='small'>
-                            <Form.Item label="用户账号" required tooltip="请输入有效账号">
+                        <Form layout="vertical" size='small' onFinish={()=>{}}>
+                            <Form.Item name="alias" label="用户名字" required tooltip="请输入用户名字">
+                                <Input placeholder="请输入用户名字" size="large" autoComplete="off"/>
+                            </Form.Item>
+                            <Form.Item name="account" label="用户账号" required tooltip="请输入有效账号">
                                 <Input placeholder="请输入有效账号" size="large" autoComplete="off"/>
                             </Form.Item>
-                            <Form.Item label="登录密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
+                            <Form.Item name="password" label="登录密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
                                 <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
                             </Form.Item>
-                            <Form.Item label="确认密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
+                            <Form.Item name="repassword" label="确认密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
                                 <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
                             </Form.Item>
                             <Form.Item label="验证码"  required tooltip={{ title: '请输入有效验证码', icon: <InfoCircleOutlined /> }}>
                                 <Row gutter={8}>
-                                    <Col flex={'auto'}>
-                                        <Form.Item name="captcha" noStyle>
-                                            <Input size="large" autoComplete="off"/>
+                                    <Col flex="180px">
+                                        <Form.Item name="code" noStyle>
+                                            <Input size="large" autoComplete="off" style={{"width":180}} key={nanoid()}/>
                                         </Form.Item>
                                     </Col>
-                                    <Col flex="80px">
-                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true}>获取验证码</Button>
+                                    <Col flex={'auto'}>
+                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
                                     </Col>
                                 </Row>
                             </Form.Item>
                             <Form.Item>
                                 <Form.Item name="remember" valuePropName="checked" noStyle>
-                                <Checkbox>已阅读并同意以下协议<a href=''>鱼律平台服务协议</a>、<a href=''>隐私权政策</a>、<a href=''>法律声明</a>协议</Checkbox>
+                                <Checkbox>已阅读并同意以下协议<a href='#'>鱼律平台服务协议</a>、<a href='#'>隐私权政策</a>、<a href='#'>法律声明</a>协议</Checkbox>
                                 </Form.Item>
                             </Form.Item>
                             <Form.Item>
@@ -349,7 +354,7 @@ class LoginView extends Component{
             </div> 
             <div className={'site-footer'}>
                 <div className={'banner'}>Copyright © 2018至今 鱼律（厦门）网络科技有限公司 All rights reserved.
-                    <a href="//beian.miit.gov.cn" target="_blank">闽ICP备18004543号-1</a>
+                    <a href="//beian.miit.gov.cn" target="_blank" rel="noreferrer">闽ICP备18004543号-1</a>
                 </div>
             </div>
             <div ref={this.bgRef} className={'wall-bg'}/>
