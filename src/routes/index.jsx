@@ -18,7 +18,7 @@ function Layout(props){
         const currentIndex = menus.current.findIndex(e=>{
             return e.path === pathname;
         });
-        const _pageNo = currentIndex===-1?1:menus.current[currentIndex].key;
+        const _pageNo = currentIndex===-1?0:menus.current[currentIndex].key;
         setPageNo(_pageNo);
      }, [location]);
     return (<DSLayout items={items} pageNo={pageNo}/>);

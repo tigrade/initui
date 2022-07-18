@@ -3,6 +3,9 @@ import { nanoid } from 'nanoid';
 import { Input, Button, PageHeader, Divider,Row,Col,Tag,Space,Table } from 'antd';
 import './index.less';
 
+import DSNavigate from 'comp/nav/index';
+import _init from 'views/index';
+
 const {Search} = Input;
 const { CheckableTag } = Tag;
 
@@ -73,7 +76,7 @@ class CaseView extends Component {
             <Fragment>
                 {/*搜索板块 */}
                 <PageHeader className="site-page-header" title="案件管理" subTitle="根据下列条件检索" extra={[
-                    <Button key={nanoid()} size="large">新增案件</Button>,
+                    <DSNavigate key={nanoid()} url={_init.list._NewCaseView.path} element={<Button key={nanoid()} size="large">新增案件</Button>}/>,
                     <Search key={nanoid()} placeholder="请输入案件名称" allowClear enterButton="搜索" size="large" onSearch={null}/>]}>
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                         <Row>

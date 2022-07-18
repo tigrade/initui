@@ -5,8 +5,9 @@ import 'antd/dist/antd.less';
 import { Layout,Menu,Row, Col,Avatar,Button} from 'antd';
 import { UserOutlined,LoginOutlined } from '@ant-design/icons';
 
-import './index.less'
-import DSNavigate from 'comp/nav/index'
+import './index.less';
+import DSNavigate from 'comp/nav/index';
+import _init from 'views/index';
 
 const { Header, Footer, Content } = Layout;
 
@@ -59,7 +60,7 @@ class DSLayout extends Component {
                                 <Avatar icon={<UserOutlined />} gap="8"/>
                             </Col>
                             <Col flex="auto">
-                                <DSNavigate url="/login" element={<Button type="primary" icon={<LoginOutlined />} >退出</Button>}/>
+                                <DSNavigate url={_init.list._LoginView.path} element={<Button type="primary" icon={<LoginOutlined />} >退出</Button>}/>
                             </Col>
                         </Row>
                     </Col>
