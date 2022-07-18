@@ -81,7 +81,7 @@ class DSRoutes extends Component {
                                 return <Route path={element.path} element={element.el} key={nanoid()}/>
                             })
                         }
-                        <Route path="*" element={<Navigate to='/login' replace={true}/>}/>
+                        <Route path="*" element={<Navigate to='/' replace={true}/>}/>
                     </Route>
 
                 </Routes>
