@@ -1,16 +1,22 @@
 {
   "files": {
-    "main.css": "/initui/static/css/main.a557060e.css",
-    "main.js": "/initui/static/js/main.7d45c6ce.js",
+    "main.css": "/initui/static/css/main.248c0763.css",
+    "main.js": "/initui/static/js/main.dc93dafb.js",
+    "static/css/59.f0e89291.chunk.css": "/initui/static/css/59.f0e89291.chunk.css",
+    "static/js/59.b7287863.chunk.js": "/initui/static/js/59.b7287863.chunk.js",
     "static/js/787.b5576a9b.chunk.js": "/initui/static/js/787.b5576a9b.chunk.js",
+    "static/js/32.c214cb6e.chunk.js": "/initui/static/js/32.c214cb6e.chunk.js",
     "static/media/bg.png": "/initui/static/media/bg.f3e5529dd33918fef914.png",
     "index.html": "/initui/index.html",
-    "main.a557060e.css.map": "/initui/static/css/main.a557060e.css.map",
-    "main.7d45c6ce.js.map": "/initui/static/js/main.7d45c6ce.js.map",
-    "787.b5576a9b.chunk.js.map": "/initui/static/js/787.b5576a9b.chunk.js.map"
+    "main.248c0763.css.map": "/initui/static/css/main.248c0763.css.map",
+    "main.dc93dafb.js.map": "/initui/static/js/main.dc93dafb.js.map",
+    "59.f0e89291.chunk.css.map": "/initui/static/css/59.f0e89291.chunk.css.map",
+    "59.b7287863.chunk.js.map": "/initui/static/js/59.b7287863.chunk.js.map",
+    "787.b5576a9b.chunk.js.map": "/initui/static/js/787.b5576a9b.chunk.js.map",
+    "32.c214cb6e.chunk.js.map": "/initui/static/js/32.c214cb6e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a557060e.css",
-    "static/js/main.7d45c6ce.js"
+    "static/css/main.248c0763.css",
+    "static/js/main.dc93dafb.js"
   ]
 }
