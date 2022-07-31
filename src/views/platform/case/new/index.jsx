@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React,{DSComponent,Fragment} from 'comp/index';
 
-class NewCaseView extends Component {
+class NewCaseView extends DSComponent {
     componentDidMount = () => {
     }
     render() {

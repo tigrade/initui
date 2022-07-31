@@ -29,13 +29,14 @@ ul.ds-theme-nav > li.ant-menu-item::after{
     right: 10px!important;
 }
 .ds-theme-content{
-    background-color: #fff;
+    // background-color: #fff;
     display: flex;
     flex: 1;
     position:absolute;
-    top: 64px;
+    top: 68px;
     bottom: 50px;
     width: 100%;
+    
 }
 .ant-layout-footer{
     border-top: 1px solid rgba(0, 0, 0, 0.06);
@@ -67,6 +68,13 @@ ul.ds-theme-nav > li.ant-menu-item::after{
     height: 100%;
     margin: 0;
     border-radius: 0;
-    background: #fff;
+    // background: #fff;
     padding-bottom: 50px;
+}
+
+.ds-user-menus{
+    width: 200px;
+    & > .ant-dropdown-menu{
+        margin-top: 20px;
+    }
 }

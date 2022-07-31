@@ -11,7 +11,7 @@ export function get(url, params = {}) {
         axios.get(url, {params: params,}).then((response) => {
             const _res = JSON.parse(JSON.stringify(response.data));
             if(_res!=null){
-                if(_res['code']==200||_res['status']=="success"){
+                if(_res['code']===200||_res['status']==="success"){
                     return resolve(_res['results']);
                 }
             }
@@ -29,18 +29,17 @@ export function get(url, params = {}) {
  * @param data
  * @returns {Promise}
  */
-export function post(url, data) {
+export function post(url, _data) {
     return new Promise((resolve, reject) => {
-        axios.post(url, data).then((response) => {
+        axios.post(url, _data,{headers: {'Content-Type': 'multipart/form-data'},transformRequest: (data, headers) => _data}).then((response) => {
             const _res = JSON.parse(JSON.stringify(response.data));
             if(_res!=null){
-                if(_res['code']==200||_res['status']=="success"){
+                if(_res['code']===200||_res['status']==="success"){
                     return resolve(_res['results']);
                 }
             }
             return reject(_res);
         }).catch((error) => {
-            // console.log(error);
             reject(error);
         });
     });
@@ -96,7 +95,7 @@ Date.prototype.Format = function (fmt) {
     for (var k in o) {
       if (new RegExp('(' + k + ')').test(fmt)) {
         //第二种：使用String()类型进行强制数据类型转换String(date.getFullYear())，这种更容易理解。
-        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(String(o[k]).length)));
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(String(o[k]).length)));
       }
     }
     return fmt;

@@ -1,30 +1,34 @@
-import React, { Component, Fragment } from 'react';
-import { nanoid } from 'nanoid'; 
+import React,{DSBase,DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
-
 import * as THREE from "three";
 // import * as Stats from "stats-js";
 
 import { InfoCircleOutlined} from '@ant-design/icons';
-import { Form, Input,Button ,Checkbox,Row, Col,Modal,Image} from 'antd';
+import { Form, Input,Button ,Checkbox,Row, Col,Modal,Image,message} from 'antd';
 
-
-class LoginView extends Component{   
+class LoginView extends DSComponent{   
     constructor(props){
         super(props);
         this.bgRef = React.createRef();
+        this.loginFormRef = React.createRef();
+        this.regeditFormRef = React.createRef();
+        this.resetFormRef = React.createRef();
+        let loginAccount;
+        let loginRemember = localStorage.getItem("remember");
+        if(loginRemember==="true"){
+            loginRemember = true;
+            loginAccount = localStorage.getItem("account");
+        }else{
+            loginRemember = false;
+        }
         // formType: Login|Regedit|Forget
-        this.state = {formType:"Login",captchShow:false,count:60,liked:true}
+        this.state = {formType:"Login",captchShow:false,count:60,liked:true,needCaptcha:false,loginAccount:loginAccount,loginRemember:loginRemember}
     }
     componentDidMount=()=>{
         this.initTHREEBg();
+        
     }
     componentDidUpdate=()=>{
-        // const {liked} = this.state;
-        // console.log(liked);
-        // if(!liked){
-        //     this.onCountDown();
-        // }
     }
     // componentWillReceiveProps=(nextProps,nextContext)=>{
     //     setTimeout(()=>this.onCountDown,1000);
@@ -34,7 +38,6 @@ class LoginView extends Component{
         // const stats = new Stats()
         // stats.showPanel(1) // 0: fps, 1: ms, 2: mb, 3+: custom
         // document.body.appendChild(stats.dom)
-
         const SEPARATION = 100; 
         const AMOUNTX = 50; //控制x轴波浪的长度
         const AMOUNTY = 50; //控制y轴波浪的长度
@@ -163,20 +166,60 @@ class LoginView extends Component{
         e.preventDefault();
         this.setState(state=>{
             state.formType = formType;
+            state.formStatus = false;
+            state.errorMessage = null;
             return state;
         });
     }
-    onClickCaptcha=async ()=>{
-        this.setState(state=>{
-            state.captchShow = !state.captchShow;
-            if(state.captchShow){
-                state.liked = false;
-            }
-            return state;
-        },(e)=>{
-            this.onCountDown();//获取验证码按钮倒计时
-
+    onClickCaptcha=async (type,use)=>{
+        const params = new FormData();
+        params.append('type', type);
+        params.append('use', use);
+        let _account;
+        if(use==="LOGIN_CODE"){
+            const {account} = this.loginFormRef.current.getFieldsValue();
+            _account = account;
+        }
+        if(use==="REGEDIT_CODE"){
+            const {account} = this.regeditFormRef.current.getFieldsValue();
+            _account = account;
+        }
+        if(use==="RESET_PASSWORD_CODE"){
+            const {account} = this.resetFormRef.current.getFieldsValue();
+            _account = account;
+        }
+        if(_account===undefined||_account===null){
+            message.error("请需填写完整有效的邮箱号码");
+            return false;
+        }
+        params.append('account', _account);
+        //获取验证码   /client/token
+        const response  = await post(`/api/client/token`,params).catch(error => {
+            message.error(error.message);
         });
+        if(response){
+            const {check,token} = response;
+            this.setState(state=>{
+                if(check===true){
+                    state.captchShow = !state.captchShow;
+                    if(state.captchShow){
+                        state.liked = false;
+                    }
+                }
+                if(use==="LOGIN_CODE"){
+                    state.LOGIN_TOKEN = token;//登录TOKEN
+                }
+                if(use==="REGEDIT_CODE"){
+                    state.REGEDIT_TOKEN = token;//注册TOKEN
+                }
+                if(use==="RESET_PASSWORD_CODE"){
+                    state.RESET_PASSWORD_TOKEN = token;//重置密码
+                }
+                return state;
+            },(e)=>{
+                this.onCountDown();//获取验证码按钮倒计时
+            });
+        }
     }
     onCaptchaSubmit=(v)=>{
 
@@ -202,9 +245,66 @@ class LoginView extends Component{
         }
     }
 
-    render(){
-        const {formType,count,liked} = this.state;
+    onLogin=async (e)=>{
+        const {account,password,remember} = e;
+        const params = new FormData();
+        params.append('username', account);
+        params.append('password', password);
+        const response  = await post(`/api/sign_in`,params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            if(remember===true){
+                localStorage.setItem("remember",true);
+                localStorage.setItem("account",account);
+            }else{
+                localStorage.removeItem("remember");
+                localStorage.removeItem("account");
+            }
+            sessionStorage.setItem('isLogin', true);
+            sessionStorage.setItem('token', response.token);
+            window.location.href = DSBase.root.path;
+        }
+    }
+    onRegedit=async (e)=>{
+        const {alias,account,password,checkCode,agree} = e;
+        if(agree!==true){
+            message.error("请同意平台协议方可注册");
+            return false;
+        }
+        const {REGEDIT_TOKEN} = this.state;
+        const data = {'type':"EMAIL",'alias':alias,'account':account,'password':password,'checkCode':checkCode,'token':REGEDIT_TOKEN};
+        const params = new FormData();
+        params.append('content', JSON.stringify(data));
+        const response  = await post(`/api/client/regedit`,params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            sessionStorage.setItem('isLogin', true);
+            sessionStorage.setItem('token', response.token);
+            window.location.href = DSBase.root.path;
+        }
+    }
+    onReset=async(e)=>{
+        const {account,password,checkCode} = e;
+        const {RESET_PASSWORD_TOKEN} = this.state;
+        const data = {'account':account,'password':password,'checkCode':checkCode,'token':RESET_PASSWORD_TOKEN};
+        const params = new FormData();
+        params.append('content', JSON.stringify(data));
+        const response  = await post(`/api/client/reset/password`,params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            sessionStorage.setItem('isLogin', true);
+            sessionStorage.setItem('token', response.token);
+            window.location.href = DSBase.root.path;
+        }
+    }
 
+    render(){
+        //formStatus:false,errorMessage:null
+        const {formType,count,liked,needCaptcha,loginAccount,loginRemember} = this.state;
+        console.log(loginAccount);
         return (
         <Fragment>
             <Modal
@@ -230,7 +330,7 @@ class LoginView extends Component{
                                             preview={false}
                                             width={150}
                                             height={40}
-                                            src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp"
+                                            src="/api/client/captcha"
                                         />
                                     </Form.Item>
                                 </Col>
@@ -247,59 +347,62 @@ class LoginView extends Component{
                         <h1>鱼律</h1>
                         <h5>鱼律科技 一律给力</h5>
                     </div>
+                    {/* 用户登录 */}
                     <div className={'login-wrap'} style={{"display":formType==="Login"?"block":"none"}}>
-                        <Form layout="vertical" size='small'>
-                            <Form.Item label="账号" required tooltip="请输入有效账号">
-                                <Input placeholder="请输入有效账号" size="large" autoComplete="off"/>
+                        <Form layout="vertical" size='small' onFinish={this.onLogin} ref={this.loginFormRef} 
+                            initialValues={{"account":loginAccount,"remember":loginRemember}}>
+                            <Form.Item name="account" label="账号" required tooltip="请输入有效账号" rules={[{ required: true, message: '请输入有效账号' }]} >
+                                <Input placeholder="请输入有效邮箱账号" size="large" autoComplete="off"/>
                             </Form.Item>
-                            <Form.Item label="密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
+                            <Form.Item name="password" label="密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }} 
+                                rules={[{ required: true, message: '请输入有效密码' }]}>
                                 <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
                             </Form.Item>
+                            {needCaptcha&&
                             <Form.Item label="验证码"  required tooltip={{ title: '请输入有效验证码', icon: <InfoCircleOutlined /> }}>
                                 <Row gutter={8}>
                                     <Col flex="180px">
-                                        <Form.Item name="captcha" noStyle>
-                                            <Input size="large" autoComplete="off" style={{"width":180}} key={nanoid()}/>
+                                        <Form.Item name="checkCode" noStyle>
+                                            <Input size="large" autoComplete="off" style={{"width":180}}/>
                                         </Form.Item>
                                     </Col>
                                     <Col flex={'auto'}>
-                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
+                                        <Button size="large" onClick={this.onClickCaptcha.bind(this,"EMAIL","LOGIN_CODE",)} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
                                     </Col>
                                 </Row>
                             </Form.Item>
+                            }
                             <Form.Item>
                                 <Form.Item name="remember" valuePropName="checked" noStyle>
                                     <Checkbox>记住我</Checkbox>
                                 </Form.Item>
-                                <a href='' className={'login-form-forgot'} onClick={this.onChangeType.bind(this,"Forget")}>忘记密码</a>
+                                <a href='#' className={'login-form-forgot'} onClick={this.onChangeType.bind(this,"Forget")}>忘记密码</a>
                             </Form.Item>
+                            
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" className={'login-form-button'} size="large">登录</Button>
                                 <span className={'login-to-regedit'}>或 <Button type="link" onClick={this.onChangeType.bind(this,"Regedit")}>立即注册</Button></span>
                             </Form.Item>
                         </Form>
                     </div>
-
+                    {/* 忘记密码 */}
                     <div className={'forget-wrap'} style={{"display":formType==="Forget"?"block":"none"}}>
-                        <Form layout="vertical" size='small'>
-                            <Form.Item label="账号" required tooltip="请输入有效账号">
-                                <Input placeholder="请输入有效账号" size="large" autoComplete="off"/>
+                        <Form layout="vertical" size='small' ref={this.resetFormRef} onFinish={this.onReset}>
+                            <Form.Item name="account" label="账号" required tooltip="请输入有效账号">
+                                <Input placeholder="请输入有效邮箱或手机" size="large" autoComplete="off"/>
                             </Form.Item>
-                            <Form.Item label="新的密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
-                                <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
-                            </Form.Item>
-                            <Form.Item label="确认密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
-                                <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
+                            <Form.Item name="password" label="新的密码"  required tooltip={{ title: '请输入新密码', icon: <InfoCircleOutlined /> }}>
+                                <Input.Password placeholder="请输入新密码" size="large" autoComplete="off"/>
                             </Form.Item>
                             <Form.Item label="验证码"  required tooltip={{ title: '请输入有效验证码', icon: <InfoCircleOutlined /> }}>
                                 <Row gutter={8}>
                                     <Col flex="180px">
-                                        <Form.Item name="captcha" noStyle>
-                                            <Input size="large" autoComplete="off" style={{"width":180}} key={nanoid()}/>
+                                        <Form.Item name="checkCode" noStyle>
+                                            <Input size="large" autoComplete="off" style={{"width":180}}/>
                                         </Form.Item>
                                     </Col>
                                     <Col flex={'auto'}>
-                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
+                                        <Button size="large" onClick={this.onClickCaptcha.bind(this,"EMAIL","RESET_PASSWORD_CODE",)} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
                                     </Col>
                                 </Row>
                             </Form.Item>
@@ -310,35 +413,37 @@ class LoginView extends Component{
                         </Form>
                     </div>
                     
-
+                    {/* 注册用户 */}
                     <div className={'regedit-wrap'} style={{"display":formType==="Regedit"?"block":"none"}}>
-                        <Form layout="vertical" size='small' onFinish={()=>{}}>
-                            <Form.Item name="alias" label="用户名字" required tooltip="请输入用户名字">
+                        <Form layout="vertical" size='small' onFinish={this.onRegedit} ref={this.regeditFormRef}>
+                            <Form.Item name="alias" label="用户名字" required tooltip="请输入用户名字" 
+                                rules={[{ required: true, message: '请输入有效账号' }]} >
                                 <Input placeholder="请输入用户名字" size="large" autoComplete="off"/>
                             </Form.Item>
-                            <Form.Item name="account" label="用户账号" required tooltip="请输入有效账号">
-                                <Input placeholder="请输入有效账号" size="large" autoComplete="off"/>
+                            <Form.Item name="account" label="邮箱"  required tooltip={{ title: '请输入有效邮箱', icon: <InfoCircleOutlined /> }} 
+                                rules={[{ required: true, message: '请输入有效邮箱' },{type: 'email',message: '请输入有效邮箱'}]} >
+                                <Input placeholder="请输入有效邮箱" size="large" autoComplete="off"/>
                             </Form.Item>
-                            <Form.Item name="password" label="登录密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
-                                <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
-                            </Form.Item>
-                            <Form.Item name="repassword" label="确认密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}>
+                            <Form.Item name="password" label="登录密码"  required tooltip={{ title: '请输入有效密码', icon: <InfoCircleOutlined /> }}
+                                rules={[{ required: true, message: '请输入有效密码' }]} >
                                 <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
                             </Form.Item>
                             <Form.Item label="验证码"  required tooltip={{ title: '请输入有效验证码', icon: <InfoCircleOutlined /> }}>
                                 <Row gutter={8}>
                                     <Col flex="180px">
-                                        <Form.Item name="code" noStyle>
-                                            <Input size="large" autoComplete="off" style={{"width":180}} key={nanoid()}/>
+                                        <Form.Item name="checkCode" noStyle 
+                                            rules={[{ required: true, message: '请输入有效验证码' }]} >
+                                            <Input size="large" autoComplete="off" style={{"width":180}}/>
                                         </Form.Item>
                                     </Col>
                                     <Col flex={'auto'}>
-                                        <Button size="large" onClick={this.onClickCaptcha} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
+                                        <Button size="large" onClick={this.onClickCaptcha.bind(this,"EMAIL","REGEDIT_CODE",)} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
                                     </Col>
                                 </Row>
                             </Form.Item>
                             <Form.Item>
-                                <Form.Item name="remember" valuePropName="checked" noStyle>
+                                <Form.Item name="agree" valuePropName="checked" noStyle 
+                                    rules={[{ required: true, message: '用户需同意本平台协议方可注册' }]} >
                                 <Checkbox>已阅读并同意以下协议<a href='#'>鱼律平台服务协议</a>、<a href='#'>隐私权政策</a>、<a href='#'>法律声明</a>协议</Checkbox>
                                 </Form.Item>
                             </Form.Item>
@@ -346,6 +451,9 @@ class LoginView extends Component{
                                 <Button type="primary" htmlType="submit" className={'login-form-button'} size="large">注册</Button>
                                 <span className={'regedit-to-login'}>或 <a href='' onClick={this.onChangeType.bind(this,"Login")}>立即登录</a></span>
                             </Form.Item>
+                            {/* <Divider>其他注册方式</Divider>
+                            <Tooltip title='手机注册'><Avatar style={{ backgroundColor: '#87d068' }} icon={<PhoneOutlined />} /></Tooltip>
+                            <Tooltip title='邮箱注册'><Avatar style={{ backgroundColor: '#87d068' }} icon={<MailOutlined />} /></Tooltip> */}
                         </Form>
                     </div>
 
