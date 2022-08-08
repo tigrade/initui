@@ -67,7 +67,6 @@ class UserRoleFormView extends DSComponent{
             message.error(error.message);
         });
         if (response) {
-            const { results} = response;
             message.success(response.message);
             this.onLoad();
         }
