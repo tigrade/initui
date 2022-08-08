@@ -1,4 +1,4 @@
-import React,{DSComponent,Fragment,post,DSTreeSelect} from 'comp/index';
+import React,{DSComponent,Fragment,post,DSTreeSelect,DSList} from 'comp/index';
 import './index.less'
 
 import { Row,Col,Modal,message, Button,Form,Input,Select,Radio,Popconfirm} from 'antd';
@@ -164,7 +164,14 @@ class RoleMenuFormView extends DSComponent{
             e.preventDefault();
             return;
         }
-        
+        if(value===4){
+            this.setState(state=>{
+                state.formType = value;
+                return state;
+            },()=>{
+                
+            });
+        }
     }
     onDeleteNode=async()=>{
         const {nodeItem} = this.state;
@@ -172,6 +179,31 @@ class RoleMenuFormView extends DSComponent{
         const params = new FormData();
         params.append('id', id);
         const response = await post('/api/menu/delete',params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            //重置表单
+            this.setState(state=>{
+                state.nodeSelect = false;
+                state.nodeItem = {};
+                state.formType = 1;
+                state.sourceType = "";
+                return state;
+            },()=>{
+                const {formData} = this.props;
+                this.formRef.current.setFieldsValue(formData);
+                this.onReload();//刷新菜单
+                message.success(response.message);
+            });
+        }
+    }
+    onMenuCopy=async(item)=>{
+        const {code} = item;
+        const {roleCode} = this.state;
+        const params = new FormData();
+        params.append('sourceRoleCode', code);
+        params.append('targetRoleCode', roleCode);
+        const response = await post('/api/menu/copy',params).catch(error => {
             message.error(error.message);
         });
         if(response){
@@ -218,7 +250,12 @@ class RoleMenuFormView extends DSComponent{
                                 cancelText={"取消"}>
                             <Radio value={3} disabled={!nodeSelect}>删除</Radio>
                             </Popconfirm>
+                            <Radio value={4}>拷贝覆盖</Radio>
                         </Radio.Group>
+                        {formType===4&&
+                        <DSList title={"name"} path="/api/role/list" onChange={this.onMenuCopy}/>
+                        }
+                        {formType!==4&&
                         <Form layout="vertical" onValuesChange={this.onValuesChange} ref={this.formRef} initialValues={formData} onFinish={this.onSaveOrUpdate}>
                             <Form.Item name="id" label="编号" noStyle hidden={true}>
                                 <Input placeholder=""  autoComplete="off"/>
@@ -257,6 +294,7 @@ class RoleMenuFormView extends DSComponent{
                                 <Button type="primary" htmlType="submit" size="large">{formType===1&&"新增"}{formType===2&&"更新"}</Button>
                             </Form.Item>
                         </Form>
+                        }
                     </Col>
                 </Row>
                     </div>

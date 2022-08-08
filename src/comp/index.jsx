@@ -18,3 +18,4 @@ export {default as DSSelectList} from 'comp/selectlist/index';
 export {default as DSTable} from 'comp/table/index';
 export {default as DSTreeSelect} from 'comp/tree/index';
 export {default as DSNavigate} from 'comp/nav/index';
+export {default as DSList} from 'comp/list/index';
