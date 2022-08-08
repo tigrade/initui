@@ -12,7 +12,7 @@ export function get(url, params = {}) {
             const _res = JSON.parse(JSON.stringify(response.data));
             if(_res!=null){
                 if(_res['code']===200||_res['status']==="success"){
-                    return resolve(_res['results']);
+                    return resolve(_res);
                 }
             }
             return reject(_res);
@@ -35,7 +35,10 @@ export function post(url, _data) {
             const _res = JSON.parse(JSON.stringify(response.data));
             if(_res!=null){
                 if(_res['code']===200||_res['status']==="success"){
-                    return resolve(_res['results']);
+                    return resolve(_res);
+                }
+                if(_res['code']===700101||_res['status']==="error"){
+                    window.location.href ="/login"
                 }
             }
             return reject(_res);

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import './index.less';
 import DSRoutes from 'routes/index';
 import reportWebVitals from './reportWebVitals';
 import axios from "axios";

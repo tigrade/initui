@@ -14,6 +14,7 @@ export { nanoid as DSID } from 'nanoid';
 export default React;
 
 
-
+export {default as DSSelectList} from 'comp/selectlist/index';
+export {default as DSTable} from 'comp/table/index';
+export {default as DSTreeSelect} from 'comp/tree/index';
 export {default as DSNavigate} from 'comp/nav/index';
-export {default as useDSTitle} from 'comp/title/index'

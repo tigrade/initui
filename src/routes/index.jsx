@@ -53,7 +53,7 @@ class DSRoutes extends DSComponent {
             let managerMenus;
             let platformMenus;
             if(menuSource){
-                const {manager,platform} = menuSource;
+                const {manager,platform} = menuSource.results;
                 if(manager){
                     managerMenus = this.renderMenus(manager);
                 }
@@ -65,7 +65,7 @@ class DSRoutes extends DSComponent {
                 }
             }
             
-            const {type,aliasName} = response;
+            const {type,aliasName} = response.results;
             this.setState(state=>{
                 state.alias = aliasName;
                 if(type==="31"){

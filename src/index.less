@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+//后台表单布局
+.ds-back-layout{
+  & > .ds-crumb{
+      margin: 16px 12px
+  }
+  & > div.ds-search{
+      background:#ffff;
+      & > div.ds-search-title{
+          display:block;
+          padding:12px 12px;
+          border-bottom:solid 1px #f0f0f0;
+      }
+      & > div.ds-search-wrap{
+          padding:12px 12px;
+      }
+  }
+  & > div.ds-table{
+      background:#ffff;
+      margin-top:12px;
+      & > div.ds-table-title{
+          display:block;
+          padding:12px 12px;
+      }
+      & > div.ds-table-wrap{
+          min-height: 250px;
+          padding: 0px 12px;
+      }
+  }
+}

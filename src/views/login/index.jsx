@@ -198,7 +198,7 @@ class LoginView extends DSComponent{
             message.error(error.message);
         });
         if(response){
-            const {check,token} = response;
+            const {check,token} = response.results;
             this.setState(state=>{
                 if(check===true){
                     state.captchShow = !state.captchShow;
@@ -262,7 +262,7 @@ class LoginView extends DSComponent{
                 localStorage.removeItem("account");
             }
             sessionStorage.setItem('isLogin', true);
-            sessionStorage.setItem('token', response.token);
+            sessionStorage.setItem('token', response.results.token);
             window.location.href = DSBase.root.path;
         }
     }
@@ -281,7 +281,7 @@ class LoginView extends DSComponent{
         });
         if(response){
             sessionStorage.setItem('isLogin', true);
-            sessionStorage.setItem('token', response.token);
+            sessionStorage.setItem('token', response.results.token);
             window.location.href = DSBase.root.path;
         }
     }
@@ -296,7 +296,7 @@ class LoginView extends DSComponent{
         });
         if(response){
             sessionStorage.setItem('isLogin', true);
-            sessionStorage.setItem('token', response.token);
+            sessionStorage.setItem('token', response.results.token);
             window.location.href = DSBase.root.path;
         }
     }
