@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/initui/static/css/main.730f4473.css",
-    "main.js": "/initui/static/js/main.094f8d57.js",
-    "static/css/977.3082fb7f.chunk.css": "/initui/static/css/977.3082fb7f.chunk.css",
-    "static/js/977.381185e8.chunk.js": "/initui/static/js/977.381185e8.chunk.js",
+    "main.js": "/initui/static/js/main.d30345fd.js",
+    "static/css/840.85a58893.chunk.css": "/initui/static/css/840.85a58893.chunk.css",
+    "static/js/840.635a2dcd.chunk.js": "/initui/static/js/840.635a2dcd.chunk.js",
     "static/js/787.b5576a9b.chunk.js": "/initui/static/js/787.b5576a9b.chunk.js",
     "static/js/722.b2a5a99a.chunk.js": "/initui/static/js/722.b2a5a99a.chunk.js",
     "static/media/bg.png": "/initui/static/media/bg.f3e5529dd33918fef914.png",
     "index.html": "/initui/index.html",
     "main.730f4473.css.map": "/initui/static/css/main.730f4473.css.map",
-    "main.094f8d57.js.map": "/initui/static/js/main.094f8d57.js.map",
-    "977.3082fb7f.chunk.css.map": "/initui/static/css/977.3082fb7f.chunk.css.map",
-    "977.381185e8.chunk.js.map": "/initui/static/js/977.381185e8.chunk.js.map",
+    "main.d30345fd.js.map": "/initui/static/js/main.d30345fd.js.map",
+    "840.85a58893.chunk.css.map": "/initui/static/css/840.85a58893.chunk.css.map",
+    "840.635a2dcd.chunk.js.map": "/initui/static/js/840.635a2dcd.chunk.js.map",
     "787.b5576a9b.chunk.js.map": "/initui/static/js/787.b5576a9b.chunk.js.map",
     "722.b2a5a99a.chunk.js.map": "/initui/static/js/722.b2a5a99a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.730f4473.css",
-    "static/js/main.094f8d57.js"
+    "static/js/main.d30345fd.js"
   ]
 }
