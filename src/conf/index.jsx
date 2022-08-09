@@ -21,6 +21,14 @@ const DSBase = {
         S_RoleView:{path:"/content/roleMgmt",code:"S_RoleView",desc:"角色管理",only:false},
         S_UserView:{path:"/content/userMgmt",code:"S_UserView",desc:"用户管理",only:false},
 
+        S_CustomerView:{path:"/content/clientMgmt",code:"S_CustomerView",desc:"客户管理",only:false},
+        S_MerchantView:{path:"/content/merchantMgmt",code:"S_MerchantView",desc:"商户管理",only:false},
+        S_MerchantRoleView:{path:"/content/merchantRoleMgmt",code:"S_MerchantRoleView",desc:"商户角色管理",only:false},
+        S_MerchantTypeView:{path:"/content/merchantTypeMgmt",code:"S_MerchantTypeView",desc:"商户类型管理",only:false},
+        S_MerchantUserView:{path:"/content/userMgmt",code:"S_MerchantUserView",desc:"商户用户管理",only:false},
+        S_IPWhiteListView:{path:"/content/whitelistMgmt",code:"S_IPWhiteListView",desc:"商户访问管理",only:false},
+        
+
     },
 
     //菜单可以服务器传递过来
