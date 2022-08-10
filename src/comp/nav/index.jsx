@@ -3,7 +3,7 @@ import { useNavigate  } from "react-router-dom";
 
 function DSNavigate(props){
     const navigate = useNavigate();
-    const {element,url} = props;
+    const {element,url,params} = props;
 
     function handleClick(url){
         return ()=>{
@@ -12,7 +12,7 @@ function DSNavigate(props){
                 sessionStorage.removeItem('token');
                 url = '/api/sign_up';
             }
-            navigate(url, { replace: true });
+            navigate(url, { replace: true,...params });
         }
     }
     return React.cloneElement(element,{onClick:handleClick(url)});

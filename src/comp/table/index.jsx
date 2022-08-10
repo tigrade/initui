@@ -12,6 +12,7 @@ class DSTable extends Component {
         searchCondition: {},
         path: '',
         id:'id',
+        pageable:true,
         other:{}
 
     }
@@ -24,7 +25,37 @@ class DSTable extends Component {
         }
         return null;
     }
-    reload = async($pageNo) => {
+    reload = async() => {
+        const {pageable} = this.props;
+        if(pageable===true){
+            this.onPageableHandle();
+        }else{
+            this.onUnPageableHandle();
+        }
+        
+    }
+    onUnPageableHandle = async()=>{
+        const { path } = this.props;
+        const { searchCondition } = this.state;
+        const params = new FormData();
+        if (searchCondition) {
+            const conditionKeys = Object.keys(searchCondition).map(e=>e);
+            conditionKeys.forEach(e=>{
+                params.append(e, searchCondition[e]);
+            });
+        }
+        const response = await post(path, params).catch(error => {
+            message.error(error.message);
+        });
+        if (response) {
+            const { results} = response;
+            this.setState(state => {
+                state.dataSource = results;
+                return state;
+            });
+        }
+    }
+    onPageableHandle = async($pageNo)=>{
         const _pageNo = $pageNo===undefined?1:$pageNo;
         const { path } = this.props;
         const { pagination, searchCondition } = this.state;
@@ -48,15 +79,24 @@ class DSTable extends Component {
         }
     }
     onPagination = (pageNo) => {
-        this.reload(pageNo);
+        this.onPageableHandle(pageNo);
     }
     render() {
-        const { columns } = this.props;
-        const { dataSource, pagination } = this.state;
-        const temp = [{title: '序号',dataIndex: 'seq',width: 70 ,render: (value, item, index) => (pagination.current - 1) * 10 + index + 1}];
-        const _columns = temp.concat(columns);
-        const {other} = this.props;
-        return React.cloneElement(<Table columns={_columns} dataSource={dataSource} pagination={pagination} bordered rowKey={this.props.id}/>,{...other});
+        const { columns,pageable,other } = this.props;
+        let _props = {};
+        if(pageable===true){
+            const { dataSource, pagination } = this.state;
+            const temp = [{title: '序号',dataIndex: 'seq',width: 70 ,render: (value, item, index) => (pagination.current - 1) * 10 + index + 1}];
+            const _columns = temp.concat(columns);
+            _props = {columns:_columns,dataSource:dataSource,pagination:pagination,rowKey:this.props.id}
+        }else{
+            const { dataSource } = this.state;
+            const temp = [{title: '序号',dataIndex: 'seq',width: 70 ,render: (value, item, index) => index + 1}];
+            const _columns = temp.concat(columns);
+            _props = {columns:_columns,dataSource:dataSource,rowKey:this.props.id}
+        }
+        return React.cloneElement(<Table {..._props} bordered/>,{...other});
+        // return React.cloneElement(<Table columns={_columns} dataSource={dataSource} pagination={pagination} bordered rowKey={this.props.id}/>,{...other});
     }
 }
 export default DSTable;

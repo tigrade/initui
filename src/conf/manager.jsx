@@ -23,3 +23,10 @@ export { default as S_MerchantTypeView }  from 'views/manager/merchantType/index
 export { default as S_MerchantUserView }  from 'views/manager/merchantUser/index';
 export { default as S_IPWhiteListView }  from 'views/manager/merchantIPWhiteList/index';
 
+export { default as S_CodeExtensionView }  from 'views/manager/code/extension/index';
+export { default as S_CodeTypeView }  from 'views/manager/code/type/index';
+export { default as S_CodeSourceView }  from 'views/manager/code/source/index';
+export { default as S_CodeAttributeView }  from 'views/manager/code/attribute/index';
+export { default as S_CodeSnapshotView }  from 'views/manager/code/snapshot/index';
+
+

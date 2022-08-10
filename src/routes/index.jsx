@@ -32,6 +32,15 @@ function Layout(props){
     return (<DSLayout pageNo={pageNo} title={title} 
         platformMenus={props.platformMenus} managerMenus={props.managerMenus} authType={props.authType} alias={props.alias}/>);
 }
+function Element(props){
+    const location = useLocation();
+    const navigate = useNavigate();
+    const Elm = props.el;
+    useEffect(() => {
+        
+     }, [location]);
+     return <Elm {...{location,navigate}}/>
+}
 class DSRoutes extends DSComponent {
     constructor(props){
         super(props);
@@ -90,7 +99,7 @@ class DSRoutes extends DSComponent {
         const componentsList = keyList.map(e=>{
             const x = DSBase.list[e];
             const DsClass = _componentList[x.code];
-            const data = Object.assign({},{el:<DsClass key={DSID()}/>},{"path":x.path,"only":x.only});
+            const data = Object.assign({},{el:<Element el={DsClass} key={DSID()}/>},{"path":x.path,"only":x.only});
             return data;
         });
 
