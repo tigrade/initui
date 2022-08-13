@@ -261,8 +261,8 @@ class LoginView extends DSComponent{
                 localStorage.removeItem("remember");
                 localStorage.removeItem("account");
             }
-            sessionStorage.setItem('isLogin', true);
-            sessionStorage.setItem('token', response.results.token);
+            localStorage.setItem('isLogin', true);
+            localStorage.setItem('token', response.results.token);
             window.location.href = DSBase.root.path;
         }
     }
@@ -280,8 +280,8 @@ class LoginView extends DSComponent{
             message.error(error.message);
         });
         if(response){
-            sessionStorage.setItem('isLogin', true);
-            sessionStorage.setItem('token', response.results.token);
+            localStorage.setItem('isLogin', true);
+            localStorage.setItem('token', response.results.token);
             window.location.href = DSBase.root.path;
         }
     }
@@ -295,8 +295,8 @@ class LoginView extends DSComponent{
             message.error(error.message);
         });
         if(response){
-            sessionStorage.setItem('isLogin', true);
-            sessionStorage.setItem('token', response.results.token);
+            localStorage.setItem('isLogin', true);
+            localStorage.setItem('token', response.results.token);
             window.location.href = DSBase.root.path;
         }
     }

@@ -2,14 +2,14 @@ import React,{DSComponent,Fragment} from 'comp/index';
 
 import './index.less'
 
-class CaseView extends DSComponent{   
+class TeamSettingView extends DSComponent{   
     componentDidMount=()=>{
     }
     render(){
         return (
-        <Fragment>CaseView
+        <Fragment>TeamSettingView
         </Fragment>
         );
     }
 }
-export default CaseView;
+export default TeamSettingView;

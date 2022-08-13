@@ -53,6 +53,8 @@ class MerchantRoleView extends DSComponent{
     render(){
         const {searchCondition} = this.state;
         const columns=[
+        {title: '名称',dataIndex: 'name'},
+        {title: '编码',dataIndex: 'code'},
         {title: '角色名称',dataIndex: 'roleName'},
         {title: '商户类型',dataIndex: 'merchantTypeName'},
         {title: '操作',width:160,render:(value,item,index)=>{

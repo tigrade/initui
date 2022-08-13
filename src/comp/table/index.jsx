@@ -93,7 +93,7 @@ class DSTable extends Component {
             const { dataSource } = this.state;
             const temp = [{title: '序号',dataIndex: 'seq',width: 70 ,render: (value, item, index) => index + 1}];
             const _columns = temp.concat(columns);
-            _props = {columns:_columns,dataSource:dataSource,rowKey:this.props.id}
+            _props = {columns:_columns,dataSource:dataSource,rowKey:this.props.id,pagination:false}
         }
         return React.cloneElement(<Table {..._props} bordered/>,{...other});
         // return React.cloneElement(<Table columns={_columns} dataSource={dataSource} pagination={pagination} bordered rowKey={this.props.id}/>,{...other});

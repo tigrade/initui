@@ -10,7 +10,7 @@ class MerchantRoleFormView extends DSComponent{
         this.state = {dialog:false};
     }
     static defaultProps = {
-        formData:{id:"",merchantTypeId:"",merchantTypeName:"",roleId:"",roleName:""},
+        formData:{id:"",name:"",code:"",merchantTypeId:"",merchantTypeName:"",roleId:"",roleName:""},
         formType:{add:{name:"新增商户角色",code:"1"},update:{name:"修改商户角色",code:"2"}},
         reloadTable:()=>{}
     }
@@ -72,16 +72,16 @@ class MerchantRoleFormView extends DSComponent{
         });
     }
     onSaveOrUpdate=async(e)=>{
-        const {id,merchantTypeId,roleId} = e;
+        const {id,merchantTypeId,roleId,name,code} = e;
         const {formStatus} = this.state;
         let path = "/api/merchant/role/save";
         let content = {};
         if(formStatus===this.props.formType.add.code){
-            content = {merchantTypeId:merchantTypeId,roleId:roleId};
+            content = {merchantTypeId:merchantTypeId,roleId:roleId,name:name,code:code};
         }
         if(formStatus===this.props.formType.update.code){
             path = "/api/merchant/role/modify";
-            content = {id:id,merchantTypeId:merchantTypeId,roleId:roleId};
+            content = {id:id,merchantTypeId:merchantTypeId,roleId:roleId,name:name,code:code};
         }
         const params = new FormData();
         params.append("content", JSON.stringify(content));
@@ -121,6 +121,12 @@ class MerchantRoleFormView extends DSComponent{
                 cancelText="取消">
                 <Form id="_form" layout="vertical" ref={this.formRef} initialValues={formData} onFinish={this.onSaveOrUpdate}>
                     <Form.Item name="id" label="编号" noStyle hidden={true}>
+                        <Input placeholder=""  autoComplete="off"/>
+                    </Form.Item>
+                    <Form.Item name="name" label="名称" rules={[{ required: true, message: '名称不能为空' }]}>
+                        <Input placeholder=""  autoComplete="off"/>
+                    </Form.Item>
+                    <Form.Item name="code" label="编码" rules={[{ required: true, message: '编码不能为空' }]}>
                         <Input placeholder=""  autoComplete="off"/>
                     </Form.Item>
                     <Form.Item name="merchantTypeId" label="商户类型" rules={[{ required: true, message: '名称不能为空' }]}>

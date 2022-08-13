@@ -105,7 +105,7 @@ class RoleView extends DSComponent{
                     <Row wrap={false}>
                         <Col flex="auto">数据列表</Col>
                         <Col flex="100px" style={{textAlign:'right'}}>
-                            <Button type="primary" icon={<PlusOutlined/>} onClick={this.onEditor}>新增</Button>
+                            <Button type="primary" icon={<PlusOutlined/>} onClick={this.onEditor.bind(this,undefined)}>新增</Button>
                         </Col>
                     </Row>
                     </div>

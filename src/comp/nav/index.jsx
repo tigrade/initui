@@ -8,8 +8,8 @@ function DSNavigate(props){
     function handleClick(url){
         return ()=>{
             if(url==='/logout'){
-                sessionStorage.removeItem('isLogin');
-                sessionStorage.removeItem('token');
+                localStorage.removeItem('isLogin');
+                localStorage.removeItem('token');
                 url = '/api/sign_up';
             }
             navigate(url, { replace: true,...params });

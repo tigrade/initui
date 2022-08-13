@@ -2,14 +2,14 @@ import React,{DSComponent,Fragment} from 'comp/index';
 
 import './index.less'
 
-class CaseView extends DSComponent{   
+class TreasuredBookView extends DSComponent{   
     componentDidMount=()=>{
     }
     render(){
         return (
-        <Fragment>CaseView
+        <Fragment>TreasuredBookView
         </Fragment>
         );
     }
 }
-export default CaseView;
+export default TreasuredBookView;

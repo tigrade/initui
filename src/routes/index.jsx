@@ -1,5 +1,5 @@
 import React,{DSID,DSBase,DSComponent,useEffect,useState,get,useCallback} from 'comp/index';
-import { BrowserRouter, Routes, Route,Link,Navigate,useLocation,useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route,Link,Navigate,useLocation,useNavigate,useOutletContext  } from "react-router-dom";
 import {message} from 'antd';
 
 import DSLayout from 'layout/index'
@@ -7,14 +7,16 @@ import DSLayout from 'layout/index'
 function Layout(props){
     const location = useLocation();
     const navigate = useNavigate();
+    const context = useOutletContext();
     const [pageNo, setPageNo] = useState();
     const [title, setTitle] = useState();
+
     const menuSource = useCallback(()=>{
       return props.db;
     },[props.db]);
     useEffect(() => {
         const pathname = location.pathname;
-        if(!sessionStorage.getItem('isLogin')){
+        if(!localStorage.getItem('isLogin')){
             navigate('/login');
             return ;
         }
@@ -30,16 +32,29 @@ function Layout(props){
         }
      }, [location,navigate,menuSource]);
     return (<DSLayout pageNo={pageNo} title={title} 
+        {...{location,navigate,context}}
         platformMenus={props.platformMenus} managerMenus={props.managerMenus} authType={props.authType} alias={props.alias}/>);
 }
 function Element(props){
     const location = useLocation();
     const navigate = useNavigate();
+    const context = useOutletContext();
     const Elm = props.el;
     useEffect(() => {
-        
-     }, [location]);
-     return <Elm {...{location,navigate}}/>
+        const pathname = location.pathname;
+        if(!localStorage.getItem('isLogin')){
+            if(pathname!==DSBase.login.path){
+                navigate(DSBase.login.path);
+                return ;
+            }
+        }else{
+            if(pathname===DSBase.login.path){
+                navigate(DSBase.root.path);
+                return ;
+            }
+        }
+     }, [location,navigate]);
+     return <Elm {...{location,navigate,context}}/>
 }
 class DSRoutes extends DSComponent {
     constructor(props){
@@ -47,16 +62,21 @@ class DSRoutes extends DSComponent {
         this.state = {menus:DSBase.menus};
     }
     componentDidMount=async()=>{
-        if(sessionStorage.getItem('isLogin')==="true"){
+        
+        await this.renderRoutes();
+    }
+    renderRoutes=async()=>{
+        if(localStorage.getItem('isLogin')==="true"){
             const response = await get('/api/user/info').catch(error => {
                 message.error(error.message);
             });
+            
             let menuSource = await get('/api/user/menu').catch(error => { 
                 message.error(error.message);
             });
             if(response===undefined){
-                sessionStorage.removeItem('isLogin');
-                sessionStorage.removeItem('token');
+                localStorage.removeItem('isLogin');
+                localStorage.removeItem('token');
                 window.location.href = DSBase.login.path;
             }
             let managerMenus;
@@ -67,8 +87,14 @@ class DSRoutes extends DSComponent {
                     managerMenus = this.renderMenus(manager);
                 }
                 if(platform){
-                    platformMenus = this.renderMenus(platform);
+                    //TODO
+                    managerMenus = this.renderMenus(platform);
+                    // platformMenus = this.renderMenus(platform);
                 }else{
+                    menuSource = Object.assign(menuSource,{platform:DSBase.menus});
+                    platformMenus = this.renderMenus(DSBase.menus);
+                }
+                if(true){
                     menuSource = Object.assign(menuSource,{platform:DSBase.menus});
                     platformMenus = this.renderMenus(DSBase.menus);
                 }
@@ -83,6 +109,9 @@ class DSRoutes extends DSComponent {
                 if(type==="11"){
                     state.authType = "admin";
                 }
+                state.authType = "admin";
+                // state.authType = "client";
+
                 state.managerMenus = managerMenus;
                 state.platformMenus = platformMenus;
                 const {manager,platform} = menuSource;
@@ -115,8 +144,8 @@ class DSRoutes extends DSComponent {
             state.onlys = componentsOnlyList;
             return state;
         });
-        
     }
+
     renderMenus=(source)=>{
         return source.map(l=>{
             if(l.isLeaf===true){
@@ -139,6 +168,7 @@ class DSRoutes extends DSComponent {
     componentDidUpdate=()=>{
     }
     render() {
+        if(!this.state.onlys||!this.state.frames)return;//判断是否已经加载完毕
         const {platformMenus,managerMenus,authType,alias,menuSource} = this.state;
         const frames = this.state.frames||[];
         const onlys = this.state.onlys||[];
@@ -150,6 +180,7 @@ class DSRoutes extends DSComponent {
                         onlys.filter(e=>{
                             return e.el!==undefined;
                         }).map(element => {
+                            console.log(element.path);
                             return <Route path={element.path} element={element.el} key={DSID()}/>
                         })
                     }
@@ -159,12 +190,12 @@ class DSRoutes extends DSComponent {
                             frames.filter(e=>{
                                 return e.el!==undefined;
                             }).map(element => {
-                                return <Route path={element.path} element={element.el} key={DSID()}/>
+                                return <Route path={element.path} element={element.el} key={DSID()} />//forceRefresh={true}
                             })
                         }
                         <Route path="*" element={<Navigate to='/' replace={true}/>}/>
                     </Route>
-
+                    
                 </Routes>
             </BrowserRouter>
         );

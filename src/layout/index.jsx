@@ -1,8 +1,9 @@
-import React,{DSBase,DSComponent,DSNavigate} from 'comp/index';
+import React,{DSBase,DSComponent,DSNavigate,get} from 'comp/index';
 import {Outlet} from 'react-router-dom';
 
-import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown} from 'antd';
+import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select} from 'antd';
 import { LoginOutlined,MailOutlined,SettingOutlined } from '@ant-design/icons';
+import {message} from 'antd';
 
 import './index.less';
 
@@ -11,7 +12,7 @@ const { Header, Footer, Content, Sider } = Layout;
 class DSLayout extends DSComponent { 
     constructor(props){
         super(props);
-        this.state = {pageNo:props.pageNo,};
+        this.state = {pageNo:props.pageNo,teamView:{}};
     }
     static getDerivedStateFromProps(props,state){
         if(props.pageNo !== state.pageNo) {
@@ -19,14 +20,52 @@ class DSLayout extends DSComponent {
         }
         return null;
     }
+    //初始化页面
+    componentDidMount=async()=>{
+        if(!sessionStorage.getItem('isTeam')){
+            const teamSource = await get('/api/team/default').catch(error => {
+                message.error(error.message);
+            });
+            if(teamSource){
+                const {results} = teamSource;
+                const {id,name} = results;
+                const _teamView_ = JSON.stringify({id:id,name:name});
+                sessionStorage.setItem('teamView', _teamView_);
+                sessionStorage.setItem('isTeam', true);
+            }
+        }else{
+            if(this.props.location.state){
+                const {teamView} = this.props.location.state;//传递参数：teamView为特殊参数
+                if(teamView){
+                    const {id,name} = teamView;
+                    const _teamView_ = JSON.stringify({id:id,name:name});
+                    sessionStorage.setItem('teamView', _teamView_);
+                    sessionStorage.setItem('isTeam', true);
+                }
+            }
+        }
+        
+        if(sessionStorage.getItem("isTeam")==="true"){
+            const _teamView = sessionStorage.getItem("teamView");
+            const _teamView_ = JSON.parse(_teamView);
+            this.setState(state=>{
+                state.teamView = _teamView_;
+                return state;
+            });
+        }
+    }
     handleClick=(e)=>{
         this.setState((state)=>{
             state.pageNo = Number(e.key);
             return state;
         });
     }
+    onSearch=()=>{
+        window.open(DSBase.list.P_CaseSearchView.path, '_blank');
+    }
 
     render() {
+        const {teamView} = this.state;
         const selectedKeys = [`${this.state.pageNo}`];
         const userItems = (<Menu items={[{
             key: 'a11',
@@ -45,7 +84,17 @@ class DSLayout extends DSComponent {
                     <Col flex="auto">
                         <Row>
                             <Col flex="150px">
-                                <div className="logo" />
+                                <div className="logo" >{teamView.name}</div>
+                            </Col>
+                            <Col flex="500px">
+                                <div style={{padding:"12px 0px"}}>
+                                <Input.Group compact>
+                                    <Select defaultValue="case" size="large">
+                                        <Select.Option value="case">案件</Select.Option>
+                                    </Select>
+                                    <Input.Search style={{ width: '400px' }} placeholder="输入查找案件关键字" size="large" onSearch={this.onSearch} enterButton/>
+                                </Input.Group>
+                                </div>
                             </Col>
                             <Col flex="auto">
                                 <Menu 
@@ -55,6 +104,7 @@ class DSLayout extends DSComponent {
                                     defaultSelectedKeys={[`${this.state.pageNo}`]} 
                                     items={platformMenus}></Menu>
                             </Col>
+                            
                         </Row>
                     </Col>
                     <Col flex="120px">
@@ -99,12 +149,8 @@ class DSLayout extends DSComponent {
                     </Sider>
                     <Layout style={{padding:0,overflow: "auto"}}>
                         <Content style={{"padding": "0 12px 12px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper'>
-                            <Outlet/>
-                            
-                            
+                            <Outlet context = {{teamView:teamView}}/>
                         </Content>
-                        
-                        
                     </Layout>
                 </Layout>
                 </div>
