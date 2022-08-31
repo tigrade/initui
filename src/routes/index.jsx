@@ -72,7 +72,7 @@ class DSRoutes extends DSComponent {
             });
             
             let menuSource = await get('/api/user/menu').catch(error => { 
-                message.error(error.message);
+                message.error(error.message+"d");
             });
             if(response===undefined){
                 localStorage.removeItem('isLogin');
@@ -87,14 +87,8 @@ class DSRoutes extends DSComponent {
                     managerMenus = this.renderMenus(manager);
                 }
                 if(platform){
-                    //TODO
-                    managerMenus = this.renderMenus(platform);
-                    // platformMenus = this.renderMenus(platform);
+                    platformMenus = this.renderMenus(platform);
                 }else{
-                    menuSource = Object.assign(menuSource,{platform:DSBase.menus});
-                    platformMenus = this.renderMenus(DSBase.menus);
-                }
-                if(true){
                     menuSource = Object.assign(menuSource,{platform:DSBase.menus});
                     platformMenus = this.renderMenus(DSBase.menus);
                 }
@@ -109,9 +103,6 @@ class DSRoutes extends DSComponent {
                 if(type==="11"){
                     state.authType = "admin";
                 }
-                state.authType = "admin";
-                // state.authType = "client";
-
                 state.managerMenus = managerMenus;
                 state.platformMenus = platformMenus;
                 const {manager,platform} = menuSource;

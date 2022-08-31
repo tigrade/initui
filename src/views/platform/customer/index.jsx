@@ -1,21 +1,26 @@
-import React,{DSBase,DSTable,DSComponent,Fragment,post} from 'comp/index';
+import React,{DSTable,DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
 
 import { Form,Input, Button,Row,Col,Breadcrumb,message,Space} from 'antd';
 import {PlusOutlined } from '@ant-design/icons';
-
-class StoreView extends DSComponent{   
+import TeamCustomerFormView from 'views/platform/customer/form';
+class TeamCustomerView extends DSComponent{   
     constructor(props){
         super(props);
         this.formRef = React.createRef();
         this.tableRef = React.createRef();
         this.searchFormRef = React.createRef();
-        this.state = {searchCondition:props.searchCondition};
+        const {teamView} = this.props.context;
+        this.state = {searchCondition:props.searchCondition,teamView:teamView};
     }
     static defaultProps = {
         searchCondition:{}
     }
-    componentDidMount=()=>{
+    static getDerivedStateFromProps(props,state){
+        if(props.context.teamView !== state.teamView) {
+            return {teamView:props.context.teamView}
+        }
+        return null;
     }
     onSearch=async(e)=>{
         this.setState(state=>{
@@ -38,7 +43,7 @@ class StoreView extends DSComponent{
     onDelete=async(e)=>{
         const params = new FormData();
         params.append("id", e.id);
-        const response = await post("/api/customer/delete",params).catch(error => {
+        const response = await post("/api/teamCustomer/delete",params).catch(error => {
             message.error(error.message);
         });
         if(response){
@@ -46,40 +51,33 @@ class StoreView extends DSComponent{
             this.onReload();
         }
     }
-    onEditor=(item,type)=>{
-        if(type===2){
-            this.props.navigate(DSBase.list.S_CodeAttributeView.path, { replace: true,state:{id:item.id,name:item.name}});
-        }
-        if(type===3){
-            this.props.navigate(DSBase.list.S_CodeSnapshotView.path, { replace: true,state:{id:item.id,name:item.name}});
-        }
-        if(type===1){
-            this.formRef.current.onEditor(item);
-        }
+    onEditor=(item)=>{
+        this.formRef.current.onEditor(item);
     }
     onReload=()=>{
         this.tableRef.current.reload();
     }
-    
     render(){
-        const {searchCondition} = this.state;
+        const {searchCondition,teamView} = this.state;
+        const _searchCondition = Object.assign({},searchCondition,{teamId:teamView.id});
         const columns=[
         {title: '名称',dataIndex: 'name'},
-        {title: '案件',dataIndex: 'code'},
-        {title: '上传者',dataIndex: 'code'},
-        {title: '建档',dataIndex: 'code'},
         {title: '操作',width:160,render:(value,item,index)=>{
             return (
             <Space>
+                <Button type="link" onClick={this.onEditor.bind(this,item)}>编辑</Button>
+                <Button type="link" onClick={this.onDelete.bind(this,item)}>删除</Button>
             </Space>
             );
         }}];
+        
         return (
         <Fragment>
+            <TeamCustomerFormView teamView={teamView} ref={this.formRef} reloadTable={this.onReload}></TeamCustomerFormView>
             <div className='ds-back-layout'>
                 <Breadcrumb className='ds-crumb'>
-                    <Breadcrumb.Item>主页</Breadcrumb.Item>
-                    <Breadcrumb.Item>存储管理</Breadcrumb.Item>
+                    <Breadcrumb.Item>首页</Breadcrumb.Item>
+                    <Breadcrumb.Item>客户管理</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className='ds-search'>
                     <div className='ds-search-title'>
@@ -89,7 +87,7 @@ class StoreView extends DSComponent{
                         </Row>
                     </div>
                     <div className='ds-search-wrap'>
-                        <Form layout="inline" ref={this.searchFormRef} initialValues={searchCondition} onFinish={this.onSearch}>
+                        <Form layout="inline" ref={this.searchFormRef} initialValues={_searchCondition} onFinish={this.onSearch}>
                             <Form.Item name="name" label="名称">
                                 <Input placeholder="" autoComplete="off"/>
                             </Form.Item>
@@ -108,12 +106,12 @@ class StoreView extends DSComponent{
                     <Row wrap={false}>
                         <Col flex="auto">数据列表</Col>
                         <Col flex="100px" style={{textAlign:'right'}}>
-                            {/* <Button type="primary" icon={<PlusOutlined/>} onClick={this.onEditor.bind(this,undefined)}>新增</Button> */}
+                            <Button type="primary" icon={<PlusOutlined/>} onClick={this.onEditor.bind(this,undefined)}>新增</Button>
                         </Col>
                     </Row>
                     </div>
                     <div className='ds-table-wrap'>
-                        <DSTable columns={columns} searchCondition={searchCondition} path={'/api/store/find'} ref={this.tableRef}></DSTable>
+                        <DSTable columns={columns} searchCondition={_searchCondition} path={'/api/teamCustomer/find'} ref={this.tableRef}></DSTable>
                     </div>
                 </div>
             </div>
@@ -121,4 +119,4 @@ class StoreView extends DSComponent{
         );
     }
 }
-export default StoreView;
+export default TeamCustomerView;

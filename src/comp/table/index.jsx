@@ -36,6 +36,7 @@ class DSTable extends Component {
     }
     onUnPageableHandle = async()=>{
         const { path } = this.props;
+        if(path===''){message.error('路径未设置');return;}
         const { searchCondition } = this.state;
         const params = new FormData();
         if (searchCondition) {
@@ -58,6 +59,7 @@ class DSTable extends Component {
     onPageableHandle = async($pageNo)=>{
         const _pageNo = $pageNo===undefined?1:$pageNo;
         const { path } = this.props;
+        if(path===''){message.error('路径未设置');return;}
         const { pagination, searchCondition } = this.state;
         const params = new FormData();
         params.append('pageNo', _pageNo);
@@ -86,12 +88,12 @@ class DSTable extends Component {
         let _props = {};
         if(pageable===true){
             const { dataSource, pagination } = this.state;
-            const temp = [{title: '序号',dataIndex: 'seq',width: 70 ,render: (value, item, index) => (pagination.current - 1) * 10 + index + 1}];
+            const temp = [{title: '序号',dataIndex: 'seq',fixed: 'left',width: 70 ,render: (value, item, index) => (pagination.current - 1) * 10 + index + 1}];
             const _columns = temp.concat(columns);
             _props = {columns:_columns,dataSource:dataSource,pagination:pagination,rowKey:this.props.id}
         }else{
             const { dataSource } = this.state;
-            const temp = [{title: '序号',dataIndex: 'seq',width: 70 ,render: (value, item, index) => index + 1}];
+            const temp = [{title: '序号',fixed: 'left',dataIndex: 'seq',width: 70 ,render: (value, item, index) => index + 1}];
             const _columns = temp.concat(columns);
             _props = {columns:_columns,dataSource:dataSource,rowKey:this.props.id,pagination:false}
         }

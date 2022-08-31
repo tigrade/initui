@@ -7,13 +7,14 @@ const DSBase = {
     list:{
         _LoginView:{path:"/login",code:"LoginView",desc:"登录、注册、忘记密码页面",only:true},//only:true  独立页面不包含在框架内
 
-        P_DefaultView:{path:"/",code:"P_DefaultView",desc:"默认页面",only:false},
+        P_DefaultView:{path:"/content/index",code:"P_DefaultView",desc:"默认页面",only:false},
         P_StoreView:{path:"/content/storeMgmt",code:"P_StoreView",desc:"存储管理",only:false},
         P_InviteView:{path:"/content/inviteMgmt",code:"P_InviteView",desc:"成员邀请",only:false},
         P_TeamplateView:{path:"/content/templateMgmt",code:"P_TeamplateView",desc:"模板管理",only:false},
+        P_TeamCustomerView:{path:"/content/teamCustomerMgmt",code:"P_TeamCustomerView",desc:"客户管理",only:false},
         P_CaseView:{path:"/content/caseMgmt",code:"P_CaseView",desc:"案件管理",only:false},
         P_TaskView:{path:"/content/taskMgmt",code:"P_TaskView",desc:"任务管理",only:false},
-        P_CaseNewView:{path:"/content/caseNew",code:"P_CaseNewView",desc:"新增案件",only:false},//only:false  独立页面包含在框架内
+        P_CaseDetailView:{path:"/content/lawCase/detail",code:"P_CaseDetailView",desc:"案件详情",only:true},//only:false  独立页面包含在框架内
         P_TeamSettingView:{path:"/content/teamSettingMgmt",code:"P_TeamSettingView",desc:"团队设置",only:false},//only:false  独立页面包含在框架内
         P_TeamView:{path:"/content/teamMgmt",code:"P_TeamView",desc:"团队管理",only:false},//only:false  独立页面包含在框架内
         P_TreasuredBookView:{path:"/content/treasuredBookMgmt",code:"P_TreasuredBookView",desc:"宝典管理",only:false},//only:false  独立页面包含在框架内
@@ -54,6 +55,13 @@ const DSBase = {
     // {path:"/client",name:"客户",code:4},
     // {path:"/client",name:"计划",code:5},
     // {path:"/client",name:"宝典",code:6}
+    ],
+    lawCaseMenus:[
+        {name:"基本信息",code:"BASE_INFO"},
+        {name:"程序列表",code:"CASE_ITEM"},
+        {name:"流程节点",code:"CASE_PROCESS"},
+        {name:"成员列表",code:"CASE_MEMBER"},
+        {name:"存储列表",code:"CASE_FILES"},
     ]
 };
 

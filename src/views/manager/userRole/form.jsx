@@ -13,7 +13,6 @@ class UserRoleFormView extends DSComponent{
     }
     
     onEditor=(item)=>{
-        debugger;
         this.setState(state=>{
             state.dialog = true;
             state.dialogTitle = "用户授权";

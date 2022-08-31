@@ -9,9 +9,10 @@ export { default as P_TeamplateView }  from 'views/platform/template/index';
 export { default as P_InviteView }  from 'views/platform/invite/index';
 export { default as P_TaskView }  from 'views/platform/task/index';
 export { default as P_CaseView }  from 'views/platform/case/index';
-export { default as P_CaseNewView }  from 'views/platform/case/new/index';
+export { default as P_CaseDetailView }  from 'views/platform/case/detail';
 export { default as P_TeamSettingView }  from 'views/platform/team/setting/index';
 export { default as P_TeamView }  from 'views/platform/team/index';
+export { default as P_TeamCustomerView }  from 'views/platform/customer/index';
 export { default as P_CaseSearchView }  from 'views/platform/search/index';
 export { default as P_TreasuredBookView }  from 'views/platform/book/index';
 

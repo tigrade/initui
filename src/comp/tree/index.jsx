@@ -9,6 +9,9 @@ class DSTreeSelect extends Component {
     }
     static defaultProps = {
         path:'',
+        condition: {},
+        defaultDataSource:[],
+        vaildLeaf:false,
         value:{id:"",name:""},
         onChange:()=>{},
         code:{title:'',value:'',isLeaf:'isLeaf',pId:''}
@@ -23,12 +26,30 @@ class DSTreeSelect extends Component {
         await this.onLoad();
     }
     onLoad=async()=>{
-        const dataSource = await this.loadData();
-        if(dataSource){
-            this.setState(state=>{
-                state.dataSource = dataSource;
-                return state;
-            });
+        const {defaultDataSource} = this.props;
+        if(defaultDataSource.length<=0){
+            const dataSource = await this.loadData();
+            if(dataSource){
+                this.setState(state=>{
+                    state.dataSource = dataSource;
+                    return state;
+                });
+            }
+        }else{
+            const children = await this.loadData();
+            if(children===null){
+                this.setState(state=>{
+                    state.dataSource = defaultDataSource;
+                    return state;
+                });
+            }else{
+                const moduleSource = this.renderSource(defaultDataSource,defaultDataSource.value,children);
+                this.setState(state=>{
+                    state.dataSource = moduleSource;
+                    return state;
+                });
+            }
+            
         }
     }
     expendNode= async(item)=>{
@@ -60,9 +81,18 @@ class DSTreeSelect extends Component {
     }
     loadData=async(keyId)=>{
         const params = new FormData();
+        const { condition } = this.props;
+        let _condition =condition;
         if(keyId!==undefined){
-            params.append(this.props.code.pId, keyId);
+            const b = {};
+            b[this.props.code.pId] = keyId;
+            _condition = Object.assign({},_condition,b);
         }
+        const conditionKeys = Object.keys(_condition).map(e=>e);
+        conditionKeys.forEach(e=>{
+            params.append(e, _condition[e]);
+        });
+        
         const response = await post(this.props.path,params).catch(error => {
             message.error(error.message);
         });
@@ -76,7 +106,14 @@ class DSTreeSelect extends Component {
         return null;
     }
     onChange=(key,node)=>{
-        this.props.onChange({id:node.value,name:node.title});
+        const {vaildLeaf} = this.props;
+        if(vaildLeaf===true){
+            if(node.isLeaf===true){
+                this.props.onChange({id:node.value,name:node.title});
+            }
+        }else{
+            this.props.onChange({id:node.value,name:node.title});
+        }
     }
     render() {
         const {dataSource,value} = this.state;

@@ -1,7 +1,7 @@
 import React,{DSBase,DSComponent,DSNavigate,get,Fragment} from 'comp/index';
 import {Outlet} from 'react-router-dom';
 
-import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select,Tag,Space,Card} from 'antd';
+import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select} from 'antd';
 import { LoginOutlined,MailOutlined,SettingOutlined } from '@ant-design/icons';
 import {message} from 'antd';
 
@@ -9,7 +9,7 @@ import './index.less';
 
 const { Header, Footer, Content, Sider } = Layout;
 
-class SearchView extends DSComponent{   
+class PlatformLayoutView extends DSComponent{   
     componentDidMount=()=>{
     }
     onSearch=()=>{
@@ -35,7 +35,7 @@ class SearchView extends DSComponent{
                     <Col flex="auto">
                         <Row>
                             <Col flex="150px">
-                                
+                                <div className="logo" >{teamView.name}</div>
                             </Col>
                             <Col flex="500px">
                                 <div style={{padding:"12px 0px"}}>
@@ -74,9 +74,9 @@ class SearchView extends DSComponent{
                     </Col>
                 </Row>
                 </Header>
-                {/* <div className='ds-theme-content' > */}
+                <div className='ds-theme-content' >
                 <Layout>
-                    {/* <Sider width={200} className="site-layout-background" trigger={null} collapsible={true} collapsed={false}>
+                    <Sider width={200} className="site-layout-background" trigger={null} collapsible={true} collapsed={false}>
                         <div style={{padding:0,overflowY: "auto",position:"absolute",overflowX:"hidden",width: "100%",height: "100%"}}>
                         <Menu
                             mode="inline"
@@ -89,62 +89,14 @@ class SearchView extends DSComponent{
                             items={menusSource}
                             />
                         </div>
-                    </Sider> */}
+                    </Sider>
                     <Layout style={{padding:0,overflow: "auto"}}>
-                        <Content style={{"padding": "12px 0px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper'>
-                            <Card>
-                            <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                                <Row>
-                                    <Col flex="100px">案件类型</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >诉讼</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>仲裁</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >顾问</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >非诉</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >其他</Tag.CheckableTag>
-                                    </Col>
-                                </Row>
-
-                                <Row wrap={false}>
-                                    <Col flex="100px">客户名称</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >幸福地产</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>世贸国际</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >恒大地产</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >中国移动</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >中国电信</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >厦门国贸</Tag.CheckableTag>
-                                    
-                                    </Col>
-                                </Row>
-
-                                <Row wrap={false}>
-                                    <Col flex="100px">进度</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >开盘前</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>收集证据</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >结案</Tag.CheckableTag>
-                                    </Col>
-                                </Row>
-
-                                <Row wrap={false}>
-                                    <Col flex="100px">状态</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >进行中</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>已完结</Tag.CheckableTag>
-                                    </Col>
-                                </Row>
-
-                            </Space>
-                            </Card>
+                        <Content style={{"padding": "0 12px 12px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper'>
+                            <Outlet context = {{teamView:teamView}}/>
                         </Content>
                     </Layout>
                 </Layout>
-                {/* </div> */}
+                </div>
                 <Footer plain='true'>
                     <div className={'banner'}>Copyright © 2018至今 鱼律（厦门）网络科技有限公司 All rights reserved.
                         <a href="//beian.miit.gov.cn" target="_blank" rel="noreferrer">闽ICP备18004543号-1</a>
@@ -155,4 +107,4 @@ class SearchView extends DSComponent{
         );
     }
 }
-export default SearchView;
+export default PlatformLayoutView;
