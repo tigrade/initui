@@ -8,7 +8,7 @@ class InviteFormView extends DSComponent{
     constructor(props){
         super(props);
         this.formRef = React.createRef();
-        this.state = {dialog:false};
+        this.state = {dialog:false,len:0,copyName:"复制链接"};
     }
     static defaultProps = {
         formData:{id:"",name:"",code:"",level:"11"},
@@ -59,49 +59,63 @@ class InviteFormView extends DSComponent{
             this.props.reloadTable();
         });
     }
+    onSelectCase=(item,keys)=>{
+        this.setState(state=>{
+            state.len = keys.length;
+            return state;
+        },()=>{
+        });
+    }
+    onCopy=()=>{
+        const text = "邀请地址：xxxxxx";
+        navigator.clipboard.writeText(text).then(()=>{
+            this.setState(state=>{
+                state.copyName = "复制成功"
+                return state;
+            },()=>{
+                const that = this;
+                setTimeout(function(){
+                    that.setState(state=>{
+                        state.copyName = "复制链接"
+                        return state;
+                    })
+                }, 2000);
+            })
+        });
+        
+    }
     render(){
-        const {dialog,formData,dialogTitle} = this.state;
+        const {dialog,formData,dialogTitle,len,copyName} = this.state;
         const {teamView} = this.props;
+        //Modal  style={{ pointerEvents: "auto"}}
         return (
         <Fragment>
             <Modal
-                title={dialogTitle}
+                title={"邀请用户"}
                 visible={dialog}
-                style={{ pointerEvents: "auto"}}
-                modalRender={()=>{
-                    return (
-                    <Card bodyStyle={{padding:"0px 0px 24px"}} className={"fl-invite-form"}>
-                    <Tabs defaultActiveKey="1" tabBarExtraContent={<CloseOutlined onClick={this.onCannel} style={{marginRight:"24px"}}/>} tabBarGutter={40}>
-                        <Tabs.TabPane tab="连接邀请" key="1">
-                        <div>
-                            <div style={{position:"relative",padding:"12px 24px",height:"50px"}}>
-                            <Row wrap={false} style={{width:"100%"}}>
-                                <Col flex={"auto"}><span>选择参与的案件</span></Col>
-                                <Col flex={"90px"} style={{textAlign:"right"}}>已选0</Col>
-                            </Row>
-                            </div>
-                            <DSList condition={{teamId:teamView.id}} title={"title"} path="/api/lawCase/list"/>
-                            <div style={{position:"relative",padding:"12px 24px",height:"50px"}}>
-                                <Input.Group compact>
-                                    <Select style={{ width: '380px' }} defaultValue="查看者">
-                                        <Select.Option value="查看者">加入团队后,仅查看</Select.Option>
-                                        <Select.Option value="编辑者">加入团队后,可编辑</Select.Option>
-                                        <Select.Option value="管理员">加入团队后,可管理</Select.Option>
-                                    </Select>
-                                    <Button type="primary" shape="round">复制链接</Button>
-                                </Input.Group>
-                            </div>
-                        </div>
-                        </Tabs.TabPane>
-                        <Tabs.TabPane tab="邮箱邀请" key="2">
-                        <Empty/>
-                        </Tabs.TabPane>
-                    </Tabs>
-
-                    </Card>
-                    )
-                }}
-                >
+                width={520}
+                bodyStyle={{overflowY:"auto",padding:0}}
+                onCancel={this.onCannel}
+                footer={null}>
+                <div>
+                    <div style={{position:"relative",padding:"12px 24px"}}>
+                    <Row wrap={false} style={{width:"100%"}}>
+                        <Col flex={"auto"}><span>选择参与的案件</span></Col>
+                        <Col flex={"90px"} style={{textAlign:"right"}}>已选{len}</Col>
+                    </Row>
+                    </div>
+                    <DSList condition={{teamId:teamView.id,status:"processing"}} title={"title"} path="/api/lawCase/find" mode={"multiple"} onChange={this.onSelectCase}/>
+                    <div style={{position:"relative",padding:"24px 24px",borderTop:"1px solid #f0f0f0"}}>
+                        <Input.Group compact>
+                            <Select style={{ width: '380px' }} defaultValue="查看者">
+                                <Select.Option value="查看者">加入团队后,仅查看</Select.Option>
+                                <Select.Option value="编辑者">加入团队后,可编辑</Select.Option>
+                                <Select.Option value="管理员">加入团队后,可管理</Select.Option>
+                            </Select>
+                            <Button type="primary" shape="round" onClick={this.onCopy}>{copyName}</Button>
+                        </Input.Group>
+                    </div>
+                </div>
             </Modal>
         </Fragment>
         );

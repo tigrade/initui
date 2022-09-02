@@ -15,7 +15,8 @@ class CaseProcessView extends DSComponent {
         this.caseProcessFormRef = React.createRef();
     }
     static defaultProps = {
-        lawCase:{}
+        lawCase:{},
+        editor:true
     }
     componentDidMount = async() => {
         await this.reload();
@@ -49,7 +50,7 @@ class CaseProcessView extends DSComponent {
     }
     render() {
         const {dataSource,activeKey} = this.state;
-        const {lawCase} = this.props;
+        const {lawCase,editor} = this.props;
         return (
             <Fragment>
             <CaseProcessFormView lawCase={lawCase} reloadTable={this.reload}  ref={this.caseProcessFormRef}></CaseProcessFormView>
@@ -58,7 +59,7 @@ class CaseProcessView extends DSComponent {
                 <Row wrap={false}>
                     <Col flex="auto">工作流程</Col>
                     <Col flex="100px" style={{textAlign:'right'}}>
-                    <Button type="link" icon={<SettingOutlined />} onClick={this.onEditor.bind(this)}>设置</Button>
+                    {editor===true&&<Button type="link" icon={<SettingOutlined />} onClick={this.onEditor.bind(this)}>设置</Button>}
                     </Col>
                 </Row>
                 </div>

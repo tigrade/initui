@@ -5,15 +5,15 @@ import {SettingOutlined} from '@ant-design/icons';
 import './index.less';
 
 class CaseMemberView extends DSComponent {
-    // constructor(props){
-    //     super(props);
-    // }
-    // static defaultProps = {
-    //     lawCase:{}
-    // }
-    // componentDidMount = () => {
-    //     //
-    // }
+    constructor(props){
+        super(props);
+    }
+    static defaultProps = {
+        lawCase:{},
+        editor:true
+    }
+    componentDidMount = () => {
+    }
     render() {
         const columns=[
             {title: '名称',dataIndex: 'memberAlias'},
@@ -23,7 +23,7 @@ class CaseMemberView extends DSComponent {
                 if(value==="CUSTOMER")return "客户成员";
                 return value;
             }}];
-        const {lawCase} = this.props;
+        const {lawCase,editor} = this.props;
         const searchCondition = {lawCaseId:lawCase.id};
         return (
             <Fragment>
@@ -32,7 +32,7 @@ class CaseMemberView extends DSComponent {
                 <Row wrap={false}>
                     <Col flex="auto">案件成员</Col>
                     <Col flex="100px" style={{textAlign:'right'}}>
-                    <Button type="link" icon={<SettingOutlined />}>设置</Button>
+                    {editor===true&&<Button type="link" icon={<SettingOutlined />}>设置</Button>}
                     </Col>
                 </Row>
                 </div>

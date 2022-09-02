@@ -119,7 +119,8 @@ class DSRoutes extends DSComponent {
         const componentsList = keyList.map(e=>{
             const x = DSBase.list[e];
             const DsClass = _componentList[x.code];
-            const data = Object.assign({},{el:<Element el={DsClass} key={DSID()}/>},{"path":x.path,"only":x.only});
+            // debugger
+            const data = Object.assign({},{el:<Element el={DsClass} key={DSID()}/>},{"path":x.path,"only":x.only,key:e});
             return data;
         });
 
@@ -180,12 +181,14 @@ class DSRoutes extends DSComponent {
                             frames.filter(e=>{
                                 return e.el!==undefined;
                             }).map(element => {
-                                if(element.path==="/content/index"){
-                                    //path={element.path}
+                                if(element.path==="/content/index"&&authType==="client"){
+                                    return <Route index  element={element.el} key={DSID()} />//forceRefresh={true}
+                                }else if(element.path==="/content/home"&&authType==="admin"){
                                     return <Route index  element={element.el} key={DSID()} />//forceRefresh={true}
                                 }else{
                                     return <Route path={element.path} element={element.el} key={DSID()} />//forceRefresh={true}
                                 }
+                                // return <Route path={element.path} element={element.el} key={DSID()} />//forceRefresh={true}
                             })
                         }
                         <Route path="*" element={<Navigate to='/' replace={true}/>}/>

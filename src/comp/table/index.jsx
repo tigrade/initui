@@ -88,7 +88,7 @@ class DSTable extends Component {
         let _props = {};
         if(pageable===true){
             const { dataSource, pagination } = this.state;
-            const temp = [{title: '序号',dataIndex: 'seq',fixed: 'left',width: 70 ,render: (value, item, index) => (pagination.current - 1) * 10 + index + 1}];
+            const temp = [{title: '序号',ellipsis: true,dataIndex: 'seq',fixed: 'left',width: 70 ,render: (value, item, index) => (pagination.current - 1) * 10 + index + 1}];
             const _columns = temp.concat(columns);
             _props = {columns:_columns,dataSource:dataSource,pagination:pagination,rowKey:this.props.id}
         }else{

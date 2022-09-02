@@ -2,16 +2,13 @@ import React,{DSBase,DSComponent,DSNavigate,post,Fragment} from 'comp/index';
 import {Outlet} from 'react-router-dom';
 
 import { Layout,Menu,Row, Col,Anchor,Button,BackTop,Dropdown, Input,Select} from 'antd';
-import { LoginOutlined,MailOutlined,SettingOutlined,UsergroupAddOutlined,CloseCircleOutlined,ShareAltOutlined } from '@ant-design/icons';
+import { LoginOutlined,KeyOutlined,SettingOutlined,UsergroupAddOutlined,DeliveredProcedureOutlined,ShareAltOutlined } from '@ant-design/icons';
 import {message} from 'antd';
 import CaseBaseView from 'views/platform/case/manager/base/index';
 import CaseItemView from 'views/platform/case/manager/item/index';
 import CaseProcessView from 'views/platform/case/manager/process/index';
 import CaseMemberView from 'views/platform/case/manager/member/index';
 import CaseResourceView from 'views/platform/case/manager/store/index';
-
-
-
 
 import './index.less';
 
@@ -44,11 +41,36 @@ class CaseDetailView extends DSComponent{
             });
         }
     }
+    onClosed=async()=>{
+        const {lawCase} = this.state;
+        const params = new FormData();
+        params.append('id', lawCase.id);
+        const response = await post('/api/lawCase/closed',params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            message.success(response.message);
+            window.location.reload();
+        }
+    }
+    onReopen=async()=>{
+        const {lawCase} = this.state;
+        const params = new FormData();
+        params.append('id', lawCase.id);
+        const response = await post('/api/lawCase/reopen',params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            message.success(response.message);
+            window.location.reload();
+        }
+    }
     render(){
         const {lawCase} = this.state;
         if(lawCase===undefined){
             return ;
         }
+        const {status} = lawCase;
         const lawCaseMenus = [
             {name:"基本信息",code:"BASE_INFO"},
             {name:"程序列表",code:"CASE_ITEM"},
@@ -60,7 +82,7 @@ class CaseDetailView extends DSComponent{
         const menusSource = lawCaseMenus.map(l=>{
             return {key:l.code,label:l.name};
         });
-
+        const isClosed = status==="closed"?true:false;//status==="processing"?true:false;
         return (
         <Fragment>
             <Layout id='kkks'>
@@ -68,11 +90,17 @@ class CaseDetailView extends DSComponent{
                 <Row>
                     <Col flex="auto">
                         <Row>
-                            <Col flex="auto">{lawCase.title}</Col>
+                            <Col flex="auto">{isClosed===true?`【结案】${lawCase.title}`:`【进行中】${lawCase.title}`}</Col>
                         </Row>
                     </Col>
                     <Col flex="120px">
                         <Row wrap={false}>
+                            {isClosed!==true&&
+                            <Col ><Button type="link" icon={<DeliveredProcedureOutlined />} onClick={this.onClosed}>结案</Button></Col>
+                            }
+                            {isClosed===true&&
+                            <Col ><Button type="link" icon={<KeyOutlined />} onClick={this.onReopen}>重启</Button></Col>
+                            }
                             <Col ><Button type="link" icon={<ShareAltOutlined />}>分享</Button></Col>
                             <Col ><Button type="link" icon={<UsergroupAddOutlined />}>邀请</Button></Col>
                             <Col push="2"></Col>
@@ -83,11 +111,11 @@ class CaseDetailView extends DSComponent{
                 <Layout>
                     <Layout style={{padding:0,overflow: "auto"}}>
                         <Content style={{"padding": "0 12px 12px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper' id='backTop'>
-                            <CaseBaseView lawCase={lawCase}/>
-                            <CaseItemView lawCase={lawCase}/>
-                            <CaseProcessView lawCase={lawCase}/>
-                            <CaseResourceView lawCase={lawCase}/>
-                            <CaseMemberView lawCase={lawCase}/>
+                            <CaseBaseView lawCase={lawCase} editor={!isClosed}/>
+                            <CaseItemView lawCase={lawCase} editor={!isClosed}/>
+                            <CaseProcessView lawCase={lawCase} editor={!isClosed}/>
+                            <CaseResourceView lawCase={lawCase} editor={!isClosed}/>
+                            <CaseMemberView lawCase={lawCase} editor={!isClosed}/>
                         </Content>
                     </Layout>
 

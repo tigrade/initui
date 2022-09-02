@@ -5,9 +5,17 @@ import {PlusOutlined,DeleteOutlined,SettingOutlined,EditOutlined,LikeOutlined,Me
 import './index.less';
 
 class CaseResourceView extends DSComponent {
+    constructor(props){
+        super(props);
+    }
+    static defaultProps = {
+        lawCase:{},
+        editor:true
+    }
     componentDidMount = () => {
     }
     render() {
+        const {editor} = this.props;
         return (
             <Fragment>
             <div className='fl-case-detail-base' id='CASE_FILES'>
@@ -15,7 +23,7 @@ class CaseResourceView extends DSComponent {
                 <Row wrap={false}>
                     <Col flex="auto">资料清单</Col>
                     <Col flex="100px" style={{textAlign:'right'}}>
-                    <Button type="link" icon={<SettingOutlined />}>设置</Button>
+                    {editor===true&&<Button type="link" icon={<SettingOutlined />}>设置</Button>}
                     </Col>
                 </Row>
                 </div>

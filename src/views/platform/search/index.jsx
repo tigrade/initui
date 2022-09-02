@@ -10,13 +10,34 @@ import './index.less';
 const { Header, Footer, Content, Sider } = Layout;
 
 class SearchView extends DSComponent{   
-    componentDidMount=()=>{
+    constructor(props){
+        super(props);
+        this.state = {data:""}
     }
-    onSearch=()=>{
-        window.open(DSBase.list.P_CaseSearchView.path, '_blank');
+    static defaultProps = {
+    }
+    componentDidMount=()=>{
+        const url = window.location.href;
+        const path = url.replace(window.location.search,'');
+        const params = new URLSearchParams(window.location.search);
+        const data = params.get('data');
+        this.setState(state=>{
+            state.data = data;
+            return state;
+        },()=>{
+            window.history.pushState('','',path);
+        });
+    }
+    onSearch=(e)=>{
+        this.setState(state=>{
+            state.data = e;
+            return state;
+        });
     }
     render(){
         const {teamView,menusSource,alias} = this.props;
+        const {data} = this.state;
+        if(data==="")return;
         // const selectedKeys = [`${this.state.pageNo}`];
         const userItems = (<Menu items={[{
             key: 'a11',
@@ -43,7 +64,7 @@ class SearchView extends DSComponent{
                                     <Select defaultValue="case" size="large">
                                         <Select.Option value="case">案件</Select.Option>
                                     </Select>
-                                    <Input.Search style={{ width: '400px' }} placeholder="输入查找案件关键字" size="large" onSearch={this.onSearch} enterButton/>
+                                    <Input.Search style={{ width: '400px' }} defaultValue = {data} placeholder="输入查找案件关键字" size="large" onSearch={this.onSearch} enterButton allowClear/>
                                 </Input.Group>
                                 </div>
                             </Col>

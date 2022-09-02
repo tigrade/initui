@@ -15,7 +15,8 @@ class CaseItemView extends DSComponent {
         this.caseItemFormRef = React.createRef();
     }
     static defaultProps = {
-        lawCase:{}
+        lawCase:{},
+        editor:true
     }
     componentDidMount = () => {
         this.reload();
@@ -55,7 +56,7 @@ class CaseItemView extends DSComponent {
         });
     }
     render() {
-        const {lawCase} = this.props;
+        const {lawCase,editor} = this.props;
         const {dataSource,activeKey} = this.state;
         return (
             <Fragment>
@@ -65,7 +66,7 @@ class CaseItemView extends DSComponent {
                 <Row wrap={false}>
                     <Col flex="auto">案件程序</Col>
                     <Col flex="100px" style={{textAlign:'right'}}>
-                        <Button type="link" icon={<SettingOutlined />} onClick={this.onEditor.bind(this)}>设置</Button>
+                        {editor===true&&<Button type="link" icon={<SettingOutlined />} onClick={this.onEditor.bind(this)}>设置</Button>}
                     </Col>
                 </Row>
                 </div>

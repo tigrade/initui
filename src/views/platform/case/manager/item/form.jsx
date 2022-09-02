@@ -26,13 +26,15 @@ class ItemFormView extends DSComponent{
         });
         if(response){
             const {results} = response;
-            const dataSource = results.map(e=>{
-                return {title:e.title,key:e.id,isLeaf:true};
-            });
-            this.setState(state=>{
-                state.dataSource = dataSource;
-                return state;
-            });
+            if(Array.isArray(results)){
+                const dataSource = results.map(e=>{
+                    return {title:e.title,key:e.id,isLeaf:true};
+                });
+                this.setState(state=>{
+                    state.dataSource = dataSource;
+                    return state;
+                });
+            }
         }
     }
     onEditor=(item)=>{

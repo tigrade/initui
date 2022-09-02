@@ -9,12 +9,13 @@ class CaseBaseView extends DSComponent {
         super(props);
     }
     static defaultProps = {
-        lawCase:{}
+        lawCase:{},
+        editor:false
     }
     componentDidMount = () => {
     }
     render() {
-        const {lawCase} = this.props;
+        const {lawCase,editor} = this.props;
         return (
             <Fragment>
             <div className='fl-case-detail-base' id='BASE_INFO'>
@@ -22,7 +23,7 @@ class CaseBaseView extends DSComponent {
                 <Row wrap={false}>
                     <Col flex="auto">基本信息</Col>
                     <Col flex="100px" style={{textAlign:'right'}}>
-                        <Button type="link" icon={<SettingOutlined />}>设置</Button>
+                        {editor===true&&<Button type="link" icon={<SettingOutlined />}>设置</Button>}
                     </Col>
                 </Row>
                 </div>

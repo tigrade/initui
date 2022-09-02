@@ -71,10 +71,15 @@ class CaseView extends DSComponent{
         const columns=[
         {title: '名称',render:(value,item,index)=>{
             return `【${item['caseTypeName']}】 ${item['title']}`;
-        },fixed: 'left',width:200},
-        {title: '程序',dataIndex: 'code',width:100},
-        {title: '进度',dataIndex: 'code',width:100},
-        {title: '任务',dataIndex: 'level',width:100},
+        },fixed: 'left',width:250,ellipsis: true},
+        {title: '程序',dataIndex: 'code',width:80},
+        {title: '进度',dataIndex: 'code',width:80},
+        {title: '任务',dataIndex: 'level',width:80},
+        {title: '状态',dataIndex: 'status',width:50,render:(value,item,index)=>{
+            if(value==="processing")return "处理中";
+            if(value==="closed")return "结案";
+            return value;
+        }},
         {title: '建档',dataIndex: 'createTime',width:100},
         {title: '操作',width:100,render:(value,item,index)=>{
             return (
