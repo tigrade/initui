@@ -48,6 +48,8 @@ class ItemFormView extends DSComponent{
         this.setState(state=>{
             state.dialog = false;
             return state;
+        },()=>{
+            this.props.reloadTable();
         });
     }
     loadMemberList=async()=>{

@@ -171,7 +171,6 @@ class DSRoutes extends DSComponent {
                         onlys.filter(e=>{
                             return e.el!==undefined;
                         }).map(element => {
-                            console.log(element.path);
                             return <Route path={element.path} element={element.el} key={DSID()}/>
                         })
                     }
@@ -181,7 +180,12 @@ class DSRoutes extends DSComponent {
                             frames.filter(e=>{
                                 return e.el!==undefined;
                             }).map(element => {
-                                return <Route path={element.path} element={element.el} key={DSID()} />//forceRefresh={true}
+                                if(element.path==="/content/index"){
+                                    //path={element.path}
+                                    return <Route index  element={element.el} key={DSID()} />//forceRefresh={true}
+                                }else{
+                                    return <Route path={element.path} element={element.el} key={DSID()} />//forceRefresh={true}
+                                }
                             })
                         }
                         <Route path="*" element={<Navigate to='/' replace={true}/>}/>

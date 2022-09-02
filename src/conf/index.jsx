@@ -18,7 +18,7 @@ const DSBase = {
         P_TeamSettingView:{path:"/content/teamSettingMgmt",code:"P_TeamSettingView",desc:"团队设置",only:false},//only:false  独立页面包含在框架内
         P_TeamView:{path:"/content/teamMgmt",code:"P_TeamView",desc:"团队管理",only:false},//only:false  独立页面包含在框架内
         P_TreasuredBookView:{path:"/content/treasuredBookMgmt",code:"P_TreasuredBookView",desc:"宝典管理",only:false},//only:false  独立页面包含在框架内
-        P_CaseSearchView:{path:"/content/caseSearch",code:"P_CaseSearchView",desc:"案件搜索",only:true},//only:false  独立页面包含在框架内
+        P_BriefTopicView:{path:"/content/briefTopic/detail",code:"P_BriefTopicView",desc:"专题详情",only:true},//only:false  独立页面包含在框架内
         
 
 

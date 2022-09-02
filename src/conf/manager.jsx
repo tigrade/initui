@@ -15,6 +15,8 @@ export { default as P_TeamView }  from 'views/platform/team/index';
 export { default as P_TeamCustomerView }  from 'views/platform/customer/index';
 export { default as P_CaseSearchView }  from 'views/platform/search/index';
 export { default as P_TreasuredBookView }  from 'views/platform/book/index';
+export { default as P_BriefTopicView }  from 'views/platform/book/detail';
+
 
 
 

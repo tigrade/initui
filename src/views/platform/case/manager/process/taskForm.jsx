@@ -1,7 +1,7 @@
 import React,{DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
 
-import { Modal,message, Button,Form,Input,Select} from 'antd';
+import { Modal,message,Form,Input,Select} from 'antd';
 
 class CaseTaskFormView extends DSComponent{   
     constructor(props){

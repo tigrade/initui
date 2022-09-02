@@ -6,7 +6,7 @@ import {PlusOutlined,SettingOutlined } from '@ant-design/icons';
 
 import BriefTreeView  from 'views/platform/book/brief';
 import BriefFormView from 'views/platform/book/briefForm';
-import TopicFormView from 'views/platform/book/topicForm';
+import TopicFormView from 'views/platform/book/topicFormww';
 
 
 class TreasuredBookView extends DSComponent{   
@@ -63,7 +63,9 @@ class TreasuredBookView extends DSComponent{
         if(type==="topicModify"){
             this.topicFormRef.current.onEditor(item);
         }
-        
+        if(type==="briefTopicDetail"){
+            window.open(`/content/briefTopic/detail?id=${item.id}`, '_blank');
+        }
     }
     onReload=()=>{
         this.tableRef.current.reload();
@@ -80,14 +82,13 @@ class TreasuredBookView extends DSComponent{
     render(){
         const {searchCondition} = this.state;
         const columns=[
-        {title: '专题描述',dataIndex: 'name'},
-        {title: '概述',dataIndex: 'code'},
-        {title: '分类',dataIndex: 'code'},
+        {title: '专题描述',dataIndex: 'title'},
+        {title: '概述',dataIndex: 'content'},
+        {title: '分类',dataIndex: 'briefName'},
         {title: '操作',width:160,render:(value,item,index)=>{
             return (
             <Space>
-                <Button type="link" onClick={this.onEditor.bind(this,item)}>详情</Button>
-                <Button type="link" onClick={this.onEditor.bind(this,item)}>编辑</Button>
+                <Button type="link" onClick={this.onEditor.bind(this,"briefTopicDetail",item)}>详情</Button>
                 <Button type="link" onClick={this.onDelete.bind(this,item)}>删除</Button>
             </Space>
             );
@@ -124,7 +125,7 @@ class TreasuredBookView extends DSComponent{
                     </div>
                 </div>
                 <div className='fl-book-wrap'>
-                <Row>
+                <Row wrap={false}>
                     <Col flex="250px">
                     <div className='fl-book-classify'>
                         <div className='fl-book-classify-title'>
@@ -160,7 +161,7 @@ class TreasuredBookView extends DSComponent{
                         <div className='fl-table-wrap' style={{borderTop:"1px solid #f0f0f0"}}>
                         <Row>
                             <Col flex="auto">
-                                <DSTable columns={columns} searchCondition={searchCondition} path={'/api/module/find'} ref={this.tableRef}></DSTable>
+                                <DSTable columns={columns} searchCondition={searchCondition} path={'/api/briefTopic/find'} ref={this.tableRef}></DSTable>
                             </Col>
                         </Row>
                         </div>

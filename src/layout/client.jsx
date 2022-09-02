@@ -33,7 +33,7 @@ class PlatformLayoutView extends DSComponent{
                 <Header className='ds-theme-header'>
                 <Row>
                     <Col flex="auto">
-                        <Row>
+                        <Row wrap={false}>
                             <Col flex="150px">
                                 <div className="logo" >{teamView.name}</div>
                             </Col>
@@ -90,7 +90,7 @@ class PlatformLayoutView extends DSComponent{
                             />
                         </div>
                     </Sider>
-                    <Layout style={{padding:0,overflow: "auto"}}>
+                    <Layout style={{padding:0,overflowX: "auto",overflowY: "none",scrollbarWidth: "thin"}}>
                         <Content style={{"padding": "0 12px 12px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper'>
                             <Outlet context = {{teamView:teamView}}/>
                         </Content>

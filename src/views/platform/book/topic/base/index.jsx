@@ -1,20 +1,20 @@
 import React,{DSComponent,Fragment,post} from 'comp/index';
 
-import { Row,Col,Button, Descriptions} from 'antd';
+import {Row,Col,Button, Descriptions} from 'antd';
 import {SettingOutlined} from '@ant-design/icons';
 import './index.less';
 
-class CaseBaseView extends DSComponent {
+class TopicBaseView extends DSComponent {
     constructor(props){
         super(props);
     }
     static defaultProps = {
-        lawCase:{}
+        briefTopic:{}
     }
     componentDidMount = () => {
     }
     render() {
-        const {lawCase} = this.props;
+        const {briefTopic} = this.props;
         return (
             <Fragment>
             <div className='fl-case-detail-base' id='BASE_INFO'>
@@ -28,12 +28,9 @@ class CaseBaseView extends DSComponent {
                 </div>
                 <div className='fl-case-detail-base-wrap'>
                 <Descriptions layout="vertical" bordered>
-                    <Descriptions.Item span={3} label="案件名称">{lawCase.title}</Descriptions.Item>
-                    <Descriptions.Item span={1} label="案源人员">{lawCase.caseSource}</Descriptions.Item>
-                    <Descriptions.Item span={1} label="创建时间">{lawCase.createTime}</Descriptions.Item>
-                    <Descriptions.Item span={1} label="案件类型">{lawCase.caseTypeName}</Descriptions.Item>
-                    <Descriptions.Item span={1} label="团队名称">{lawCase.teamName}</Descriptions.Item>
-                    <Descriptions.Item label="客户名称">{lawCase.teamCustomerName}</Descriptions.Item>
+                    <Descriptions.Item span={1} label="案由">{briefTopic.briefName}</Descriptions.Item>
+                    <Descriptions.Item span={2} label="专题">{briefTopic.title}</Descriptions.Item>
+                    <Descriptions.Item span={3} label="概述">{briefTopic.content}</Descriptions.Item>
                 </Descriptions>
                 </div>
             </div>
@@ -41,4 +38,4 @@ class CaseBaseView extends DSComponent {
         );
     }
 }
-export default CaseBaseView;
+export default TopicBaseView;

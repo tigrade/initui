@@ -2,11 +2,13 @@ import React,{DSComponent,Fragment} from 'comp/index';
 
 import './index.less'
 import { List,Row, Col,Button,Switch } from 'antd';
+import InviteFormView from 'views/platform/invite/form'
 
 
 class InviteView extends DSComponent{   
     constructor(props){
         super(props);
+        this.formRef = React.createRef();
         this.state = {teamView:undefined};
     }
     static defaultProps = {
@@ -19,15 +21,19 @@ class InviteView extends DSComponent{
             return state;
         });
     }
+    onEditor=(type)=>{
+        this.formRef.current.onEditor(type)
+    }
     render(){
         const {teamView} = this.state;
         if(!teamView)return;
         const data = [
-            {title: '连接邀请',desc: '点击邀请按钮生成并拷贝发送给邀请人',action:[<Button type="primary" shape="round">邀请</Button>]},
-            {title: '邮箱邀请',desc: '点击邀请按钮输入邀请人邮箱即可把邀请连接发送到邀请人邮箱账号',action:[<Button type="primary" shape="round">邀请</Button>]},
+            {title: '连接邀请',desc: '点击邀请按钮生成并拷贝发送给邀请人',action:[<Button type="primary" shape="round" onClick={this.onEditor.bind(this,"url")}>邀请</Button>]},
+            {title: '邮箱邀请',desc: '点击邀请按钮输入邀请人邮箱即可把邀请连接发送到邀请人邮箱账号',action:[<Button type="primary" shape="round" onClick={this.onEditor.bind(this,"mail")}>邀请</Button>]},
           ];
         return (
         <Fragment>
+            <InviteFormView teamView={teamView} ref={this.formRef}/>
             <div className='fl-team-setting'>
                 <div className='fl-team-setting-title'>
                 <Row wrap={false}>

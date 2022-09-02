@@ -44,7 +44,6 @@ class CaseProcessView extends DSComponent {
     onEditor=()=>{
         this.caseProcessFormRef.current.onEditor();
         this.setState(state=>{
-            state.activeKey = null;//关闭
             return state;
         });
     }
@@ -53,7 +52,7 @@ class CaseProcessView extends DSComponent {
         const {lawCase} = this.props;
         return (
             <Fragment>
-            <CaseProcessFormView lawCase={lawCase}  ref={this.caseProcessFormRef}></CaseProcessFormView>
+            <CaseProcessFormView lawCase={lawCase} reloadTable={this.reload}  ref={this.caseProcessFormRef}></CaseProcessFormView>
             <div className='fl-case-detail-base' id='CASE_PROCESS'>
                 <div className='fl-case-detail-base-title'>
                 <Row wrap={false}>
@@ -70,7 +69,7 @@ class CaseProcessView extends DSComponent {
                         return (
                         <Collapse.Panel header={e.title} key={e.id}>
                             <div>
-                            <CaseTaskView lawCaseProcess={e} lawCase={lawCase}/>
+                            <CaseTaskView lawCaseProcess={e} lawCase={lawCase} key={Math.floor(Math.random() * 10000)}/>
                             </div>
                         </Collapse.Panel>)
                     })}

@@ -11,7 +11,7 @@ import  CaseItemDescView from 'views/platform/case/manager/item/desc';
 class CaseItemView extends DSComponent {
     constructor(props){
         super(props);
-        this.state = {dataSource:[]};
+        this.state = {dataSource:[],activeKey:undefined};
         this.caseItemFormRef = React.createRef();
     }
     static defaultProps = {
@@ -30,20 +30,36 @@ class CaseItemView extends DSComponent {
         if(response){
             const {results} = response;
             this.setState(state=>{
-                state.dataSource = (results===null||results===undefined)?[]:results;
+                if(results!=undefined&&results!==null&&results.length>0){
+                    state.activeKey = results[0].id;
+                    state.dataSource = results;
+                }else{
+                    state.dataSource = [];
+                    state.activeKey = undefined;
+                }
                 return state;
             });
         }
     }
+    onChangeTabs=(activeKey)=>{
+        this.setState(state=>{
+            state.activeKey = activeKey;
+            return state;
+        });
+    }
     onEditor=()=>{
         this.caseItemFormRef.current.onEditor();
+        this.setState(state=>{
+            state.activeKey = "";
+            return state;
+        });
     }
     render() {
         const {lawCase} = this.props;
-        const {dataSource} = this.state;
+        const {dataSource,activeKey} = this.state;
         return (
             <Fragment>
-            <ItemFormView lawCase={lawCase} reloadItem={this.reload} ref={this.caseItemFormRef}/>
+            <ItemFormView lawCase={lawCase} reloadTable={this.reload} ref={this.caseItemFormRef}/>
             <div className='fl-case-detail-base' id='CASE_ITEM'>
                 <div className='fl-case-detail-base-title'>
                 <Row wrap={false}>
@@ -55,11 +71,11 @@ class CaseItemView extends DSComponent {
                 </div>
                 <div className='fl-case-detail-base-wrap'>
                 {dataSource.length>0&&
-                <Tabs tabPosition={"left"} destroyInactiveTabPane={true} activeKey={dataSource[0].id}>
+                <Tabs tabPosition={"left"} destroyInactiveTabPane={true} activeKey={activeKey} onChange={this.onChangeTabs}>
                     {dataSource.map(item=>{
                         return (
-                        <Tabs.TabPane tab={item.title} key={item.id}>
-                            <CaseItemDescView lawCaseItem={item}/>
+                        <Tabs.TabPane tab={item.title} key={item.id} forceRender={true}>
+                            <CaseItemDescView lawCaseItem={item} key={Math.floor(Math.random() * 10000)}/>
                         </Tabs.TabPane>    
                         )
                     })}
