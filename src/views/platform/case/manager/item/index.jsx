@@ -30,7 +30,7 @@ class CaseItemView extends DSComponent {
         if(response){
             const {results} = response;
             this.setState(state=>{
-                if(results!=undefined&&results!==null&&results.length>0){
+                if(results!==undefined&&results!==null&&results.length>0){
                     state.activeKey = results[0].id;
                     state.dataSource = results;
                 }else{
