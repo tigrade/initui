@@ -121,7 +121,6 @@ class RoleMenuFormView extends DSComponent{
     }
     onFormTypeChange=async(e)=>{
         const value = e.target.value;
-        // debugger;
         if(value===2){
             const {nodeItem} = this.state;
             const {id} = nodeItem;
@@ -197,7 +196,7 @@ class RoleMenuFormView extends DSComponent{
             });
         }
     }
-    onMenuCopy=async(item)=>{
+    onMenuCopy=async(keys,item)=>{
         const {code} = item;
         const {roleCode} = this.state;
         const params = new FormData();

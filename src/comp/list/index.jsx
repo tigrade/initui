@@ -88,7 +88,12 @@ class DSList extends Component {
             return state;
         },()=>{
             const {selectedRowKeys,selectedAll} = this.state;
-            this.props.onChange(item,selectedRowKeys,selectedAll);
+            //一个时候，全部
+            if(selectedAll===true){
+                this.props.onChange(['ALL'],item);  
+            }else{
+                this.props.onChange(selectedRowKeys,item);
+            }
         });
     }
     hasChecked=(item)=>{

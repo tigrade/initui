@@ -119,7 +119,7 @@ class ModuleView extends DSComponent{
                     </Row>
                     </div>
                     <div className='ds-table-wrap' style={{borderTop:"1px solid #f0f0f0"}}>
-                    <Row>
+                    <Row wrap={false}>
                         <Col flex="250px">
                             <div style={{marginTop:12}}>
                             <ModuleTreeView onSelect={this.onSelectNode} ref={this.moduleTreeRef}></ModuleTreeView>

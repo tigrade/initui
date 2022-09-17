@@ -1,14 +1,14 @@
-import React,{DSBase,DSComponent,DSNavigate,post,Fragment} from 'comp/index';
-import {Outlet} from 'react-router-dom';
+import React,{DSComponent,post,Fragment} from 'comp/index';
 
-import { Layout,Menu,Row, Col,Anchor,Button,BackTop,Dropdown, Input,Select} from 'antd';
-import { LoginOutlined,KeyOutlined,SettingOutlined,UsergroupAddOutlined,DeliveredProcedureOutlined,ShareAltOutlined } from '@ant-design/icons';
+import { Layout,Row, Col,Anchor,Button,BackTop} from 'antd';
+import { KeyOutlined,SettingOutlined,UsergroupAddOutlined,DeliveredProcedureOutlined,ShareAltOutlined } from '@ant-design/icons';
 import {message} from 'antd';
 import CaseBaseView from 'views/platform/case/manager/base/index';
 import CaseItemView from 'views/platform/case/manager/item/index';
 import CaseProcessView from 'views/platform/case/manager/process/index';
 import CaseMemberView from 'views/platform/case/manager/member/index';
 import CaseResourceView from 'views/platform/case/manager/store/index';
+import InviteFormView from 'views/platform/case/inviteForm';
 
 import './index.less';
 
@@ -19,6 +19,7 @@ class CaseDetailView extends DSComponent{
     constructor(props){
         super(props);
         this.formRef = React.createRef();
+        
         this.state = {dialog:false};
     }
     static defaultProps = {
@@ -35,10 +36,24 @@ class CaseDetailView extends DSComponent{
         });
         if(response){
             const {results} = response;
+            const {teamId} = results;
+            const teamRole = await this.onTeamRole(teamId);
             this.setState(state=>{
                 state.lawCase = results;
+                state.teamRole = teamRole;
                 return state;
             });
+        }
+    }
+    onTeamRole=async(teamId)=>{
+        const params = new FormData();
+        params.append('teamId', teamId);
+        const teamRoleResponse = await post('/api/client/teamRole',params).catch(error => {
+            message.error(error.message);
+        });
+        if(teamRoleResponse){
+            const {results} = teamRoleResponse;
+            return results;
         }
     }
     onClosed=async()=>{
@@ -65,26 +80,28 @@ class CaseDetailView extends DSComponent{
             window.location.reload();
         }
     }
-    render(){
+    onShare=()=>{
         const {lawCase} = this.state;
+        debugger
+        const text = `【${lawCase.title}】案件分享地址:http://www.fishlawer.com/content/share/lawCase/index?id==${lawCase.id}`;
+        navigator.clipboard.writeText(text).then(()=>{
+            message.success("分享地址拷贝完成");
+        });
+    }
+    onInvite=()=>{
+        this.formRef.current.onEditor();
+    }
+    render(){
+        const {lawCase,teamRole} = this.state;
         if(lawCase===undefined){
             return ;
         }
         const {status} = lawCase;
-        const lawCaseMenus = [
-            {name:"基本信息",code:"BASE_INFO"},
-            {name:"程序列表",code:"CASE_ITEM"},
-            {name:"流程节点",code:"CASE_PROCESS"},
-            {name:"成员列表",code:"CASE_MEMBER"},
-            {name:"存储列表",code:"CASE_FILES"},
-            {name:"人员邀请",code:"CASE_JOIN"},
-        ]
-        const menusSource = lawCaseMenus.map(l=>{
-            return {key:l.code,label:l.name};
-        });
-        const isClosed = status==="closed"?true:false;//status==="processing"?true:false;
+        const isClosed = status==="closed"||teamRole==="TEAM_VIEW"?true:false;//status==="processing"?true:false;
         return (
         <Fragment>
+            
+            <InviteFormView lawCase={lawCase} teamRole={teamRole} ref={this.formRef}/>
             <Layout id='kkks'>
                 <Header className='ds-theme-header'>
                 <Row>
@@ -95,14 +112,16 @@ class CaseDetailView extends DSComponent{
                     </Col>
                     <Col flex="120px">
                         <Row wrap={false}>
-                            {isClosed!==true&&
+                            {isClosed!==true&&(teamRole==="TEAM_OWNER"||teamRole==="TEAM_ADMIN"||teamRole==="TEAM_EDIT")&&
                             <Col ><Button type="link" icon={<DeliveredProcedureOutlined />} onClick={this.onClosed}>结案</Button></Col>
                             }
-                            {isClosed===true&&
+                            {isClosed===true&&(teamRole==="TEAM_OWNER"||teamRole==="TEAM_ADMIN"||teamRole==="TEAM_EDIT")&&
                             <Col ><Button type="link" icon={<KeyOutlined />} onClick={this.onReopen}>重启</Button></Col>
                             }
-                            <Col ><Button type="link" icon={<ShareAltOutlined />}>分享</Button></Col>
-                            <Col ><Button type="link" icon={<UsergroupAddOutlined />}>邀请</Button></Col>
+                            <Col ><Button type="link" icon={<ShareAltOutlined />} onClick={this.onShare}>分享</Button></Col>
+                            {(teamRole==="TEAM_OWNER"||teamRole==="TEAM_ADMIN"||teamRole==="TEAM_EDIT")&&
+                            <Col ><Button type="link" icon={<UsergroupAddOutlined />}  onClick={this.onInvite}>邀请</Button></Col>
+                            }
                             <Col push="2"></Col>
                         </Row>
                     </Col>
@@ -110,11 +129,11 @@ class CaseDetailView extends DSComponent{
                 </Header>
                 <Layout>
                     <Layout style={{padding:0,overflow: "auto"}}>
-                        <Content style={{"padding": "0 12px 12px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper' id='backTop'>
+                        <Content style={{"padding": "0 12px 60px 12px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper' id='backTop'>
                             <CaseBaseView lawCase={lawCase} editor={!isClosed}/>
                             <CaseItemView lawCase={lawCase} editor={!isClosed}/>
                             <CaseProcessView lawCase={lawCase} editor={!isClosed}/>
-                            <CaseResourceView lawCase={lawCase} editor={!isClosed}/>
+                            {/* <CaseResourceView lawCase={lawCase} editor={!isClosed}/> */}
                             <CaseMemberView lawCase={lawCase} editor={!isClosed}/>
                         </Content>
                     </Layout>
@@ -125,7 +144,7 @@ class CaseDetailView extends DSComponent{
                             <Anchor.Link href="#BASE_INFO" title="基本信息"  />
                             <Anchor.Link href="#CASE_ITEM" title="案件程序"/>
                             <Anchor.Link href="#CASE_PROCESS" title="案件流程" />
-                            <Anchor.Link href="#CASE_FILES" title="资料清单"/>
+                            {/* <Anchor.Link href="#CASE_FILES" title="资料清单"/> */}
                             <Anchor.Link href="#CASE_MEMBER" title="案件成员"/>
                         </Anchor>
                         </div>

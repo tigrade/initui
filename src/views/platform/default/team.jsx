@@ -47,7 +47,7 @@ class TeamView extends DSComponent{
         this.tableRef.current.reload();
     }
     onEnter=(item)=>{
-        this.props.navigate(DSBase.list.P_DefaultView.path, { replace: true,state:{teamView:{id:item.id,name:item.name}}});
+        this.props.navigate("/", { replace: true,state:{teamView:{id:item.id,name:item.name}}});
         this.props.navigate(0)
     }
     render(){
@@ -55,7 +55,7 @@ class TeamView extends DSComponent{
         const {formData} = this.props;
         const columns=[
         {title: '名称',dataIndex: 'name'},
-        {title: '所有者',dataIndex: 'owner',width: 100},
+        {title: '所有者',dataIndex: 'owner',width: 100,render:(value,item,index)=>{return value===true?"是":"否"}},
         {title: '操作',width:120,render:(value,item,index)=>{
             return (
             <Space>
@@ -78,17 +78,17 @@ class TeamView extends DSComponent{
                             <Form.Item name="id" label="编号" noStyle hidden={true}>
                                 <Input placeholder=""  autoComplete="off"/>
                             </Form.Item>
-                            <Row gutter={24}>
-                                <Col span={11}>
-                                <Form.Item name="name" label="名称" rules={[{ required: true, message: '名称不能为空' }]}>
-                                    <Input placeholder=""  autoComplete="off"/>
+                            <Row gutter={24} style={{width:"100%"}}>
+                                <Col span={20}>
+                                <Form.Item name="name" label="团队名称" rules={[{ required: true, message: '名称不能为空' }]}>
+                                    <Input placeholder=""  autoComplete="off" style={{width:"100%"}}/>
                                 </Form.Item>
                                 </Col>
-                                <Col span={9}>
+                                {/* <Col span={9}>
                                 <Form.Item name="code" label="联络人">
                                     <Input placeholder=""  autoComplete="off"/>
                                 </Form.Item>
-                                </Col>
+                                </Col> */}
                                 <Col span={3}>
                                 <Form.Item>
                                     <Button type="primary" htmlType="submit" size="middle">新增</Button>

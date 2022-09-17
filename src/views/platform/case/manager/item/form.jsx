@@ -200,7 +200,6 @@ class ItemFormView extends DSComponent{
                 return Object.assign({id:item.id,name:item.name,storeValue:fieldValue});
             });
         }
-        debugger;
         const params = new FormData();
         let path = '/api/lawCaseItem/save';
         if(formType===2){

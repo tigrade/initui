@@ -118,7 +118,6 @@ class CodeSnapshotFormView extends DSComponent{
     getDynamicAttribute=()=>{
         const {codeAttributeList} = this.state;
         if(codeAttributeList!==undefined){
-            // debugger;
             return codeAttributeList.map(e=>{
                 return (
                 <Col span={8} key={e.id}>

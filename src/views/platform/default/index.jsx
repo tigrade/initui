@@ -1,7 +1,7 @@
 import React,{DSTable,DSComponent,Fragment} from 'comp/index';
 import './index.less'
 import {Row, Col,Button,Space, Card} from 'antd';
-import TeamView from 'views/platform/default/team';
+
 import ReactECharts from 'echarts-for-react';
 
 class DefaultView extends DSComponent{   
@@ -15,23 +15,11 @@ class DefaultView extends DSComponent{
     static defaultProps = {
         searchCondition:{}
     }
-    // componentDidMount=async ()=>{
-    //     const {teamView} = this.props.context;
-    //     console.log(teamView);
-    // }
     static getDerivedStateFromProps(props,state){
         if(props.context.teamView !== state.teamView) {
             return {teamView:props.context.teamView}
         }
         return null;
-    }
-    onLoadTeam = async()=>{
-        
-    }
-    onEditor=(type)=>{
-        if(type==="team"){
-            this.teamRef.current.onEditor();
-        }
     }
 
     getMasterLawer=()=>{
@@ -188,22 +176,7 @@ class DefaultView extends DSComponent{
 
         return (
         <Fragment>
-            <TeamView ref={this.teamRef} {...{navigate:this.props.navigate}}/>
-            <div className='fl-quick'>
-                <div className='fl-quick-title'>
-                <Row wrap={false}>
-                    <Col flex="auto">快捷菜单</Col>
-                </Row>
-                </div>
-                <div className='fl-quick-button'>
-                <Space size="large">
-                    <Button type="primary" size="large" onClick={this.onEditor.bind(this,'case')}>新增案件</Button>
-                    <Button size="large" onClick={this.onEditor.bind(this,'team')}>切换 / 创建团队</Button>
-                </Space>
-                </div>
-            </div>
-            
-            <Row wrap={false} style={{marginTop:"12px"}}>
+            <Row wrap={false} style={{marginTop:"30px"}}>
                 <Col span={12} style={{paddingRight:"8px"}}>
                     <Card>
                     <ReactECharts option={this.getMasterLawer()}/>
@@ -216,7 +189,7 @@ class DefaultView extends DSComponent{
                 </Col>
             </Row>
 
-            <Row wrap={false} style={{marginTop:"12px"}}>
+            <Row wrap={false} style={{marginTop:"30px"}}>
                 <Col span={12} style={{paddingRight:"8px"}}>
                     <Card>
                     <ReactECharts option={this.getSourceTotal()}/>
@@ -228,20 +201,6 @@ class DefaultView extends DSComponent{
                     </Card>
                 </Col>
             </Row>
-
-            {/* <div className='fl-case'>
-                <div className='fl-case-title'>
-                <Row wrap={false}>
-                    <Col flex="auto">全部案件</Col>
-                    <Col flex="100px" style={{textAlign:'right'}}>
-                    </Col>
-                </Row>
-                </div>
-                <div className='ds-table-wrap'>
-                    <DSTable columns={columns} searchCondition={condition} path={'/api/lawCase/find'} ref={this.tableRef}></DSTable>
-                </div>
-            </div> */}
-            
         </Fragment>
         );
     }

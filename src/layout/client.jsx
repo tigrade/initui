@@ -1,12 +1,13 @@
-import React,{DSBase,DSComponent,DSNavigate,get,Fragment} from 'comp/index';
-import {Outlet} from 'react-router-dom';
+import React,{DSBase,DSComponent,DSNavigate,get,Fragment,post} from 'comp/index';
+import {Outlet,Link} from 'react-router-dom';
 
 import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select} from 'antd';
-import { LoginOutlined,UsergroupAddOutlined,SettingOutlined } from '@ant-design/icons';
+import { LoginOutlined,UsergroupAddOutlined,SettingOutlined,BlockOutlined } from '@ant-design/icons';
 import {message} from 'antd';
 
 import './index.less';
 import InviteFormView from 'views/platform/invite/form';//
+import TeamView from 'views/platform/default/team';
 
 const { Header, Footer, Content, Sider } = Layout;
 
@@ -14,13 +15,43 @@ class PlatformLayoutView extends DSComponent{
     constructor(props){
         super(props);
         this.formRef = React.createRef();
+        this.teamRef = React.createRef();
         this.searchRef = React.createRef();
-        this.state = {searchData:""}
+        this.state = {searchData:"",menusSource:[]}
     }
     static defaultProps = {
     }
     componentDidMount=()=>{
         document.addEventListener('visibilitychange', this.handleVisibilitychange);
+        this.onLoadMenu();
+    }
+    onLoadMenu = async ()=>{
+        const {teamView} = this.props;
+        const params = new FormData();
+        params.append('teamId', teamView.id);
+        const response = await post('/api/client/menu',params).catch(error => {
+            message.error(error.message);
+        });
+        const teamRoleResponse = await post('/api/client/teamRole',params).catch(error => {
+            message.error(error.message);
+        });
+        let teamRole;
+        if(teamRoleResponse){
+            const {results} = teamRoleResponse;
+            teamRole = results;
+        }
+        if(response){
+            const {results} = response;
+            const data = results===null?[]:results;
+            const menusList= this.renderMenus(data);
+            this.setState(state=>{
+                const db = [];
+                this._menuSource(menusList,db);
+                state.menusSource = db;
+                state.teamRole = teamRole;
+                return state;
+            });
+        }
     }
     handleVisibilitychange=()=>{
         if(document.hidden!==true){
@@ -32,6 +63,9 @@ class PlatformLayoutView extends DSComponent{
             },10);
         }
     }
+    onChangeCase=()=>{
+        this.teamRef.current.onEditor()
+    }
     onEditor=()=>{
         this.formRef.current.onEditor()
     }
@@ -39,8 +73,29 @@ class PlatformLayoutView extends DSComponent{
         const path = DSBase.list.P_CaseSearchView.path;
         window.open(`${path}?data=${e}`, '_blank');
     }
+    renderMenus=(source)=>{
+        return source.map(l=>{
+            if(l.isLeaf===true){
+                const children = this.renderMenus(l.subMenu);
+                return {key:l.code,label:l.name,children:children};
+            }
+            return {key:l.code,label:(<Link to={l.path}><span>{l.name}</span></Link>)};
+        });
+    }
+    _menuSource=(source,db)=>{
+        for(let s in source){
+            if(source[s].isLeaf===true){
+                this._menuSource(source[s].subMenu,db);
+            }else{
+                db.push(source[s]);
+            }
+        }
+    }
     render(){
-        const {teamView,menusSource,alias} = this.props;
+        const {teamView,alias} = this.props;
+        const {menusSource,teamRole} = this.state;
+        if(teamRole===undefined)return;
+        console.log(teamRole);
         const userItems = (<Menu items={[{
             key: 'a11',
             label:<DSNavigate url={DSBase.list._LoginView.path} element={<Button type="link" icon={<SettingOutlined />} >账号设置</Button>}/>
@@ -50,10 +105,10 @@ class PlatformLayoutView extends DSComponent{
             key: 'a1w',
             label:<DSNavigate url={DSBase.logout.path} element={<Button type="link" icon={<LoginOutlined />} >退出</Button>}/>
           }]}/>);
-        //   this.searchRef.current.input.value="";
         return (
         <Fragment>
-            <InviteFormView teamView={teamView} ref={this.formRef}/>
+            <InviteFormView teamView={teamView} ref={this.formRef} teamRole={teamRole}/>
+            <TeamView ref={this.teamRef} {...{navigate:this.props.navigate}}/>
             <Layout>
                 <Header className='ds-theme-header'>
                 <Row>
@@ -85,10 +140,14 @@ class PlatformLayoutView extends DSComponent{
                     </Col>
                     <Col flex="120px">
                         <Row wrap={false}>
-                            <Col >
+                            <Col>
+                            <a onClick={this.onChangeCase}><Avatar icon={<BlockOutlined />}/></a>
+                            </Col>
+
+                            <Col style={{padding:"0px 8px"}}>
                             <a onClick={this.onEditor}><Avatar icon={<UsergroupAddOutlined />}/></a>
                             </Col>
-                            <Col push="2">
+                            <Col>
                                 <Dropdown overlay={userItems} placement="bottom" overlayClassName='ds-user-menus'>
                                     <a onClick={e => e.preventDefault()}>
                                         <Avatar gap="8" style={{backgroundColor: '#87d068' }}>

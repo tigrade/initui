@@ -1,177 +1,461 @@
-import React,{DSBase,DSComponent,DSNavigate,get,Fragment} from 'comp/index';
-import {Outlet} from 'react-router-dom';
+import React,{DSComponent,post,Fragment} from 'comp/index';
 
-import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select,Tag,Space,Card} from 'antd';
-import { LoginOutlined,MailOutlined,SettingOutlined } from '@ant-design/icons';
+import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Empty,Descriptions} from 'antd';
+// import { LoginOutlined,MailOutlined,SettingOutlined } from '@ant-design/icons';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {message} from 'antd';
 
 import './index.less';
 
-const { Header, Footer, Content, Sider } = Layout;
+const { Header, Footer, Content} = Layout;
 
 class SearchView extends DSComponent{   
     constructor(props){
         super(props);
-        this.state = {data:""}
+        this.domRef = React.createRef();
+        this.state = {pageNo:0,results:[],minHeight:200,
+            selectedTeamList:[],selectedCustomerList:[],selectedLawCaseTypeList:[],
+            selectedLawCaseStatusList:[],selectedLawCaseItemCaseTypeList:[],
+            selectedLawCaseItemStatusList:[],selectedSourceList:[],selectedMasterList:[]};
     }
     static defaultProps = {
+        
     }
     componentDidMount=()=>{
         const url = window.location.href;
         const path = url.replace(window.location.search,'');
         const params = new URLSearchParams(window.location.search);
         const data = params.get('data');
-        this.setState(state=>{
+        window.history.pushState('','',path);
+        this.setState(state => {
             state.data = data;
             return state;
         },()=>{
-            window.history.pushState('','',path);
+            this.loadDataSource();
         });
     }
-    onSearch=(e)=>{
-        this.setState(state=>{
+    loadDataSource=async()=>{
+        const {pageNo,data,selectedTeamList,
+            selectedCustomerList,selectedLawCaseTypeList,selectedLawCaseStatusList,selectedLawCaseItemCaseTypeList,selectedLawCaseItemStatusList,
+            selectedSourceList,selectedMasterList} = this.state;
+        const params = new FormData();
+        params.append('pageNo', pageNo);
+        params.append('pageSize', 6);
+        params.append('content', data===null?"":data);
+        if(selectedTeamList.length>0){
+            params.append('team', selectedTeamList.join());
+        }
+        if(selectedCustomerList.length>0){
+            params.append('customer', selectedCustomerList.join());
+        }
+        if(selectedLawCaseTypeList.length>0){
+            params.append('lawCaseType', selectedLawCaseTypeList.join());
+        }
+        if(selectedLawCaseStatusList.length>0){
+            params.append('lawCaseStatus', selectedLawCaseStatusList.join());
+        }
+        if(selectedLawCaseItemCaseTypeList.length>0){
+            params.append('lawCaseItemCaseType', selectedLawCaseItemCaseTypeList.join());
+        }
+        if(selectedLawCaseItemStatusList.length>0){
+            params.append('lawCaseItemStatus', selectedLawCaseItemStatusList.join());
+        }
+        if(selectedSourceList.length>0){
+            params.append('source', selectedSourceList.join());
+        }
+        if(selectedMasterList.length>0){
+            params.append('master', selectedMasterList.join());
+        }
+        const response = await post('/api/lawCase/search', params).catch(error => {
+            message.error(error.message);
+        });
+        if (response) {
+            const h = this.domRef.current.clientHeight;
+            const {results,total,teamList,customerList,lawCaseTypeList,lawCaseStatusList,lawCaseItemCaseTypeList,lawCaseItemStatusList,sourceList,masterList} = response;
+            this.setState(state=>{
+                state.data = data;
+                if(state.pageNo>0){
+                    state.results = state.results.concat(results);;
+                }else{
+                    state.results = results;
+                }
+                state.minHeight = h-65;
+                state.total = total;
+                state.teamList = teamList;
+                state.customerList = customerList;
+                state.lawCaseTypeList = lawCaseTypeList;
+                state.lawCaseStatusList = lawCaseStatusList;
+                state.lawCaseItemCaseTypeList = lawCaseItemCaseTypeList;
+                state.lawCaseItemStatusList = lawCaseItemStatusList;
+                state.sourceList = sourceList;
+                state.masterList = masterList;
+                return state;
+            },()=>{
+            });
+        }
+    }
+    onSearch=async(e)=>{
+        this.setState(state => {
             state.data = e;
+            state.pageNo = 0;
             return state;
+        },()=>{
+            this.loadDataSource();
         });
     }
-    render(){
-        const {teamView,menusSource,alias} = this.props;
-        const {data} = this.state;
-        if(data==="")return;
-        // const selectedKeys = [`${this.state.pageNo}`];
-        const userItems = (<Menu items={[{
-            key: 'a11',
-            label:<DSNavigate url={DSBase.list._LoginView.path} element={<Button type="link" icon={<SettingOutlined />} >账号设置</Button>}/>
-          }, {
-            type: 'divider',
-          },{
-            key: 'a1w',
-            label:<DSNavigate url={DSBase.logout.path} element={<Button type="link" icon={<LoginOutlined />} >退出</Button>}/>
-          }]}/>);
-        return (
-        <Fragment>
-            <Layout>
-                <Header className='ds-theme-header'>
-                <Row>
-                    <Col flex="auto">
-                        <Row>
-                            <Col flex="150px">
-                                
-                            </Col>
-                            <Col flex="500px">
-                                <div style={{padding:"12px 0px"}}>
-                                <Input.Group compact>
-                                    <Select defaultValue="case" size="large">
-                                        <Select.Option value="case">案件</Select.Option>
-                                    </Select>
-                                    <Input.Search style={{ width: '400px' }} defaultValue = {data} placeholder="输入查找案件关键字" size="large" onSearch={this.onSearch} enterButton allowClear/>
-                                </Input.Group>
-                                </div>
-                            </Col>
-                            <Col flex="auto">
-                                {/* <Menu 
-                                    selectedKeys={selectedKeys} 
-                                    onClick={this.handleClick}
-                                    className='ds-theme-nav' mode="horizontal" 
-                                    defaultSelectedKeys={[`${this.state.pageNo}`]} 
-                                    items={platformMenus}></Menu> */}
-                            </Col>
-                            
-                        </Row>
+    onNextLoading=()=>{
+        this.setState(state => {
+            state.pageNo = state.pageNo+1;
+            return state;
+        },()=>{
+            this.loadDataSource();
+        });
+    }
+    selectedConditions=(item,type,checked)=>{
+        this.setState(state => {
+            if(type==='team'){
+                let _selectedTeamList = state.selectedTeamList;
+                if(checked===true){
+                    _selectedTeamList.push(item);
+                    _selectedTeamList = _selectedTeamList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedTeamList = _selectedTeamList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedTeamList = _selectedTeamList;
+            }
+            if(type==='customer'){
+                let _selectedCustomerList = state.selectedCustomerList;
+                if(checked===true){
+                    _selectedCustomerList.push(item);
+                    _selectedCustomerList = _selectedCustomerList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedCustomerList = _selectedCustomerList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedCustomerList = _selectedCustomerList;
+            }
+            if(type==='lawCaseType'){
+                let _selectedLawCaseTypeList = state.selectedLawCaseTypeList;
+                if(checked===true){
+                    _selectedLawCaseTypeList.push(item);
+                    _selectedLawCaseTypeList = _selectedLawCaseTypeList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedLawCaseTypeList = _selectedLawCaseTypeList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedLawCaseTypeList = _selectedLawCaseTypeList;
+            }
+            if(type==='lawCaseStatus'){
+                let _selectedLawCaseStatusList = state.selectedLawCaseStatusList;
+                if(checked===true){
+                    _selectedLawCaseStatusList.push(item);
+                    _selectedLawCaseStatusList = _selectedLawCaseStatusList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedLawCaseStatusList = _selectedLawCaseStatusList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedLawCaseStatusList = _selectedLawCaseStatusList;
+            }
+            if(type==='lawCaseItemCaseType'){
+                let _selectedLawCaseItemCaseTypeList = state.selectedLawCaseItemCaseTypeList;
+                if(checked===true){
+                    _selectedLawCaseItemCaseTypeList.push(item);
+                    _selectedLawCaseItemCaseTypeList = _selectedLawCaseItemCaseTypeList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedLawCaseItemCaseTypeList = _selectedLawCaseItemCaseTypeList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedLawCaseItemCaseTypeList = _selectedLawCaseItemCaseTypeList;
+            }
+            if(type==='lawCaseItemStatus'){
+                let _selectedLawCaseItemStatusList = state.selectedLawCaseItemStatusList;
+                if(checked===true){
+                    _selectedLawCaseItemStatusList.push(item);
+                    _selectedLawCaseItemStatusList = _selectedLawCaseItemStatusList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedLawCaseItemStatusList = _selectedLawCaseItemStatusList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedLawCaseItemStatusList = _selectedLawCaseItemStatusList;
+            }
+            if(type==='source'){
+                let _selectedSourceList = state.selectedSourceList;
+                if(checked===true){
+                    _selectedSourceList.push(item);
+                    _selectedSourceList = _selectedSourceList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedSourceList = _selectedSourceList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedSourceList = _selectedSourceList;
+            }
+            if(type==='master'){
+                let _selectedMasterList = state.selectedMasterList;
+                if(checked===true){
+                    _selectedMasterList.push(item);
+                    _selectedMasterList = _selectedMasterList.filter((item, pos, self) => self.findIndex(v => v === item) === pos);
+                }else{
+                    _selectedMasterList = _selectedMasterList.filter(e=>{
+                        return e!==item;
+                    });
+                }
+                state.selectedMasterList = _selectedMasterList;
+            }
+            state.pageNo = 0;
+            return state;
+        },()=>{
+            this.loadDataSource();
+        });
+        
+    }
+    hasChecked=(item,type)=>{
+        if(type==='team'){
+            const {selectedTeamList} = this.state;
+            return selectedTeamList.includes(item);
+        }
+        if(type==='customer'){
+            const {selectedCustomerList} = this.state;
+            return selectedCustomerList.includes(item);
+        }
+        if(type==='lawCaseType'){
+            const {selectedLawCaseTypeList} = this.state;
+            return selectedLawCaseTypeList.includes(item);
+        }
+        if(type==='lawCaseStatus'){
+            const {selectedLawCaseStatusList} = this.state;
+            return selectedLawCaseStatusList.includes(item);
+        }
+        if(type==='lawCaseItemCaseType'){
+            const {selectedLawCaseItemCaseTypeList} = this.state;
+            return selectedLawCaseItemCaseTypeList.includes(item);
+        }
+        if(type==='lawCaseItemStatus'){
+            const {selectedLawCaseItemStatusList} = this.state;
+            return selectedLawCaseItemStatusList.includes(item);
+        }
+        if(type==='source'){
+            const {selectedSourceList} = this.state;
+            return selectedSourceList.includes(item);
+        }
+        if(type==='master'){
+            const {selectedMasterList} = this.state;
+            return selectedMasterList.includes(item);
+        }
+    }
+    bodyRender=()=>{
+        const {results,minHeight,teamList,customerList,lawCaseTypeList,lawCaseStatusList,lawCaseItemCaseTypeList,lawCaseItemStatusList,sourceList,masterList} = this.state;
+        return <Layout>
+        <Header className='ds-theme-header'>
+        <Row wrap={false}>
+            <Col flex="auto">
+                <Row wrap={false}>
+                    <Col flex="150px"> 
                     </Col>
-                    <Col flex="120px">
-                        <Row wrap={false}>
-                            <Col ><Badge count={1}><Avatar icon={<MailOutlined />} gap="8"/></Badge></Col>
-                            <Col push="2">
-                                <Dropdown overlay={userItems} placement="bottom" overlayClassName='ds-user-menus'>
-                                    <a onClick={e => e.preventDefault()}>
-                                        <Avatar gap="8" style={{backgroundColor: '#87d068' }}>
-                                            {alias?alias.charAt(0).toUpperCase():"U"}
-                                        </Avatar>
-                                    </a>
-                                </Dropdown>
-                            </Col>
-                        </Row>
+                    <Col flex="500px">
+                        <div style={{padding:"12px 0px"}}>
+                        <Input.Group compact>
+                            <Select defaultValue="case" size="large">
+                                <Select.Option value="case">案件</Select.Option>
+                            </Select>
+                            <Input.Search style={{ width: '400px' }} defaultValue = {this.state.data} placeholder="输入查找案件关键字" size="large" onSearch={this.onSearch} enterButton allowClear/>
+                        </Input.Group>
+                        </div>
+                    </Col>
+                    <Col flex="auto">
                     </Col>
                 </Row>
-                </Header>
-                {/* <div className='ds-theme-content' > */}
-                <Layout>
-                    {/* <Sider width={200} className="site-layout-background" trigger={null} collapsible={true} collapsed={false}>
-                        <div style={{padding:0,overflowY: "auto",position:"absolute",overflowX:"hidden",width: "100%",height: "100%"}}>
-                        <Menu
-                            mode="inline"
-                            defaultSelectedKeys={['k5-1']}
-                            defaultOpenKeys={['k5-1']}
-                            style={{
-                                height: '100%',
-                                borderRight: 0,
-                            }}
-                            items={menusSource}
-                            />
-                        </div>
-                    </Sider> */}
-                    <Layout style={{padding:0,overflow: "auto"}}>
-                        <Content style={{"padding": "12px 0px",minHeight: 280,background:"#f0f2f5"}} className='main-wrapper'>
-                            <Card>
-                            <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                                <Row>
-                                    <Col flex="100px">案件类型</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >诉讼</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>仲裁</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >顾问</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >非诉</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >其他</Tag.CheckableTag>
-                                    </Col>
-                                </Row>
-
-                                <Row wrap={false}>
-                                    <Col flex="100px">客户名称</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >幸福地产</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>世贸国际</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >恒大地产</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >中国移动</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >中国电信</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >厦门国贸</Tag.CheckableTag>
-                                    
-                                    </Col>
-                                </Row>
-
-                                <Row wrap={false}>
-                                    <Col flex="100px">进度</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >开盘前</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>收集证据</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >结案</Tag.CheckableTag>
-                                    </Col>
-                                </Row>
-
-                                <Row wrap={false}>
-                                    <Col flex="100px">状态</Col>
-                                    <Col flex="auto">:
-                                        <Tag.CheckableTag color="default" >全部</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default" >进行中</Tag.CheckableTag>
-                                        <Tag.CheckableTag color="default"  checked={true}>已完结</Tag.CheckableTag>
-                                    </Col>
-                                </Row>
-
-                            </Space>
-                            </Card>
-                        </Content>
-                    </Layout>
-                </Layout>
-                {/* </div> */}
-                <Footer plain='true'>
-                    <div className={'banner'}>Copyright © 2018至今 鱼律（厦门）网络科技有限公司 All rights reserved.
-                        <a href="//beian.miit.gov.cn" target="_blank" rel="noreferrer">闽ICP备18004543号-1</a>
+            </Col>
+            <Col flex="80px"></Col>
+        </Row>
+        </Header>
+        <Layout>
+            <Layout style={{padding:"0px",overflow: "auto"}}>
+                <Content style={{"padding": "12px 16px",background:"#f0f2f5",minHeight:minHeight,paddingBottom:80}} className='main-wrapper'>
+                <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+                    <Breadcrumb className='ds-crumb'>
+                        <Breadcrumb.Item>全部结果:</Breadcrumb.Item>
+                        <Breadcrumb.Item>{this.state.data}</Breadcrumb.Item>
+                    </Breadcrumb>
+                    {/* {results.length===0&&
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                    } */}
+                    {/* {results.length>0&& */}
+                    <Card>
+                    <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+                        {teamList!==undefined&&teamList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>团队</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {teamList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'team')} onChange={this.selectedConditions.bind(this,d.id,'team')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}({d.count})</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                        {customerList!==undefined&&customerList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>客户</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {customerList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'customer')} onChange={this.selectedConditions.bind(this,d.id,'customer')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}({d.count})</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                        {lawCaseTypeList!==undefined&&lawCaseTypeList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>案件类型</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {lawCaseTypeList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'lawCaseType')} onChange={this.selectedConditions.bind(this,d.id,'lawCaseType')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}({d.count})</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                        {lawCaseStatusList!==undefined&&lawCaseStatusList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>案件状态</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {lawCaseStatusList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'lawCaseStatus')} onChange={this.selectedConditions.bind(this,d.id,'lawCaseStatus')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}({d.count})</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                        {lawCaseItemCaseTypeList!==undefined&&lawCaseItemCaseTypeList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>案件程序</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {lawCaseItemCaseTypeList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'lawCaseItemCaseType')} onChange={this.selectedConditions.bind(this,d.id,'lawCaseItemCaseType')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}({d.count})</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                        {lawCaseItemStatusList!==undefined&&lawCaseItemStatusList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>程序状态</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {lawCaseItemStatusList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'lawCaseItemStatus')} onChange={this.selectedConditions.bind(this,d.id,'lawCaseItemStatus')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}({d.count})</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                        {sourceList!==undefined&&sourceList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>案源</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {sourceList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'source')} onChange={this.selectedConditions.bind(this,d.id,'source')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                        {masterList!==undefined&&masterList.length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>主办律师</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                {masterList.map(d=>{
+                                    return <Tag.CheckableTag checked={this.hasChecked(d.id,'master')} onChange={this.selectedConditions.bind(this,d.id,'master')} color="default" key={d.id} style={{fontSize:12,padding:"4px 12px"}}>{d.name}</Tag.CheckableTag>
+                                })}
+                                </div>
+                            </Col>
+                        </Row>
+                        }
+                    </Space>
+                    </Card>
+                    {results.length>0&&
+                    <div>
+                        <Space>
+                        <Row gutter={[16, 16]}>
+                        {results.map(d=>{
+                            return <Col span={results.length===1?24:results.length===2?12:8} key={Math.floor(Math.random() * 10000)}>
+                                <Card title={"平安集团"} extra={"处理中"} hoverable={true} onClick={()=>{window.open(`/content/lawCase/detail?id=${d.lawCaseId}`, '_blank');}}>
+                                <Card.Meta
+                                    title="民事/一审"
+                                    description={d.lawCaseTitle}
+                                    />
+                                <div style={{margin:"12px 0px"}}>
+                                    <Descriptions  bordered title={"案件信息"} column={1}>
+                                        <Descriptions.Item  label={"团队名称"}>泽高房地产团队</Descriptions.Item>
+                                        <Descriptions.Item  label={"案件类型"}>诉讼案件</Descriptions.Item>
+                                        <Descriptions.Item  label={"主办律师"}>吴亦凡</Descriptions.Item>
+                                        <Descriptions.Item  label={"案源人员"}>黄东东</Descriptions.Item>
+                                        <Descriptions.Item  label={"工作流程"}>委托阶段</Descriptions.Item>
+                                        <Descriptions.Item  label={"创建时间"}>2022-09-08</Descriptions.Item>
+                                    </Descriptions>
+                                    {/* <Space>
+                                        <span>案件类型:诉讼案件</span>
+                                        <span>主办律师:吴亦凡</span>
+                                        <span>客户名称:平安集团</span>
+                                        <span>案件推荐:黄东东</span>
+                                        <span>创建时间:2022-09-08</span>
+                                        <span>工作流程:委托阶段</span>
+                                        <span>案件状态:处理中</span>
+                                    </Space> */}
+                                </div>
+                                </Card>
+                            </Col>
+                        })}
+                        </Row>
+                        </Space>
                     </div>
-                </Footer>
+                    }
+                </Space>
+                </Content>
             </Layout>
+        </Layout>
+
+        <Footer plain='true'>
+            <div className={'banner'}>Copyright © 2018至今 鱼律（厦门）网络科技有限公司 All rights reserved.
+                <a href="//beian.miit.gov.cn" target="_blank" rel="noreferrer">闽ICP备18004543号-1</a>
+            </div>
+        </Footer>
+    </Layout>;
+    }
+    render(){
+        if(this.state.data===undefined)return ;
+        const {results,total} = this.state;
+        return (
+        <Fragment>
+            <div style={{overflow:"hidden",width:"100%",height:"100%"}} ref={this.domRef}>
+            <div id="ss" style={{overflow:"auto",width:"100%",height:"100%"}}>
+            <InfiniteScroll
+                    dataLength={results.length}
+                    next={this.onNextLoading}
+                    hasMore={results.length < total}
+                    // loader={<Spin />}
+                    // endMessage={<Divider/>}
+                    scrollableTarget="ss"
+                >
+                {this.bodyRender()}
+                </InfiniteScroll>
+            </div>
+            </div>
         </Fragment>
         );
     }

@@ -1,7 +1,7 @@
-import React,{DSComponent,Fragment,post,DSList} from 'comp/index';
+import React,{DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
 
-import { Form,Input,Modal ,message, Select, Button,Row,Col} from 'antd';
+import { Form,Input,Modal ,message,Select, Button} from 'antd';
 
 class InviteFormView extends DSComponent{   
     constructor(props){
@@ -10,17 +10,18 @@ class InviteFormView extends DSComponent{
         this.state = {dialog:false,len:0,copyName:"点我复制链接",formData:props.formData};
     }
     static defaultProps = {
-        formData:{teamMemberRole:"TEAM_VIEW",lawCaseMemberRole:"CUSTOMER",projectList:[]},
-        teamView:{},
-        teamRole:''
+        formData:{teamMemberRole:"TEAM_VIEW",lawCaseMemberRole:"CUSTOMER"},
+        lawCase:{teamId:'',teamName:'',id:''},
     }
-    onEditor=(item)=>{
+    onEditor=()=>{
+        const {id,teamId,teamName} = this.props.lawCase;
         this.setState(state=>{
             state.dialog = true;
             state.copyName = "点我复制链接";
+            state.projectList= [{lawCaseId:id}];
+            state.teamId = teamId
+            state.teamName = teamName;
             return state;
-        },()=>{
-           
         });
     }
     onCannel=()=>{
@@ -31,19 +32,10 @@ class InviteFormView extends DSComponent{
         });
     }
     onSaveOrUpdate=async(e)=>{
-        const {teamMemberRole,lawCaseMemberRole,caseItemList} = e;
-        const {teamView} = this.props;
+        const {teamMemberRole,lawCaseMemberRole} = e;
+        const {projectList,teamId,teamName} = this.state;
         const path = "/api/invite/save";
-        const teamId = teamView.id;
-        const teamName = teamView.name;
-        let content = {teamId:teamId,type:'URL',teamMemberRoleCode:teamMemberRole,lawCaseMemberRole:lawCaseMemberRole};
-        if(caseItemList){
-            const projectList = caseItemList.map(e=>{
-                return {lawCaseId:e};
-            });
-            content = Object.assign({},content,{projectList:projectList});
-        }
-
+        let content = {teamId:teamId,type:'URL',teamMemberRoleCode:teamMemberRole,lawCaseMemberRole:lawCaseMemberRole,projectList:projectList};
         const params = new FormData();
         params.append("content", JSON.stringify(content));
         const response = await post(path,params).catch(error => {
@@ -62,27 +54,17 @@ class InviteFormView extends DSComponent{
                     this.formRef.current.setFieldsValue(formData);
                     setTimeout(function(){
                         that.setState(state=>{
-                            state.copyName = "点我复制链接"
+                            state.copyName = "复制链接"
                             return state;
                         })
                     }, 10000);
                 })
             });
-            
         }
     }
-    onSelectCase=(item,keys)=>{
-        this.setState(state=>{
-            state.len = keys.length;
-            state.caseItems = keys;
-            return state;
-        },()=>{
-        });
-    }
     render(){
-        const {dialog,formData,dialogTitle,len,copyName} = this.state;
-        const {teamView,teamRole} = this.props;
-        // const {teamMemberRoleCode,lawCaseMemberRole,projectList} = formData;
+        const {dialog,formData,copyName} = this.state;
+        const {teamRole} = this.props;
         return (
         <Fragment>
             <Modal
@@ -94,15 +76,6 @@ class InviteFormView extends DSComponent{
                 footer={null}>
                 {dialog===true&&
                 <Form layout="vertical" ref={this.formRef} onFinish={this.onSaveOrUpdate} initialValues={formData}>
-                    <div style={{position:"relative",padding:"12px 24px"}}>
-                    <Row wrap={false} style={{width:"100%"}}>
-                        <Col flex={"auto"}><span>选择参与的案件</span></Col>
-                        <Col flex={"90px"} style={{textAlign:"right"}}>已选{len}</Col>
-                    </Row>
-                    </div>
-                    <Form.Item name="caseItemList" noStyle>
-                    <DSList condition={{teamId:teamView.id,status:"processing"}} title={"title"} path="/api/lawCase/find" mode={"multiple"} onChange={this.onSelectCase}/>
-                    </Form.Item>
                     <div style={{position:"relative",padding:"24px 24px",borderTop:"1px solid #f0f0f0"}}>
                         <Input.Group compact>
                             <Form.Item name="teamMemberRole" noStyle>

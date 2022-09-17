@@ -1,5 +1,5 @@
 import React,{DSBase,DSComponent,DSNavigate,get,Fragment} from 'comp/index';
-import {Outlet} from 'react-router-dom';
+import {Outlet,Link} from 'react-router-dom';
 
 import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select} from 'antd';
 import { LoginOutlined,MailOutlined,SettingOutlined } from '@ant-design/icons';
@@ -10,14 +10,57 @@ import './index.less';
 const { Header, Footer, Content, Sider } = Layout;
 
 class AdminLayoutView extends DSComponent{   
+    constructor(props){
+        super(props);
+        this.state = {menusSource:[]}
+    }
+    static defaultProps = {
+    }
     componentDidMount=()=>{
+        this.onLoadMenu();
+    }
+    onLoadMenu = async ()=>{
+        let menuSource = await get('/api/user/menu').catch(error => { 
+            message.error(error.message+"d");
+        });
+        let managerMenus;
+        if(menuSource){
+            const {manager,platform} = menuSource.results;
+            if(manager){
+                managerMenus = this.renderMenus(manager);
+            }
+        }
+        this.setState(state=>{
+            const db = [];
+            this._menuSource(managerMenus,db);
+            state.menusSource = db;
+            return state;
+        });
     }
     onSearch=()=>{
         window.open(DSBase.list.P_CaseSearchView.path, '_blank');
     }
+    renderMenus=(source)=>{
+        return source.map(l=>{
+            if(l.isLeaf===true){
+                const children = this.renderMenus(l.subMenu);
+                return {key:l.code,label:l.name,children:children};
+            }
+            return {key:l.code,label:(<Link to={l.path}><span>{l.name}</span></Link>)};
+        });
+    }
+    _menuSource=(source,db)=>{
+        for(let s in source){
+            if(source[s].isLeaf===true){
+                this._menuSource(source[s].subMenu,db);
+            }else{
+                db.push(source[s]);
+            }
+        }
+    }
     render(){
-        const {menusSource,alias} = this.props;
-        // const selectedKeys = [`${this.state.pageNo}`];
+        const {alias} = this.props;
+        const {menusSource} = this.state;
         const userItems = (<Menu items={[{
             key: 'a11',
             label:<DSNavigate url={DSBase.list._LoginView.path} element={<Button type="link" icon={<SettingOutlined />} >账号设置</Button>}/>

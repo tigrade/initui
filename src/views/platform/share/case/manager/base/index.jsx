@@ -1,40 +1,26 @@
-import React,{DSComponent,Fragment,post} from 'comp/index';
+import React,{DSComponent,Fragment} from 'comp/index';
 
-import { Row,Col,Button, Descriptions} from 'antd';
-import {SettingOutlined} from '@ant-design/icons';
+import { Row,Col, Descriptions} from 'antd';
 import './index.less';
-import BaseFormView from 'views/platform/case/manager/base/form';
 
 class CaseBaseView extends DSComponent {
     constructor(props){
         super(props);
-        this.baseFormRef = React.createRef();
     }
     static defaultProps = {
         lawCase:{},
-        editor:false
     }
     componentDidMount = () => {
-
-    }
-    onEditor=()=>{
-        const {lawCase} = this.props;
-        this.baseFormRef.current.onEditor(lawCase);
-    }
-    reloadPage=()=>{
-        window.location.reload();
     }
     render() {
-        const {lawCase,editor} = this.props;
+        const {lawCase} = this.props;
         return (
             <Fragment>
-            <BaseFormView ref={this.baseFormRef} reloadPage={this.reloadPage}/>
             <div className='fl-case-detail-base' id='BASE_INFO'>
                 <div className='fl-case-detail-base-title'>
                 <Row wrap={false}>
                     <Col flex="auto">基本信息</Col>
                     <Col flex="100px" style={{textAlign:'right'}}>
-                        {editor===true&&<Button type="link" icon={<SettingOutlined />} onClick={this.onEditor}>设置</Button>}
                     </Col>
                 </Row>
                 </div>

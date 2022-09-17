@@ -1,13 +1,14 @@
-import React,{DSTable,DSComponent,Fragment} from 'comp/index';
+import React,{DSTable,DSComponent,Fragment,post} from 'comp/index';
 
-import { List,Row, Col,Button,Space } from 'antd';
+import { Row, Col,Button,Space,message } from 'antd';
 
 import './index.less'
-
+import TeamFormView from 'views/platform/team/form';
 class TeamView extends DSComponent{   
     constructor(props){
         super(props);
         this.tableRef = React.createRef();
+        this.formRef = React.createRef();
         const {teamView} = this.props.context;
         this.state = {searchCondition:{teamId:teamView.id}};
     }
@@ -16,11 +17,23 @@ class TeamView extends DSComponent{
     }
     componentDidMount=()=>{
         
-        // this.setState(state=>{
-
-        //     return state;
-        // })
-        
+    }
+    onEditor=(item)=>{
+        this.formRef.current.onEditor(item);
+    }
+    onReload=()=>{
+        this.tableRef.current.reload();
+    }
+    onDelete=async(item)=>{
+        const params = new FormData();
+        params.append("id",item.id);
+        const response = await post('/api/team/user/delete',params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            message.success(response.message);
+            this.onReload();
+        }
     }
     render(){
         const {searchCondition} = this.state;
@@ -33,12 +46,16 @@ class TeamView extends DSComponent{
         {title: '操作',width:160,render:(value,item,index)=>{
             return (
             <Space>
-                <Button type="link">编辑</Button>
+                <Button type="link" onClick={this.onEditor.bind(this,item)}>设置</Button>
+                {item.merchantRoleCode!=="TEAM_OWNER"&&
+                <Button type="link" onClick={this.onDelete.bind(this,item)}>移除</Button>
+                }
             </Space>
             );
         }}];
         return (
         <Fragment>
+            <TeamFormView ref={this.formRef} reloadTable={this.onReload}/>
             <div className='fl-team'>
                 <div className='fl-team-title'>
                 <Row wrap={false}>

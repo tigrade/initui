@@ -44,8 +44,6 @@ class CaseFormView extends DSComponent{
             this.setState(state=>{
                 state.caseTypeList = results;
                 return state;
-            },()=>{
-                
             });
         }
     }
@@ -84,6 +82,9 @@ class CaseFormView extends DSComponent{
             state.dialog = false;
             state.formData = null;
             return state;
+        },()=>{
+            const {formData} = this.props;
+            this.formRef.current.setFieldsValue(formData);
         });
     }
     onSaveOrUpdate=async(e)=>{
@@ -135,7 +136,7 @@ class CaseFormView extends DSComponent{
                     </Form.Item>
                     <Form.Item name="caseTypeId" label="案件类型" rules={[{ required: true, message: '案件类型不能为空' }]}>
                         <Select>
-                        {caseTypeList.map(e=>{
+                        {caseTypeList&&caseTypeList.map(e=>{
                             return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
                         })}
                         </Select>
@@ -151,7 +152,8 @@ class CaseFormView extends DSComponent{
                                     <Form.Item {...field} name={[field.name,"memberType"]} rules={[{ required: true, message: "类型不能为空" }]}>
                                         <Select>
                                             <Select.Option value="SOURCE">案源人员</Select.Option>
-                                            <Select.Option value="HANDLER">办案成员</Select.Option>
+                                            <Select.Option value="INNER_HANDLER">内部办案成员</Select.Option>
+                                            <Select.Option value="OUTER_HANDLER">外部办案成员</Select.Option>
                                             <Select.Option value="CUSTOMER">客户成员</Select.Option>
                                         </Select>
                                     </Form.Item>
@@ -160,7 +162,7 @@ class CaseFormView extends DSComponent{
                                     <Form.Item {...field} name={[field.name,"memberId"]} rules={[{ required: true, message: "人员不能为空" }]}>
                                         <Select>
                                             {teamUserList.map(e=>{
-                                                return <Select.Option value={e.id} key={e.id}>{e.userAlias}</Select.Option>
+                                                return <Select.Option value={e.id} key={e.id}>{e.alias}</Select.Option>
                                             })}
                                         </Select>
                                     </Form.Item>

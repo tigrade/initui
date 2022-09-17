@@ -1,17 +1,10 @@
 import React,{DSBase,DSComponent,DSNavigate,get,Fragment} from 'comp/index';
-import {Outlet} from 'react-router-dom';
-
-import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select} from 'antd';
-import { LoginOutlined,MailOutlined,SettingOutlined } from '@ant-design/icons';
 import {message} from 'antd';
+import { useLocation,useNavigate,useOutletContext} from "react-router-dom";
 
 import './index.less';
 import PlatformLayoutView from 'layout/client'
 import AdminLayoutView from 'layout/admin'
-
-import { Object3D } from 'three';
-const { Header, Footer, Content, Sider } = Layout;
-
 
 class DSLayout extends DSComponent { 
     constructor(props){
@@ -64,15 +57,6 @@ class DSLayout extends DSComponent {
     }
     render() {
         const {authType,alias} = this.props;
-        const userItems = (<Menu items={[{
-            key: 'a11',
-            label:<DSNavigate url={DSBase.list._LoginView.path} element={<Button type="link" icon={<SettingOutlined />} >账号设置</Button>}/>
-            }, {
-            type: 'divider',
-            },{
-            key: 'a1w',
-            label:<DSNavigate url={DSBase.logout.path} element={<Button type="link" icon={<LoginOutlined />} >退出</Button>}/>
-        }]}/>);
 
         if(authType==="admin"){
             const {managerMenus} = this.props;
@@ -84,11 +68,13 @@ class DSLayout extends DSComponent {
         }
 
         if(authType==="client"){
-            const {platformMenus} = this.props;
             const {teamView} = this.state;
+            if(teamView===undefined||(teamView!==undefined&&teamView.id===undefined)){
+                return;
+            }
             return (
                 <Fragment>
-                    <PlatformLayoutView {...{teamView:teamView,menusSource:platformMenus,alias:alias}}></PlatformLayoutView>
+                    <PlatformLayoutView {...{teamView:teamView,alias:alias,navigate:this.props.navigate}}/>
                 </Fragment>
             );
         }

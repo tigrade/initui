@@ -22,18 +22,9 @@ function Layout(props){
         }
         if(menuSource()){
             const _menuSource = menuSource();
-            const currentIndex = _menuSource.findIndex(e=>{
-                return e.path === pathname;
-            });
-            const _pageNo = currentIndex===-1?0:_menuSource[currentIndex].code;
-            let _title = currentIndex===-1?undefined:_menuSource[currentIndex].name;
-            setTitle(_title)
-            setPageNo(_pageNo);
         }
      }, [location,navigate,menuSource]);
-    return (<DSLayout pageNo={pageNo} title={title} 
-        {...{location,navigate,context}}
-        platformMenus={props.platformMenus} managerMenus={props.managerMenus} authType={props.authType} alias={props.alias}/>);
+    return (<DSLayout pageNo={pageNo} title={title} {...{location,navigate,context}} authType={props.authType} alias={props.alias}/>);
 }
 function Element(props){
     const location = useLocation();
@@ -43,7 +34,9 @@ function Element(props){
     useEffect(() => {
         const pathname = location.pathname;
         if(!localStorage.getItem('isLogin')){
-            if(pathname!==DSBase.login.path){
+            //过滤非需要登陆的页面
+            const filterList = ['/content/invite','/content/share/lawCase/index'];
+            if(pathname!==DSBase.login.path&&filterList.includes(pathname)===false){
                 navigate(DSBase.login.path);
                 return ;
             }
@@ -59,10 +52,9 @@ function Element(props){
 class DSRoutes extends DSComponent {
     constructor(props){
         super(props);
-        this.state = {menus:DSBase.menus};
+        this.state = {}
     }
     componentDidMount=async()=>{
-        
         await this.renderRoutes();
     }
     renderRoutes=async()=>{
@@ -70,30 +62,11 @@ class DSRoutes extends DSComponent {
             const response = await get('/api/user/info').catch(error => {
                 message.error(error.message);
             });
-            
-            let menuSource = await get('/api/user/menu').catch(error => { 
-                message.error(error.message+"d");
-            });
             if(response===undefined){
                 localStorage.removeItem('isLogin');
                 localStorage.removeItem('token');
                 window.location.href = DSBase.login.path;
             }
-            let managerMenus;
-            let platformMenus;
-            if(menuSource){
-                const {manager,platform} = menuSource.results;
-                if(manager){
-                    managerMenus = this.renderMenus(manager);
-                }
-                if(platform){
-                    platformMenus = this.renderMenus(platform);
-                }else{
-                    menuSource = Object.assign(menuSource,{platform:DSBase.menus});
-                    platformMenus = this.renderMenus(DSBase.menus);
-                }
-            }
-            
             const {type,aliasName} = response.results;
             this.setState(state=>{
                 state.alias = aliasName;
@@ -103,13 +76,6 @@ class DSRoutes extends DSComponent {
                 if(type==="11"){
                     state.authType = "admin";
                 }
-                state.managerMenus = managerMenus;
-                state.platformMenus = platformMenus;
-                const {manager,platform} = menuSource;
-                const db = [];
-                this._menuSource(manager,db);
-                this._menuSource(platform,db);
-                state.menuSource = db;
                 return state;
             });
         }
@@ -119,7 +85,6 @@ class DSRoutes extends DSComponent {
         const componentsList = keyList.map(e=>{
             const x = DSBase.list[e];
             const DsClass = _componentList[x.code];
-            // debugger
             const data = Object.assign({},{el:<Element el={DsClass} key={DSID()}/>},{"path":x.path,"only":x.only,key:e});
             return data;
         });
@@ -137,31 +102,9 @@ class DSRoutes extends DSComponent {
             return state;
         });
     }
-
-    renderMenus=(source)=>{
-        return source.map(l=>{
-            if(l.isLeaf===true){
-                const children = this.renderMenus(l.subMenu);
-                return {key:l.code,label:l.name,children:children};
-            }
-            //icon:React.createElement(NotificationOutlined)
-            return {key:l.code,label:(<Link to={l.path}><span>{l.name}</span></Link>)};
-        });
-    }
-    _menuSource=(source,db)=>{
-        for(let s in source){
-            if(source[s].isLeaf===true){
-                this._menuSource(source[s].subMenu,db);
-            }else{
-                db.push(source[s]);
-            }
-        }
-    }
-    componentDidUpdate=()=>{
-    }
     render() {
         if(!this.state.onlys||!this.state.frames)return;//判断是否已经加载完毕
-        const {platformMenus,managerMenus,authType,alias,menuSource} = this.state;
+        const {authType,alias} = this.state;
         const frames = this.state.frames||[];
         const onlys = this.state.onlys||[];
         return (
@@ -175,8 +118,7 @@ class DSRoutes extends DSComponent {
                             return <Route path={element.path} element={element.el} key={DSID()}/>
                         })
                     }
-                    <Route path="/" element={<Layout db={menuSource} 
-                        platformMenus={platformMenus} managerMenus={managerMenus} authType={authType} alias={alias}/>}>
+                    <Route path="/" element={<Layout authType={authType} alias={alias}/>}>
                         {
                             frames.filter(e=>{
                                 return e.el!==undefined;
@@ -188,7 +130,6 @@ class DSRoutes extends DSComponent {
                                 }else{
                                     return <Route path={element.path} element={element.el} key={DSID()} />//forceRefresh={true}
                                 }
-                                // return <Route path={element.path} element={element.el} key={DSID()} />//forceRefresh={true}
                             })
                         }
                         <Route path="*" element={<Navigate to='/' replace={true}/>}/>

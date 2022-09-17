@@ -25,8 +25,24 @@ class LoginView extends DSComponent{
         this.state = {formType:"Login",captchShow:false,count:60,liked:true,needCaptcha:false,loginAccount:loginAccount,loginRemember:loginRemember}
     }
     componentDidMount=()=>{
-        this.initTHREEBg();
+        const url = window.location.href;
+        const path = url.replace(window.location.search,'');
+        const params = new URLSearchParams(window.location.search);
         
+        const formType = params.get('type');
+        const inviteToken = params.get('inviteToken');
+        if(formType!==null){
+            this.setState(state=>{
+                state.formType = formType;
+                state.formStatus = false;
+                state.errorMessage = null;
+                state.inviteToken = inviteToken;
+                return state;
+            },()=>{
+                window.history.pushState('','',path);
+            });
+        }
+        this.initTHREEBg();
     }
     componentDidUpdate=()=>{
     }
@@ -263,7 +279,9 @@ class LoginView extends DSComponent{
             }
             localStorage.setItem('isLogin', true);
             localStorage.setItem('token', response.results.token);
-            window.location.href = DSBase.root.path;
+            this.onRedirect();
+            // window.location.href = DSBase.root.path;
+
         }
     }
     onRegedit=async (e)=>{
@@ -282,7 +300,8 @@ class LoginView extends DSComponent{
         if(response){
             localStorage.setItem('isLogin', true);
             localStorage.setItem('token', response.results.token);
-            window.location.href = DSBase.root.path;
+            this.onRedirect();
+            // window.location.href = DSBase.root.path;
         }
     }
     onReset=async(e)=>{
@@ -297,6 +316,16 @@ class LoginView extends DSComponent{
         if(response){
             localStorage.setItem('isLogin', true);
             localStorage.setItem('token', response.results.token);
+            this.onRedirect();
+            // window.location.href = DSBase.root.path;
+        }
+    }
+
+    onRedirect=()=>{
+        const {inviteToken} = this.state;
+        if(inviteToken){
+            window.location.href = DSBase.list.P_InviteView.path+"?code="+inviteToken;
+        }else{
             window.location.href = DSBase.root.path;
         }
     }

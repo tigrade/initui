@@ -328,6 +328,7 @@ module.exports = function (webpackEnv) {
         ...(modules.webpackAliases || {}),
         //文件别名
         // 'pub/':path.resolve(__dirname, '../public/*'),
+        // Assets: path.resolve(__dirname, "./src/assets/"),
       },
       plugins: [
         // Prevents users from importing files from outside of src/ (or node_modules/).
