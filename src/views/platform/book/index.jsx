@@ -6,7 +6,7 @@ import {PlusOutlined,SettingOutlined } from '@ant-design/icons';
 
 import BriefTreeView  from 'views/platform/book/brief';
 import BriefFormView from 'views/platform/book/briefForm';
-import TopicFormView from 'views/platform/book/topicFormww';
+import TopicFormView from 'views/platform/book/topicForm';
 
 
 class TreasuredBookView extends DSComponent{   

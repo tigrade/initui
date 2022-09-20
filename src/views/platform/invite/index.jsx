@@ -17,7 +17,7 @@ class InviteView extends DSComponent{
         const inviteToken = params.get('code');
         const _params = new FormData();
         _params.append('code', inviteToken);
-        const response = await post('/api/invite/token',_params).catch(error => {
+        const response = await post('/api/team/user/invite/token',_params).catch(error => {
             message.error(error.message);
         });
         if(response){
@@ -48,7 +48,7 @@ class InviteView extends DSComponent{
         const params = new FormData();
         params.append('code', inviteToken);
         params.append('content', content===undefined?"":content);
-        const response = await post('/api/invite/join',params).catch(error => {
+        const response = await post('/api/team/user/invite/join',params).catch(error => {
             message.error(error.message);
         });
         if(response){

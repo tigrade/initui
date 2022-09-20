@@ -43,7 +43,7 @@ class P_TeamUserJoinView extends DSComponent{
         const params = new FormData();
         params.append("id", id);
         params.append("status", status);
-        const response = await post("/api/teamUserJoin/approval",params).catch(error => {
+        const response = await post("/api/team/user/join/approval",params).catch(error => {
             message.error(error.message);
         });
         if(response){
@@ -122,7 +122,7 @@ class P_TeamUserJoinView extends DSComponent{
                     </Row>
                     </div>
                     <div className='ds-table-wrap'>
-                        <DSTable columns={columns} searchCondition={condition} path={'/api//teamUserJoin/find'} ref={this.tableRef}></DSTable>
+                        <DSTable columns={columns} searchCondition={condition} path={'/api/team/user/join/find'} ref={this.tableRef}></DSTable>
                     </div>
                 </div>
             </div>

@@ -50,7 +50,7 @@ class CaseFormView extends DSComponent{
     loadCustomerList = async(teamId)=>{
         const params = new FormData();
         params.append("teamId", teamId);
-        const response = await post('/api/teamCustomer/list',params).catch(error => {
+        const response = await post('/api/team/customer/list',params).catch(error => {
             message.error(error.message);
         });
         if(response){

@@ -1,11 +1,12 @@
 import React,{DSComponent,post,Fragment} from 'comp/index';
 
-import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Empty,Descriptions} from 'antd';
-// import { LoginOutlined,MailOutlined,SettingOutlined } from '@ant-design/icons';
+import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table} from 'antd';
+import { AppstoreOutlined,BarsOutlined,MailOutlined,SettingOutlined,ArrowUpOutlined,ArrowDownOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {message} from 'antd';
 
 import './index.less';
+import moment from 'moment';
 
 const { Header, Footer, Content} = Layout;
 
@@ -14,6 +15,7 @@ class SearchView extends DSComponent{
         super(props);
         this.domRef = React.createRef();
         this.state = {pageNo:0,results:[],minHeight:200,
+            showStyle:"card",
             selectedTeamList:[],selectedCustomerList:[],selectedLawCaseTypeList:[],
             selectedLawCaseStatusList:[],selectedLawCaseItemCaseTypeList:[],
             selectedLawCaseItemStatusList:[],selectedSourceList:[],selectedMasterList:[]};
@@ -71,7 +73,8 @@ class SearchView extends DSComponent{
         });
         if (response) {
             const h = this.domRef.current.clientHeight;
-            const {results,total,teamList,customerList,lawCaseTypeList,lawCaseStatusList,lawCaseItemCaseTypeList,lawCaseItemStatusList,sourceList,masterList} = response;
+            const {results,total,teamList,customerList,lawCaseTypeList,lawCaseStatusList,lawCaseItemCaseTypeList,lawCaseItemStatusList,
+                sourceList,masterList,createTime} = response;
             this.setState(state=>{
                 state.data = data;
                 if(state.pageNo>0){
@@ -89,6 +92,7 @@ class SearchView extends DSComponent{
                 state.lawCaseItemStatusList = lawCaseItemStatusList;
                 state.sourceList = sourceList;
                 state.masterList = masterList;
+                state.createTime = createTime;
                 return state;
             },()=>{
             });
@@ -250,8 +254,29 @@ class SearchView extends DSComponent{
             return selectedMasterList.includes(item);
         }
     }
+    onShowStyle=(type)=>{
+        this.setState(state=>{
+            state.showStyle = type;
+            return state;
+        });
+    }
     bodyRender=()=>{
-        const {results,minHeight,teamList,customerList,lawCaseTypeList,lawCaseStatusList,lawCaseItemCaseTypeList,lawCaseItemStatusList,sourceList,masterList} = this.state;
+        const {showStyle,total,results,minHeight,teamList,customerList,lawCaseTypeList,lawCaseStatusList,lawCaseItemCaseTypeList,
+            lawCaseItemStatusList,sourceList,masterList,createTime} = this.state;
+        console.log(showStyle);
+        const columns=[
+            {title: '序号',fixed: 'left',dataIndex: 'seq',width: 70 ,render: (value, item, index) => index + 1},
+            {title: '名称',dataIndex:"lawCaseTitle",fixed: 'left',width:250,ellipsis: true},
+            {title: '程序',render:(value,item,index)=>{
+                return `【${item.lawCaseItemStatus===null?"未建立":item.lawCaseItemStatus}】${item.lawCaseItemTitle===null?"无":item.lawCaseItemTitle}`;
+            },fixed: 'left',width:250,ellipsis: true},
+            {title: '主办律师',dataIndex:"masterName",ellipsis: true},
+            {title: '案源人员',dataIndex:"sourceName",ellipsis: true},
+            {title: '案件类型',dataIndex:"lawCaseTypeName",ellipsis: true},
+            {title: '团队名称',dataIndex:"teamName",ellipsis: true},
+            {title: '创建时间',dataIndex:"createTime",ellipsis: true},
+           ];
+
         return <Layout>
         <Header className='ds-theme-header'>
         <Row wrap={false}>
@@ -280,10 +305,10 @@ class SearchView extends DSComponent{
             <Layout style={{padding:"0px",overflow: "auto"}}>
                 <Content style={{"padding": "12px 16px",background:"#f0f2f5",minHeight:minHeight,paddingBottom:80}} className='main-wrapper'>
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                    <Breadcrumb className='ds-crumb'>
-                        <Breadcrumb.Item>全部结果:</Breadcrumb.Item>
+                    {/* <Breadcrumb className='ds-crumb' separator=">">
+                        <Breadcrumb.Item>查询结果【{total}】:</Breadcrumb.Item>
                         <Breadcrumb.Item>{this.state.data}</Breadcrumb.Item>
-                    </Breadcrumb>
+                    </Breadcrumb> */}
                     {/* {results.length===0&&
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     } */}
@@ -386,43 +411,88 @@ class SearchView extends DSComponent{
                             </Col>
                         </Row>
                         }
+                        {createTime&&Object.keys(createTime).length>0&&
+                        <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
+                            <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>时间范围</div></Col>
+                            <Col flex="auto">
+                                <div>
+                                    <DatePicker.RangePicker key={Math.floor(Math.random() * 10000)}
+                                        defaultValue={[moment(createTime.min, "YYYY-MM-DD HH:mm:ss"), moment(createTime.max, "YYYY-MM-DD HH:mm:ss")]}
+                                        disabled={[false, false]}/>
+                                </div>
+                            </Col>
+                        </Row>
+                        }
                     </Space>
                     </Card>
                     {results.length>0&&
                     <div>
-                        <Space>
-                        <Row gutter={[16, 16]}>
+                        <div style={{padding:"16px 12px",backgroundColor:"#fff",width:"100%",marginBottom:"16px"}}>
+                        <Row  wrap={false} gutter={[16,16]} align="middle">
+                            <Col flex="220px">
+                            <Breadcrumb className='ds-crumb' separator=">">
+                                <Breadcrumb.Item>查询结果【{total}】</Breadcrumb.Item>
+                                <Breadcrumb.Item>{this.state.data===""||this.state.data===null?"全部":this.state.data}</Breadcrumb.Item>
+                            </Breadcrumb>
+                            </Col>
+                            <Col flex="auto">
+                                
+                            </Col>
+                            <Col flex="160px">
+                                <Row  wrap={false} gutter={4} align="middle">
+                                    <Col>
+                                    <Tooltip placement="bottom" title={"按时间降序"}>
+                                        <Button  icon={<ArrowDownOutlined />}/>
+                                    </Tooltip>
+                                    </Col>
+                                    <Col>
+                                    <Tooltip placement="bottom" title={"按时间升序"}>
+                                        <Button  icon={<ArrowUpOutlined />}/>
+                                    </Tooltip>
+                                    </Col>
+                                    <Col>
+                                    <Tooltip placement="bottom" title={"卡片风格"}>
+                                        <Button  icon={<AppstoreOutlined />} onClick={this.onShowStyle.bind(this,"card")}/>
+                                    </Tooltip>
+                                    </Col>
+                                    <Col>
+                                    <Tooltip placement="bottom" title={"列表风格"}>
+                                        <Button  icon={<BarsOutlined />}  onClick={this.onShowStyle.bind(this,"list")}/>
+                                    </Tooltip>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                        
+                        </div>
+                        {showStyle==="list"&&
+                        <Table columns={columns} dataSource={results} size="middle" pagination={false}/>
+                        }
+                        {showStyle==="card"&&
+                        <Row gutter={[32, { xs: 8, sm: 16, md: 24, lg: 32 }]} type="flex">
                         {results.map(d=>{
-                            return <Col span={results.length===1?24:results.length===2?12:8} key={Math.floor(Math.random() * 10000)}>
-                                <Card title={"平安集团"} extra={"处理中"} hoverable={true} onClick={()=>{window.open(`/content/lawCase/detail?id=${d.lawCaseId}`, '_blank');}}>
+                            return <Col span={8} key={Math.floor(Math.random() * 10000)}>
+                                <Card title={d.customerName} extra={d.lawCaseStatus} hoverable={true} onClick={()=>{window.open(`/content/lawCase/detail?id=${d.lawCaseId}`, '_blank');}}>
                                 <Card.Meta
-                                    title="民事/一审"
-                                    description={d.lawCaseTitle}
+                                    title={`【${d.lawCaseItemStatus===null?"未建立":d.lawCaseItemStatus}】${d.lawCaseItemTitle===null?"无":d.lawCaseItemTitle}`}
+                                    description={
+                                        <div title={d.lawCaseTitle} style={{textOverflow: "ellipsis",overflow:"hidden",whiteSpace: "nowrap"}}>{d.lawCaseTitle}</div>
+                                    }
                                     />
                                 <div style={{margin:"12px 0px"}}>
-                                    <Descriptions  bordered title={"案件信息"} column={1}>
-                                        <Descriptions.Item  label={"团队名称"}>泽高房地产团队</Descriptions.Item>
-                                        <Descriptions.Item  label={"案件类型"}>诉讼案件</Descriptions.Item>
-                                        <Descriptions.Item  label={"主办律师"}>吴亦凡</Descriptions.Item>
-                                        <Descriptions.Item  label={"案源人员"}>黄东东</Descriptions.Item>
-                                        <Descriptions.Item  label={"工作流程"}>委托阶段</Descriptions.Item>
-                                        <Descriptions.Item  label={"创建时间"}>2022-09-08</Descriptions.Item>
+                                    <Descriptions  bordered title={"案件信息"} column={1} size={"small"}>
+                                        <Descriptions.Item  label={"团队名称"}>{d.teamName}</Descriptions.Item>
+                                        <Descriptions.Item  label={"案件类型"}>{d.lawCaseTypeName}</Descriptions.Item>
+                                        <Descriptions.Item  label={"主办律师"}>{d.masterName}</Descriptions.Item>
+                                        <Descriptions.Item  label={"案源人员"}>{d.sourceName}</Descriptions.Item>
+                                        <Descriptions.Item  label={"创建时间"}>{d.createTime}</Descriptions.Item>
                                     </Descriptions>
-                                    {/* <Space>
-                                        <span>案件类型:诉讼案件</span>
-                                        <span>主办律师:吴亦凡</span>
-                                        <span>客户名称:平安集团</span>
-                                        <span>案件推荐:黄东东</span>
-                                        <span>创建时间:2022-09-08</span>
-                                        <span>工作流程:委托阶段</span>
-                                        <span>案件状态:处理中</span>
-                                    </Space> */}
                                 </div>
                                 </Card>
                             </Col>
                         })}
                         </Row>
-                        </Space>
+                        }
                     </div>
                     }
                 </Space>

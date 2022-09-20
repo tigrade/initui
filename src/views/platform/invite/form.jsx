@@ -33,7 +33,7 @@ class InviteFormView extends DSComponent{
     onSaveOrUpdate=async(e)=>{
         const {teamMemberRole,lawCaseMemberRole,caseItemList} = e;
         const {teamView} = this.props;
-        const path = "/api/invite/save";
+        const path = "/api/team/user/invite/save";
         const teamId = teamView.id;
         const teamName = teamView.name;
         let content = {teamId:teamId,type:'URL',teamMemberRoleCode:teamMemberRole,lawCaseMemberRole:lawCaseMemberRole};

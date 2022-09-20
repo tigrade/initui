@@ -48,13 +48,13 @@ class TeamCustomerFormView extends DSComponent{
         const {id,name} = e;
         const {formStatus} = this.state;
         const {teamView} = this.props;
-        let path = "/api/teamCustomer/save";
+        let path = "/api/team/customer/save";
         let content = {};
         if(formStatus===this.props.formType.add.code){
             content = {name:name,teamId:teamView.id};
         }
         if(formStatus===this.props.formType.update.code){
-            path = "/api/teamCustomer/modify";
+            path = "/api/team/customer/modify";
             content = {id:id,name:name,teamId:teamView.id};
         }
         const params = new FormData();

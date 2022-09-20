@@ -43,7 +43,7 @@ class TeamCustomerView extends DSComponent{
     onDelete=async(e)=>{
         const params = new FormData();
         params.append("id", e.id);
-        const response = await post("/api/teamCustomer/delete",params).catch(error => {
+        const response = await post("/api/team/customer/delete",params).catch(error => {
             message.error(error.message);
         });
         if(response){
@@ -111,7 +111,7 @@ class TeamCustomerView extends DSComponent{
                     </Row>
                     </div>
                     <div className='ds-table-wrap'>
-                        <DSTable columns={columns} searchCondition={_searchCondition} path={'/api/teamCustomer/find'} ref={this.tableRef}></DSTable>
+                        <DSTable columns={columns} searchCondition={_searchCondition} path={'/api/team/customer/find'} ref={this.tableRef}></DSTable>
                     </div>
                 </div>
             </div>
