@@ -79,7 +79,7 @@ class ItemFormView extends DSComponent{
             },async()=>{
                 const params = new FormData();
                 params.append('id', keys[0]);
-                const response = await post('/api/lawCaseItem//find/one',params).catch(error => {
+                const response = await post('/api/lawCaseItem/find/one',params).catch(error => {
                     message.error(error.message);
                 });
                 if(response){
@@ -101,7 +101,7 @@ class ItemFormView extends DSComponent{
                         if(f.type==="DATE_TIME"&&vv!==undefined&&vv!==null){
                             vv = moment(vv);
                         }
-                        if(f.type==="MULTIPLE_CHOICE"){
+                        if(f.type==="MULTIPLE_CHOICE"&&vv!==null){
                             vv = vv.split(",");
                         }
                         if(vv===null){
@@ -172,6 +172,7 @@ class ItemFormView extends DSComponent{
     onSaveOrUpdate=async(e)=>{
         const {lawCase} = this.props;
         const {id,master,branch,caseTypeId} = e;
+
         let positionList=[];
         if(master!==undefined&&master.length>0){
             const _master = master.map(i=>{
@@ -200,11 +201,12 @@ class ItemFormView extends DSComponent{
                 return Object.assign({id:item.id,name:item.name,storeValue:fieldValue});
             });
         }
+
         const params = new FormData();
         let path = '/api/lawCaseItem/save';
         if(formType===2){
             path = '/api/lawCaseItem/modify';
-            const content = {id:id,schemaFields:schemaFieldsValue,positionList:positionList}
+            const content = {id:id,lawCaseId:lawCase.id,schemaFields:schemaFieldsValue,positionList:positionList}
             params.append('content', JSON.stringify(content));
         }else{
             const content = {caseTypeId:caseTypeId.id,lawCaseId:lawCase.id,schemaFields:schemaFieldsValue,positionList:positionList}

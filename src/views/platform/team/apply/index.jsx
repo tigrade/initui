@@ -88,7 +88,6 @@ class P_TeamUserJoinView extends DSComponent{
         <Fragment>
             <div className='ds-back-layout'>
                 <Breadcrumb className='ds-crumb'>
-                    <Breadcrumb.Item>首页</Breadcrumb.Item>
                     <Breadcrumb.Item>团队管理</Breadcrumb.Item>
                     <Breadcrumb.Item>申请加入管理</Breadcrumb.Item>
                 </Breadcrumb>
