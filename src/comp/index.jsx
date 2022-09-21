@@ -3,7 +3,7 @@ import 'antd/dist/antd.less';
 
 export class DSComponent extends Component{
     componentDidUpdate(){
-        document.title = `【${this.props.title||"测试"}】鱼律科技 一律给力`
+        document.title = `鱼律科技 一律给力`
     }
 }
 export {Fragment,useEffect,useState,useRef,useCallback} from 'react';

@@ -129,12 +129,12 @@ class CaseFieldFormView extends DSComponent{
                     <Form.Item name="name" label="名称" rules={[{ required: true, message: '名称不能为空' }]}>
                         <Input placeholder=""  autoComplete="off"/>
                     </Form.Item>
-                    <Form.Item name='required' label="是否必填" rules={[{ required: true, message: '输入类型不能为空' }]}>
+                    {/* <Form.Item name='required' label="是否必填" rules={[{ required: true, message: '输入类型不能为空' }]}>
                         <Radio.Group>
                             <Radio value={true}>必填</Radio>
                             <Radio value={false}>选填</Radio>
                         </Radio.Group>
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item name="caseFieldGroupId" label="分组">
                         <Select>
                             {groupSource.map(e=>{

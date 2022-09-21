@@ -1,8 +1,8 @@
 import React,{DSBase,DSTable,DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
 
-import { Form,Input, Button,Row,Col,Breadcrumb,message,Space} from 'antd';
-import {PlusOutlined } from '@ant-design/icons';
+import { Form,Input, Button,Row,Col,Breadcrumb,message,Select} from 'antd';
+// import {PlusOutlined } from '@ant-design/icons';
 
 class TaskView extends DSComponent{   
     constructor(props){
@@ -103,15 +103,42 @@ class TaskView extends DSComponent{
                     </div>
                     <div className='ds-search-wrap'>
                         <Form layout="inline" ref={this.searchFormRef} initialValues={condition} onFinish={this.onSearch}>
-                            <Form.Item name="name" label="名称">
-                                <Input placeholder="" autoComplete="off"/>
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">搜索</Button>
-                            </Form.Item>
-                            <Form.Item>
-                                <Button onClick = {this.onReset}>重置</Button>
-                            </Form.Item>
+                            <Row gutter={[8,16]}>
+                                <Col>
+                                <Form.Item name="lawCaseName" label="案件">
+                                    <Input placeholder="" autoComplete="off" allowClear />
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item name="title" label="标题">
+                                    <Input placeholder="" autoComplete="off" allowClear />
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item name="content" label="描述">
+                                    <Input placeholder="" autoComplete="off" allowClear />
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item name="status" label="状态">
+                                    <Select style={{width:"120px"}}>
+                                        <Select.Option value="PANDING">待处理</Select.Option>
+                                        <Select.Option value="HANDLE">处理中</Select.Option>
+                                        <Select.Option value="FINISH">完成</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">搜索</Button>
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item>
+                                    <Button onClick = {this.onReset}>重置</Button>
+                                </Form.Item>
+                                </Col>
+                            </Row>
                         </Form>
                     </div>
                 </div>

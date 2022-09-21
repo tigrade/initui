@@ -76,7 +76,6 @@ class TeamCustomerView extends DSComponent{
             <TeamCustomerFormView teamView={teamView} ref={this.formRef} reloadTable={this.onReload}></TeamCustomerFormView>
             <div className='ds-back-layout'>
                 <Breadcrumb className='ds-crumb'>
-                    <Breadcrumb.Item>首页</Breadcrumb.Item>
                     <Breadcrumb.Item>客户管理</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className='ds-search'>

@@ -1,6 +1,6 @@
 import React,{DSTable,DSComponent,Fragment,post} from 'comp/index';
 
-import { Row, Col,Button,Space,message } from 'antd';
+import { Row, Col,Button,Space,message,Breadcrumb } from 'antd';
 
 import './index.less'
 import TeamFormView from 'views/platform/team/form';
@@ -57,9 +57,13 @@ class TeamView extends DSComponent{
         <Fragment>
             <TeamFormView ref={this.formRef} reloadTable={this.onReload}/>
             <div className='fl-team'>
+                <Breadcrumb>
+                    <Breadcrumb.Item>团队管理</Breadcrumb.Item>
+                    <Breadcrumb.Item>团队成员</Breadcrumb.Item>
+                </Breadcrumb>
                 <div className='fl-team-title'>
                 <Row wrap={false}>
-                    <Col flex="auto">团队成员</Col>
+                    <Col flex="auto">成员列表</Col>
                 </Row>
                 </div>
                 <div className='fl-team-wrap'>

@@ -1,7 +1,7 @@
 import React,{DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
 
-import { Form,Input,Modal,Select,message,Button,Radio,Row,Col,Divider} from 'antd';
+import { Form,Input,Modal,Select,message,Button,Row,Col,Divider} from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 class CaseFormView extends DSComponent{   
@@ -103,14 +103,14 @@ class CaseFormView extends DSComponent{
             state.formData = null;
             return state;
         },()=>{
+            this.formRef.current.resetFields();
             this.props.reloadTable();
             window.open(`/content/lawCase/detail?id=${response.results.id}`, '_blank');
-            // this.props.navigate(,{replace: true});
         });
     }
     
     render(){
-        const {dialog,formData,dialogTitle,teamUserList,caseTypeList,customerList,teamId} = this.state;
+        const {dialog,formData,dialogTitle,teamUserList,caseTypeList,customerList} = this.state;
         if(teamUserList===undefined||caseTypeList===undefined){
             return ;
         }
@@ -125,7 +125,7 @@ class CaseFormView extends DSComponent{
                 cancelText="取消">
                 <Form id="_form" layout="vertical" ref={this.formRef} initialValues={formData} onFinish={this.onSaveOrUpdate}>
                     <Form.Item name="title" label="案件名称" rules={[{ required: true, message: '名称不能为空' }]}>
-                        <Input placeholder=""  autoComplete="off"/>
+                        <Input.TextArea placeholder=""  autoComplete="off"/>
                     </Form.Item>
                     <Form.Item name="teamCustomerId" label="客户" rules={[{ required: true, message: '客户不能为空' }]}>
                         <Select>

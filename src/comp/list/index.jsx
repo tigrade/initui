@@ -1,6 +1,6 @@
 import React, {Component,Fragment} from 'react';
 import { post } from 'utils/http'; 
-import { List, message,Checkbox, Row, Col,Divider,Spin } from 'antd';
+import { List, message,Checkbox, Row, Col,Spin } from 'antd';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import './index.less'
 
@@ -17,6 +17,7 @@ class DSList extends Component {
         title:'name',
         key:'id',
         other:{},
+        filter:[],
         mode:"single",//multiple||single
         onChange:(items)=>{}
     }
@@ -30,7 +31,7 @@ class DSList extends Component {
         return null;
     }
     onDataLoading=async()=>{
-        const { path,key } = this.props;
+        const { path,key,filter } = this.props;
         const {condition,pageNo,pageSize} = this.state;
         const params = new FormData();
         params.append('pageNo', pageNo);
@@ -45,7 +46,9 @@ class DSList extends Component {
             const { results,pageNo,pageSize,total} = response;
             const selectedRowKeys = results.filter(e=>e.selected).map(e=>e[key]);
             this.setState(state => {
-                state.dataSource = state.dataSource.concat(results);
+                state.dataSource = state.dataSource.concat(results.filter(e=>{
+                    return filter.includes(e.id)?false:true;
+                }));
                 state.selectedRowKeys = state.selectedRowKeys.concat(selectedRowKeys);
                 state.pageNo = pageNo;
                 state.pageSize = pageSize;
@@ -70,8 +73,11 @@ class DSList extends Component {
                     });
                 }
             }else{
-                selectedRowKeys = [];
-                selectedRowKeys.push(item[key]);
+                if(checked===true){
+                    selectedRowKeys.push(item[key]);
+                }else{
+                    selectedRowKeys = [];
+                }
             }
             state.selectedRowKeys = selectedRowKeys;
             const groupSourceValue = state.dataSource.reduce((group, item) => {
@@ -138,7 +144,9 @@ class DSList extends Component {
             <div style={{position:"relative",margin:"0px 24px",padding:"12px 16px 6px 6px",borderBottom:"1px solid #f0f0f0"}}>
                 <Row wrap={false} style={{width:"100%"}}>
                     <Col flex={"auto"}><span>全选</span></Col>
-                    <Col flex={"20px"}><Checkbox checked={selectedAll} onChange={this.onAllChange}/></Col>
+                    <Col flex={"20px"}>
+                        <Checkbox checked={selectedAll} onChange={this.onAllChange}/>
+                    </Col>
                 </Row>
             </div>
             }

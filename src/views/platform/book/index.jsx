@@ -101,7 +101,6 @@ class TreasuredBookView extends DSComponent{
             
             <div className='fl-book'>
                 <Breadcrumb className='fl-book-crumb'>
-                    <Breadcrumb.Item>主页</Breadcrumb.Item>
                     <Breadcrumb.Item>宝典管理</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className='fl-book-search'>

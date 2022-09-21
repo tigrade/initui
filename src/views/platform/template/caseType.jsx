@@ -32,13 +32,17 @@ class CaseTypeTreeView extends DSComponent{
                 this.props.onSelect(node);
             });
         }else{
-            if(node.node.isLeaf===true){
+            if(node.node.isLeaf===true&&node.node.isRoot===false){
                 this.setState(state=>{
                     state.selectedKeys = keys;
                     return state;
                 },()=>{
                     this.props.onSelect(node);
                 });
+            }else{
+                if(node.node.isLeaf===true){
+                    message.error("请在案件分类的【设置】按钮，新增下级分类。");
+                }
             }
         }
         
@@ -103,7 +107,7 @@ class CaseTypeTreeView extends DSComponent{
         if(response){
             if(response.results){
                 return response.results.map(e=>{
-                    return {title:e.name,key:e.id,isLeaf:e.isLeaf};
+                    return {title:e.name,key:e.id,isLeaf:e.isLeaf,isRoot:e.caseTypeId===null?true:false};
                 });
             }
         }

@@ -145,7 +145,7 @@ class CaseFieldGroupFormView extends DSComponent{
             <Modal
                 title={dialogTitle}
                 visible={dialog}
-                width={1200}
+                width={800}
                 bodyStyle={{overflowY:"auto",padding:0}}
                 onCancel={this.onCannel}
                 footer={null}>

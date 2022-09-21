@@ -1,13 +1,14 @@
 import React,{DSBase,DSComponent,DSNavigate,get,Fragment,post} from 'comp/index';
 import {Outlet,Link} from 'react-router-dom';
 
-import { Layout,Menu,Row, Col,Avatar,Button,Badge,Dropdown, Input,Select} from 'antd';
+import { Layout,Menu,Row, Col,Avatar,Button,Tooltip,Dropdown, Input,Select} from 'antd';
 import { LoginOutlined,UsergroupAddOutlined,SettingOutlined,BlockOutlined } from '@ant-design/icons';
 import {message} from 'antd';
 
 import './index.less';
-import InviteFormView from 'views/platform/invite/form';//
+import InviteFormView from 'views/platform/invite/form';
 import TeamView from 'views/platform/default/team';
+import logoGif from 'assets/imgs/logo.gif';
 
 const { Header, Footer, Content, Sider } = Layout;
 
@@ -111,13 +112,17 @@ class PlatformLayoutView extends DSComponent{
             <TeamView ref={this.teamRef} {...{navigate:this.props.navigate}}/>
             <Layout>
                 <Header className='ds-theme-header'>
-                <Row>
+                <Row wrap={false}>
                     <Col flex="auto">
-                        <Row wrap={false}>
-                            <Col flex="150px">
-                                <div className="logo" >{teamView.name}</div>
+                        <Row wrap={false} >
+                            <Col flex="220px" >
+                                <Row wrap={false} gutter={16} align="middle" justify="start">
+                                    <Col><img src={logoGif} style={{width:"50px",margin:0,paddingBottom:"12px"}}/></Col>
+                                    <Col><div >{teamView.name}</div></Col>
+                                </Row>
+                                {/* <div className="logo" ></div> */}
                             </Col>
-                            <Col flex="500px">
+                            <Col flex="auto">
                                 <div style={{padding:"12px 0px"}}>
                                 <Input.Group compact>
                                     <Select defaultValue="case" size="large">
@@ -127,25 +132,28 @@ class PlatformLayoutView extends DSComponent{
                                 </Input.Group>
                                 </div>
                             </Col>
-                            <Col flex="auto">
-                                {/* <Menu 
+                            {/* <Col flex="auto">
+                                <Menu 
                                     selectedKeys={selectedKeys} 
                                     onClick={this.handleClick}
                                     className='ds-theme-nav' mode="horizontal" 
                                     defaultSelectedKeys={[`${this.state.pageNo}`]} 
-                                    items={platformMenus}></Menu> */}
-                            </Col>
+                                    items={platformMenus}></Menu>
+                            </Col> */}
                             
                         </Row>
                     </Col>
                     <Col flex="120px">
-                        <Row wrap={false}>
+                        <Row wrap={false} gutter={8}>
                             <Col>
-                            <a onClick={this.onChangeCase}><Avatar icon={<BlockOutlined />}/></a>
+                                <Tooltip placement="bottom" title={"切换案件"} color="#1890ff">
+                                    <Button shape="circle"  icon={<BlockOutlined />} onClick={this.onChangeCase}/>
+                                </Tooltip>
                             </Col>
-
-                            <Col style={{padding:"0px 8px"}}>
-                            <a onClick={this.onEditor}><Avatar icon={<UsergroupAddOutlined />}/></a>
+                            <Col>
+                                <Tooltip placement="bottom" title={"邀请用户"} color="#1890ff">
+                                    <Button shape="circle"  icon={<UsergroupAddOutlined />} onClick={this.onEditor}/>
+                                </Tooltip>
                             </Col>
                             <Col>
                                 <Dropdown overlay={userItems} placement="bottom" overlayClassName='ds-user-menus'>

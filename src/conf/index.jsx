@@ -12,7 +12,7 @@ const DSBase = {
         P_TeamplateView:{path:"/content/templateMgmt",code:"P_TeamplateView",desc:"模板管理",only:false},
         P_TeamCustomerView:{path:"/content/teamCustomerMgmt",code:"P_TeamCustomerView",desc:"客户管理",only:false},
         P_CaseView:{path:"/content/caseMgmt",code:"P_CaseView",desc:"案件管理",only:false},
-        P_TaskView:{path:"/content/taskMgmt",code:"P_TaskView",desc:"任务管理",only:false},
+        P_TaskView:{path:"/content/caseTaskMgmt",code:"P_TaskView",desc:"案件任务管理",only:false},
         P_CaseDetailView:{path:"/content/lawCase/detail",code:"P_CaseDetailView",desc:"案件详情",only:true},//only:false  独立页面包含在框架内
         P_TeamSettingView:{path:"/content/teamSettingMgmt",code:"P_TeamSettingView",desc:"团队设置",only:false},//only:false  独立页面包含在框架内
         P_TeamView:{path:"/content/teamMgmt",code:"P_TeamView",desc:"团队管理",only:false},//only:false  独立页面包含在框架内

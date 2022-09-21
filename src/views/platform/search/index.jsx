@@ -1,7 +1,7 @@
 import React,{DSComponent,post,Fragment} from 'comp/index';
 
-import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table} from 'antd';
-import { AppstoreOutlined,BarsOutlined,MailOutlined,SettingOutlined,ArrowUpOutlined,ArrowDownOutlined } from '@ant-design/icons';
+import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table,Avatar,Dropdown,Menu,Result} from 'antd';
+import { AppstoreOutlined,BarsOutlined,UsergroupAddOutlined,SmileOutlined,ArrowUpOutlined,ArrowDownOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {message} from 'antd';
 
@@ -18,7 +18,7 @@ class SearchView extends DSComponent{
             showStyle:"card",
             selectedTeamList:[],selectedCustomerList:[],selectedLawCaseTypeList:[],
             selectedLawCaseStatusList:[],selectedLawCaseItemCaseTypeList:[],
-            selectedLawCaseItemStatusList:[],selectedSourceList:[],selectedMasterList:[]};
+            selectedLawCaseItemStatusList:[],selectedSourceList:[],selectedMasterList:[],createTime:undefined};
     }
     static defaultProps = {
         
@@ -92,7 +92,7 @@ class SearchView extends DSComponent{
                 state.lawCaseItemStatusList = lawCaseItemStatusList;
                 state.sourceList = sourceList;
                 state.masterList = masterList;
-                state.createTime = createTime;
+                state.createTime = results.length===0?undefined:createTime;
                 return state;
             },()=>{
             });
@@ -276,7 +276,15 @@ class SearchView extends DSComponent{
             {title: '团队名称',dataIndex:"teamName",ellipsis: true},
             {title: '创建时间',dataIndex:"createTime",ellipsis: true},
            ];
-
+        const userItems = (<Menu items={[{
+            key: 'a11',
+            label:"账号设置"
+          }, {
+            type: 'divider',
+          },{
+            key: 'a1w',
+            label:"退出"
+          }]}/>);
         return <Layout>
         <Header className='ds-theme-header'>
         <Row wrap={false}>
@@ -284,21 +292,37 @@ class SearchView extends DSComponent{
                 <Row wrap={false}>
                     <Col flex="150px"> 
                     </Col>
-                    <Col flex="500px">
+                    <Col flex="800px">
                         <div style={{padding:"12px 0px"}}>
                         <Input.Group compact>
                             <Select defaultValue="case" size="large">
                                 <Select.Option value="case">案件</Select.Option>
                             </Select>
-                            <Input.Search style={{ width: '400px' }} defaultValue = {this.state.data} placeholder="输入查找案件关键字" size="large" onSearch={this.onSearch} enterButton allowClear/>
+                            <Input.Search style={{ width: '600px' }} defaultValue = {this.state.data} placeholder="输入查找案件关键字" size="large" onSearch={this.onSearch} enterButton allowClear/>
                         </Input.Group>
                         </div>
                     </Col>
                     <Col flex="auto">
+                   
                     </Col>
                 </Row>
             </Col>
-            <Col flex="80px"></Col>
+            <Col flex="100px">
+                <Row wrap={false}>
+                    <Col style={{padding:"0px 8px"}}>
+                    <a onClick={this.onEditor}><Avatar icon={<UsergroupAddOutlined />}/></a>
+                    </Col>
+                    <Col>
+                        <Dropdown overlay={userItems} placement="bottom" overlayClassName='ds-user-menus'>
+                            <a onClick={e => e.preventDefault()}>
+                                <Avatar gap="8" style={{backgroundColor: '#87d068' }}>
+                                    {"U"}
+                                </Avatar>
+                            </a>
+                        </Dropdown>
+                    </Col>
+                </Row>
+            </Col>
         </Row>
         </Header>
         <Layout>
@@ -312,7 +336,7 @@ class SearchView extends DSComponent{
                     {/* {results.length===0&&
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     } */}
-                    {/* {results.length>0&& */}
+                    {results.length>0&&
                     <Card>
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                         {teamList!==undefined&&teamList.length>0&&
@@ -411,7 +435,7 @@ class SearchView extends DSComponent{
                             </Col>
                         </Row>
                         }
-                        {createTime&&Object.keys(createTime).length>0&&
+                        {createTime!==undefined&&createTime&&Object.keys(createTime).length>0&&
                         <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
                             <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>时间范围</div></Col>
                             <Col flex="auto">
@@ -425,6 +449,13 @@ class SearchView extends DSComponent{
                         }
                     </Space>
                     </Card>
+                    }
+                    {results.length===0&&
+                        <Result
+                            icon={<SmileOutlined />}
+                            title="还未创建案件，期待您的操作"
+                        />
+                    }
                     {results.length>0&&
                     <div>
                         <div style={{padding:"16px 12px",backgroundColor:"#fff",width:"100%",marginBottom:"16px"}}>
@@ -479,7 +510,7 @@ class SearchView extends DSComponent{
                                         <div title={d.lawCaseTitle} style={{textOverflow: "ellipsis",overflow:"hidden",whiteSpace: "nowrap"}}>{d.lawCaseTitle}</div>
                                     }
                                     />
-                                <div style={{margin:"12px 0px"}}>
+                                <div style={{margin:"12px 0px",padding:"4px"}}>
                                     <Descriptions  bordered title={"案件信息"} column={1} size={"small"}>
                                         <Descriptions.Item  label={"团队名称"}>{d.teamName}</Descriptions.Item>
                                         <Descriptions.Item  label={"案件类型"}>{d.lawCaseTypeName}</Descriptions.Item>
@@ -513,14 +544,14 @@ class SearchView extends DSComponent{
         return (
         <Fragment>
             <div style={{overflow:"hidden",width:"100%",height:"100%"}} ref={this.domRef}>
-            <div id="ss" style={{overflow:"auto",width:"100%",height:"100%"}}>
+            <div id="scrollableDiv" style={{overflow:"auto",width:"100%",height:"100%"}}>
             <InfiniteScroll
                     dataLength={results.length}
                     next={this.onNextLoading}
                     hasMore={results.length < total}
                     // loader={<Spin />}
                     // endMessage={<Divider/>}
-                    scrollableTarget="ss"
+                    scrollableTarget="scrollableDiv"
                 >
                 {this.bodyRender()}
                 </InfiniteScroll>

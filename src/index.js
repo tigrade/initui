@@ -4,6 +4,8 @@ import './index.less';
 import DSRoutes from 'routes/index';
 import reportWebVitals from './reportWebVitals';
 import axios from "axios";
+import zhCN from 'antd/es/locale/zh_CN';
+import { ConfigProvider } from 'antd';
 
 
 axios.defaults.timeout = 100000;
@@ -44,7 +46,10 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 //装载
 root.render(
   // <React.StrictMode>
-  <DSRoutes/>
+  <ConfigProvider locale={zhCN}>
+    <DSRoutes/>
+  </ConfigProvider>
+  
   // </React.StrictMode>
 );
 //卸载

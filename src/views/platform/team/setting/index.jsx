@@ -1,7 +1,7 @@
 import React,{DSComponent,Fragment,post} from 'comp/index';
 
 import './index.less'
-import { List,Row, Col,Button,Switch,message } from 'antd';
+import { List,Row, Col,Button,Switch,message,Breadcrumb } from 'antd';
 import TeamSettingFormView from 'views/platform/team/setting/form';
 import TeamRobotFormView from 'views/platform/team/setting/robotForm';
 
@@ -136,11 +136,11 @@ class TeamSettingView extends DSComponent{
             <TeamSettingFormView ref={this.formRef} reloadTable={this.reload}/>
             <TeamRobotFormView ref={this.robotFormRef} reloadTable={this.reload} key={Math.floor(Math.random() * 10000)}/>
             <div className='fl-team-setting'>
-                <div className='fl-team-setting-title'>
-                <Row wrap={false}>
-                    <Col flex="auto">团队设置</Col>
-                </Row>
-                </div>
+                <Breadcrumb className='ds-crumb'>
+                    <Breadcrumb.Item>首页</Breadcrumb.Item>
+                    <Breadcrumb.Item>团队管理</Breadcrumb.Item>
+                    <Breadcrumb.Item>团队设置</Breadcrumb.Item>
+                </Breadcrumb>
                 <div className='fl-team-setting-wrap'>
                 <List
                     itemLayout="horizontal"

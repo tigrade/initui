@@ -157,11 +157,11 @@ class TemplateView extends DSComponent{
             });
             return dd.join(",");
         }},
-        {title: '是否必填',dataIndex: 'required',render:(value,item,index)=>{
-            if(value===true)return "必填";
-            if(value===false)return "选填";
-            return value;
-        }},
+        // {title: '是否必填',dataIndex: 'required',render:(value,item,index)=>{
+        //     if(value===true)return "必填";
+        //     if(value===false)return "选填";
+        //     return value;
+        // }},
         {title: '排序',dataIndex: 'serialNumber'},
         {title: '分组',dataIndex: 'caseFieldGroupName'},
         {title: '归属',dataIndex: 'caseTypeName'},
@@ -182,7 +182,6 @@ class TemplateView extends DSComponent{
             
             <div className='fl-template'>
                 <Breadcrumb className='fl-template-crumb'>
-                    <Breadcrumb.Item>主页</Breadcrumb.Item>
                     <Breadcrumb.Item>案件模板管理</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className='fl-template-wrap'>

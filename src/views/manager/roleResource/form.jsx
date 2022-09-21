@@ -65,7 +65,7 @@ class RoleResourceFormView extends DSComponent{
             <Modal
                 title={dialogTitle}
                 visible={dialog}
-                width={1200}
+                width={800}
                 bodyStyle={{height: 1000,overflowY:"auto"}}
                 okButtonProps={{htmlType: 'submit', form: '_form'}}
                 onCancel={this.onCannel}

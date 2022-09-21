@@ -1,8 +1,9 @@
-import React,{DSBase,DSTable,DSComponent,Fragment,post} from 'comp/index';
+import React,{DSTable,DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
 
-import { Form,Input, Button,Row,Col,Breadcrumb,message,Space} from 'antd';
+import { Form,Input, Button,Row,Col,Breadcrumb,message,Space,Select,DatePicker} from 'antd';
 import {PlusOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 import CaseFormView from 'views/platform/case/form';
 
@@ -13,10 +14,14 @@ class CaseView extends DSComponent{
         this.tableRef = React.createRef();
         this.searchFormRef = React.createRef();
         const {teamView} = this.props.context;
-        this.state = {searchCondition:props.searchCondition,teamView:teamView};
+        this.state = {searchCondition:props.searchCondition,teamView:teamView,caseTypeList:[]};
     }
     static defaultProps = {
         searchCondition:{}
+    }
+    componentDidMount=async ()=>{
+        const {teamView} = this.props.context;
+        await this.loadCaseTypeList(teamView.id);
     }
     static getDerivedStateFromProps(props,state){
         if(props.context.teamView !== state.teamView) {
@@ -24,9 +29,40 @@ class CaseView extends DSComponent{
         }
         return null;
     }
+    loadCaseTypeList = async(teamId)=>{
+        const params = new FormData();
+        params.append("teamId", teamId);
+        const response = await post('/api/caseType/list',params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            const {results} = response;
+            this.setState(state=>{
+                state.caseTypeList = results;
+                return state;
+            });
+        }
+    }
     onSearch=async(e)=>{
+        const {searchTime,title,status,caseTypeId} = e;
+        let condition = {};
+        if(searchTime){
+            const createTimeStart = moment(searchTime[0]).format("YYYY-MM-DD 00:00:01");
+            const createTimeEnd = moment(searchTime[1]).format("YYYY-MM-DD 00:00:01");
+            condition = Object.assign({},condition,{createTimeStart:createTimeStart,createTimeEnd:createTimeEnd});
+        }
+        if(title){
+            condition = Object.assign({},condition,{title:title});
+        }
+        if(status){
+            condition = Object.assign({},condition,{status:status});
+        }
+        if(caseTypeId){
+            condition = Object.assign({},condition,{caseTypeId:caseTypeId});
+        }
+        
         this.setState(state=>{
-            state.searchCondition = e;
+            state.searchCondition = condition;
             return state;
         },()=>{
             this.tableRef.current.reload();//刷新表单
@@ -63,7 +99,7 @@ class CaseView extends DSComponent{
     }
     
     render(){
-        const {searchCondition,teamView} = this.state;
+        const {searchCondition,teamView,caseTypeList} = this.state;
         if(teamView===undefined||(teamView!==undefined&&teamView.id===undefined)){
             return;
         }
@@ -72,9 +108,9 @@ class CaseView extends DSComponent{
         {title: '名称',render:(value,item,index)=>{
             return `【${item['caseTypeName']}】 ${item['title']}`;
         },fixed: 'left',width:250,ellipsis: true},
-        {title: '程序',dataIndex: 'code',width:80},
-        {title: '进度',dataIndex: 'code',width:80},
-        {title: '任务',dataIndex: 'level',width:80},
+        {title: '程序',dataIndex: 'lastLawCaseItemName',width:80},
+        // {title: '进度',dataIndex: 'code',width:80},
+        // {title: '任务',dataIndex: 'level',width:80},
         {title: '状态',dataIndex: 'status',width:50,render:(value,item,index)=>{
             if(value==="processing")return "处理中";
             if(value==="closed")return "结案";
@@ -96,7 +132,6 @@ class CaseView extends DSComponent{
             <CaseFormView ref={this.formRef} reloadTable={this.onReload} {...{navigate:this.props.navigate}}></CaseFormView>
             <div className='ds-back-layout'>
                 <Breadcrumb className='ds-crumb'>
-                    <Breadcrumb.Item>主页</Breadcrumb.Item>
                     <Breadcrumb.Item>案件管理</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className='ds-search'>
@@ -108,15 +143,45 @@ class CaseView extends DSComponent{
                     </div>
                     <div className='ds-search-wrap'>
                         <Form layout="inline" ref={this.searchFormRef} initialValues={searchCondition} onFinish={this.onSearch}>
-                            <Form.Item name="name" label="名称">
-                                <Input placeholder="" autoComplete="off"/>
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">搜索</Button>
-                            </Form.Item>
-                            <Form.Item>
-                                <Button onClick = {this.onReset}>重置</Button>
-                            </Form.Item>
+                            <Row gutter={[8,16]}>
+                                <Col>
+                                <Form.Item name="caseTypeId" label="案件类型">
+                                    <Select style={{width:"120px"}}>
+                                        {caseTypeList.map(e=>{
+                                                return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
+                                            })}
+                                    </Select>
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item name="title" label="名称">
+                                    <Input placeholder="" autoComplete="off"/>
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item name="searchTime" label="建档">
+                                    <DatePicker.RangePicker />
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item name="status" label="状态">
+                                    <Select style={{width:"120px"}}>
+                                        <Select.Option value="processing">处理中</Select.Option>
+                                        <Select.Option value="closed">结案</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">搜索</Button>
+                                </Form.Item>
+                                </Col>
+                                <Col>
+                                <Form.Item>
+                                    <Button onClick = {this.onReset}>重置</Button>
+                                </Form.Item>
+                                </Col>
+                            </Row>
                         </Form>
                     </div>
                 </div>

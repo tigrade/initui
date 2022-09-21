@@ -1,8 +1,8 @@
 import React,{DSTable,DSComponent,Fragment,post} from 'comp/index';
 import './index.less'
 
-import { Form,Input, Button,Row,Col,Breadcrumb,message,Space} from 'antd';
-import {PlusOutlined } from '@ant-design/icons';
+import { Form,Input, Button,Row,Col,Breadcrumb,message,Space,Select} from 'antd';
+// import {PlusOutlined } from '@ant-design/icons';
 class P_TeamUserJoinView extends DSComponent{
     constructor(props){
         super(props);
@@ -100,15 +100,32 @@ class P_TeamUserJoinView extends DSComponent{
                     </div>
                     <div className='ds-search-wrap'>
                         <Form layout="inline" ref={this.searchFormRef} initialValues={condition} onFinish={this.onSearch}>
-                            <Form.Item name="name" label="名称">
-                                <Input placeholder="" autoComplete="off"/>
+                            <Row>
+                            <Col>
+                            <Form.Item name="status" label="状态">
+                                <Select style={{width:"120px"}}>
+                                    <Select.Option value="APPLY">审批</Select.Option>
+                                    <Select.Option value="AGREE">同意</Select.Option>
+                                    <Select.Option value="REJECT">拒绝</Select.Option>
+                                </Select>
                             </Form.Item>
+                            </Col>
+                            <Col>
+                            <Form.Item name="inviteMemberName" label="邀请用户">
+                                <Input placeholder="" autoComplete="off" allowClear />
+                            </Form.Item>
+                            </Col>
+                            <Col>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit">搜索</Button>
                             </Form.Item>
+                            </Col>
+                            <Col>
                             <Form.Item>
                                 <Button onClick = {this.onReset}>重置</Button>
                             </Form.Item>
+                            </Col>
+                            </Row>
                         </Form>
                     </div>
                 </div>
