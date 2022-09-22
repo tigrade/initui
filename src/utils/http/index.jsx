@@ -37,7 +37,7 @@ export function post(url, _data) {
                 if(_res['code']===200||_res['status']==="success"){
                     return resolve(_res);
                 }
-                if(_res['code']===700101||_res['status']==="error"){
+                if((_res['code']===700101||_res['code']===700100||_res['code']===70009||_res['code']===400)&&_res['status']==="error"){
                     window.location.href ="/login"
                 }
             }

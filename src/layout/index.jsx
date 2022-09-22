@@ -1,6 +1,6 @@
-import React,{DSBase,DSComponent,DSNavigate,get,Fragment} from 'comp/index';
+import React,{DSComponent,get,Fragment} from 'comp/index';
 import {message} from 'antd';
-import { useLocation,useNavigate,useOutletContext} from "react-router-dom";
+// import { useLocation,useNavigate,useOutletContext} from "react-router-dom";
 
 import './index.less';
 import PlatformLayoutView from 'layout/client'
@@ -9,12 +9,12 @@ import AdminLayoutView from 'layout/admin'
 class DSLayout extends DSComponent { 
     constructor(props){
         super(props);
-        this.state = {pageNo:props.pageNo,teamView:{}};
+        this.state = {teamView:{}};
     }
     static getDerivedStateFromProps(props,state){
-        if(props.pageNo !== state.pageNo) {
-            return {pageNo:props.pageNo}
-        }
+        // if(props.pageNo !== state.pageNo) {
+        //     return {pageNo:props.pageNo}
+        // }
         return null;
     }
     //初始化页面

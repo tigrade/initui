@@ -43,12 +43,8 @@ class LoginView extends DSComponent{
             });
         }
         this.initTHREEBg();
+        sessionStorage.removeItem('isTeam');
     }
-    componentDidUpdate=()=>{
-    }
-    // componentWillReceiveProps=(nextProps,nextContext)=>{
-    //     setTimeout(()=>this.onCountDown,1000);
-    // }
 
     initTHREEBg=()=>{
         // const stats = new Stats()
@@ -187,6 +183,41 @@ class LoginView extends DSComponent{
             return state;
         });
     }
+    onRefreshCaptcha=async()=>{
+        debugger
+        const {REGEDIT_TOKEN,LOGIN_TOKEN,RESET_PASSWORD_TOKEN,use} = this.state;
+        const params = new FormData();
+        if(use==="LOGIN_CODE"){
+            params.append('token', LOGIN_TOKEN);
+        }
+        if(use==="REGEDIT_CODE"){
+            params.append('token', REGEDIT_TOKEN);
+        }
+        if(use==="RESET_PASSWORD_CODE"){
+            params.append('token', RESET_PASSWORD_TOKEN);
+        }
+        //获取验证码   /client/token
+        const response  = await post(`/api/client/image/token`,params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            const {token,captcha} = response.results;
+            this.setState(state=>{
+                state.captcha = captcha;
+                // state.use = use;
+                if(use==="LOGIN_CODE"){
+                    state.LOGIN_TOKEN = token;//登录TOKEN
+                }
+                if(use==="REGEDIT_CODE"){
+                    state.REGEDIT_TOKEN = token;//注册TOKEN
+                }
+                if(use==="RESET_PASSWORD_CODE"){
+                    state.RESET_PASSWORD_TOKEN = token;//重置密码
+                }
+                return state;
+            });
+        }
+    }
     onClickCaptcha=async (type,use)=>{
         const params = new FormData();
         params.append('type', type);
@@ -214,14 +245,16 @@ class LoginView extends DSComponent{
             message.error(error.message);
         });
         if(response){
-            const {check,token} = response.results;
+            const {check,token,captcha} = response.results;
             this.setState(state=>{
                 if(check===true){
                     state.captchShow = !state.captchShow;
+                    state.captcha = captcha;
                     if(state.captchShow){
                         state.liked = false;
                     }
                 }
+                state.use = use;
                 if(use==="LOGIN_CODE"){
                     state.LOGIN_TOKEN = token;//登录TOKEN
                 }
@@ -237,7 +270,45 @@ class LoginView extends DSComponent{
             });
         }
     }
-    onCaptchaSubmit=(v)=>{
+    onCaptchaSubmit=async(v)=>{
+        //验证码确认
+        const {code} = v;
+        const {REGEDIT_TOKEN,LOGIN_TOKEN,RESET_PASSWORD_TOKEN,use} = this.state;
+        const params = new FormData();
+        if(use==="LOGIN_CODE"){
+            params.append('token', LOGIN_TOKEN);
+        }
+        if(use==="REGEDIT_CODE"){
+            params.append('token', REGEDIT_TOKEN);
+        }
+        if(use==="RESET_PASSWORD_CODE"){
+            params.append('token', RESET_PASSWORD_TOKEN);
+        }
+        params.append('captcha', code);
+        //获取验证码   /client/token
+        const response  = await post(`/api/client/captcha`,params).catch(error => {
+            message.error(error.message);
+        });
+        if(response){
+            const {token} = response.results;
+            this.setState(state=>{
+                if(use==="LOGIN_CODE"){
+                    state.LOGIN_TOKEN = token;//登录TOKEN
+                }
+                if(use==="REGEDIT_CODE"){
+                    state.REGEDIT_TOKEN = token;//注册TOKEN
+                }
+                if(use==="RESET_PASSWORD_CODE"){
+                    state.RESET_PASSWORD_TOKEN = token;//重置密码
+                }
+                return state;
+            },()=>{
+
+                this.onCloseCaptch();
+            });
+        }else{
+            this.onRefreshCaptcha();
+        }
 
     }
     onCountDown=()=>{
@@ -262,14 +333,32 @@ class LoginView extends DSComponent{
     }
 
     onLogin=async (e)=>{
-        const {account,password,remember} = e;
+        const {account,password,remember,checkCode} = e;
+        const {needCaptcha,LOGIN_TOKEN} = this.state;
         const params = new FormData();
         params.append('username', account);
         params.append('password', password);
+        if(needCaptcha===true){
+            params.append('token', LOGIN_TOKEN);
+            params.append('code', checkCode);
+        }
         const response  = await post(`/api/sign_in`,params).catch(error => {
+            const {needCode,code} = error;
             message.error(error.message);
+            if(needCode){
+                this.setState(state=>{
+                    state.needCaptcha = needCode;
+                    if(code==="99999999"){
+                        state.checkCode = 99999999;
+                    }else{
+                        state.checkCode = 88888;
+                    }
+                    return state;
+                });
+            }
         });
         if(response){
+            const {token} = response.results;
             if(remember===true){
                 localStorage.setItem("remember",true);
                 localStorage.setItem("account",account);
@@ -278,10 +367,8 @@ class LoginView extends DSComponent{
                 localStorage.removeItem("account");
             }
             localStorage.setItem('isLogin', true);
-            localStorage.setItem('token', response.results.token);
+            localStorage.setItem('token', token);
             this.onRedirect();
-            // window.location.href = DSBase.root.path;
-
         }
     }
     onRegedit=async (e)=>{
@@ -298,10 +385,10 @@ class LoginView extends DSComponent{
             message.error(error.message);
         });
         if(response){
+            const {token} = response.results;
             localStorage.setItem('isLogin', true);
-            localStorage.setItem('token', response.results.token);
+            localStorage.setItem('token', token);
             this.onRedirect();
-            // window.location.href = DSBase.root.path;
         }
     }
     onReset=async(e)=>{
@@ -314,10 +401,10 @@ class LoginView extends DSComponent{
             message.error(error.message);
         });
         if(response){
+            const {token} = response.results;
             localStorage.setItem('isLogin', true);
-            localStorage.setItem('token', response.results.token);
+            localStorage.setItem('token', token);
             this.onRedirect();
-            // window.location.href = DSBase.root.path;
         }
     }
 
@@ -330,10 +417,14 @@ class LoginView extends DSComponent{
         }
     }
 
+    onCloseCaptch=()=>{
+        this.setState(state=>{
+            state.captchShow = false;
+            return state;
+        })
+    }
     render(){
-        //formStatus:false,errorMessage:null
-        const {formType,count,liked,needCaptcha,loginAccount,loginRemember} = this.state;
-        console.log(loginAccount);
+        const {formType,count,liked,needCaptcha,loginAccount,loginRemember,captcha,checkCode} = this.state;
         return (
         <Fragment>
             <Modal
@@ -342,7 +433,7 @@ class LoginView extends DSComponent{
                 maskClosable={false}
                 visible={this.state.captchShow}
                 width={350}
-                onCancel={this.onClickCaptcha}
+                onCancel={this.onCloseCaptch}
                 closable={true}
                 footer={null}>
                     <Form layout="vertical" size='small' onFinish={this.onCaptchaSubmit}>
@@ -359,7 +450,8 @@ class LoginView extends DSComponent{
                                             preview={false}
                                             width={150}
                                             height={40}
-                                            src="/api/client/captcha"
+                                            src={`data:image/png;base64, ${captcha}`}
+                                            onClick={this.onRefreshCaptcha}
                                         />
                                     </Form.Item>
                                 </Col>
@@ -387,7 +479,7 @@ class LoginView extends DSComponent{
                                 rules={[{ required: true, message: '请输入有效密码' }]}>
                                 <Input.Password placeholder="请输入有效密码" size="large" autoComplete="off"/>
                             </Form.Item>
-                            {needCaptcha&&
+                            {needCaptcha===true&&
                             <Form.Item label="验证码"  required tooltip={{ title: '请输入有效验证码', icon: <InfoCircleOutlined /> }}>
                                 <Row gutter={8}>
                                     <Col flex="180px">
@@ -396,7 +488,12 @@ class LoginView extends DSComponent{
                                         </Form.Item>
                                     </Col>
                                     <Col flex={'auto'}>
+                                        {(checkCode===undefined||checkCode!==99999999)&&
                                         <Button size="large" onClick={this.onClickCaptcha.bind(this,"EMAIL","LOGIN_CODE",)} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
+                                        }
+                                        {checkCode===99999999&&
+                                        <Button size="large" onClick={this.onClickCaptcha.bind(this,"ACCOUNT","LOGIN_CODE",)} disabled={liked?false:true} style={{"width":"100%"}}>{liked?"获取验证码":`(${count})秒后重试`}</Button>
+                                        }
                                     </Col>
                                 </Row>
                             </Form.Item>

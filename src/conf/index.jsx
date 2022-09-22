@@ -49,6 +49,10 @@ const DSBase = {
         S_CodeTypeView:{path:"/content/codeTypeMgmt",code:"S_CodeTypeView",desc:"编码类型管理",only:false},
         S_CodeAttributeView:{path:"/content/codeAttributeMgmt",code:"S_CodeAttributeView",desc:"编码属性管理",only:false},
         S_CodeSnapshotView:{path:"/content/codeSnapshotMgmt",code:"S_CodeSnapshotView",desc:"编码快照管理",only:false},
+
+        S_SecurityView:{path:"/content/securityMgmt",code:"S_SecurityView",desc:"安全管理",only:false},
+
+        
         
 
     },

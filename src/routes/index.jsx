@@ -1,5 +1,5 @@
-import React,{DSID,DSBase,DSComponent,useEffect,useState,get,useCallback} from 'comp/index';
-import { BrowserRouter, Routes, Route,Link,Navigate,useLocation,useNavigate,useOutletContext  } from "react-router-dom";
+import React,{DSID,DSBase,DSComponent,useEffect,get} from 'comp/index';
+import { BrowserRouter, Routes, Route,Navigate,useLocation,useNavigate,useOutletContext  } from "react-router-dom";
 import {message} from 'antd';
 
 import DSLayout from 'layout/index'
@@ -8,23 +8,24 @@ function Layout(props){
     const location = useLocation();
     const navigate = useNavigate();
     const context = useOutletContext();
-    const [pageNo, setPageNo] = useState();
-    const [title, setTitle] = useState();
+    // const [pageNo, setPageNo] = useState();
+    // const [title, setTitle] = useState();
 
-    const menuSource = useCallback(()=>{
-      return props.db;
-    },[props.db]);
+    // const menuSource = useCallback(()=>{
+    //   return props.db;
+    // },[props.db]);
+
     useEffect(() => {
-        const pathname = location.pathname;
+        // const pathname = location.pathname;
         if(!localStorage.getItem('isLogin')){
             navigate('/login');
             return ;
         }
-        if(menuSource()){
-            const _menuSource = menuSource();
-        }
-     }, [location,navigate,menuSource]);
-    return (<DSLayout pageNo={pageNo} title={title} {...{location,navigate,context}} authType={props.authType} alias={props.alias}/>);
+        // if(menuSource()){
+        //     // const _menuSource = menuSource();
+        // }
+     }, [location,navigate]);
+    return (<DSLayout {...{location,navigate,context}} authType={props.authType} alias={props.alias}/>);
 }
 function Element(props){
     const location = useLocation();

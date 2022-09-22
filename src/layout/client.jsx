@@ -1,4 +1,4 @@
-import React,{DSBase,DSComponent,DSNavigate,get,Fragment,post} from 'comp/index';
+import React,{DSBase,DSComponent,DSNavigate,Fragment,post} from 'comp/index';
 import {Outlet,Link} from 'react-router-dom';
 
 import { Layout,Menu,Row, Col,Avatar,Button,Tooltip,Dropdown, Input,Select} from 'antd';
@@ -117,7 +117,7 @@ class PlatformLayoutView extends DSComponent{
                         <Row wrap={false} >
                             <Col flex="220px" >
                                 <Row wrap={false} gutter={16} align="middle" justify="start">
-                                    <Col><img src={logoGif} style={{width:"50px",margin:0,paddingBottom:"12px"}}/></Col>
+                                    <Col><img alt='logo' src={logoGif} style={{width:"50px",margin:0,paddingBottom:"12px"}}/></Col>
                                     <Col><div >{teamView.name}</div></Col>
                                 </Row>
                                 {/* <div className="logo" ></div> */}

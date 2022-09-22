@@ -46,4 +46,8 @@ export { default as S_CodeSourceView }  from 'views/manager/code/source/index';
 export { default as S_CodeAttributeView }  from 'views/manager/code/attribute/index';
 export { default as S_CodeSnapshotView }  from 'views/manager/code/snapshot/index';
 
+export { default as S_SecurityView }  from 'views/manager/security/index';
+
+
+
 
