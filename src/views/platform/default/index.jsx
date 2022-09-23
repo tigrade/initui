@@ -171,26 +171,23 @@ class DefaultView extends DSComponent{
         }
         return (
         <Fragment>
-            <Row wrap={false} style={{marginTop:"30px"}}>
-                <Col span={12} style={{paddingRight:"8px"}}>
+            <Row gutter={[32,32]} style={{padding:34}}>
+                <Col span={12} >
                     <Card>
                     <ReactECharts option={this.getMasterLawer()}/>
                     </Card>
                 </Col>
-                <Col span={12} style={{paddingLeft:"8px"}}>
+                <Col span={12} >
                     <Card>
                     <ReactECharts option={this.getSourceTypeTotal()}/>
                     </Card>
                 </Col>
-            </Row>
-
-            <Row wrap={false} style={{marginTop:"30px"}}>
-                <Col span={12} style={{paddingRight:"8px"}}>
+                <Col span={12} >
                     <Card>
                     <ReactECharts option={this.getSourceTotal()}/>
                     </Card>
                 </Col>
-                <Col span={12} style={{paddingLeft:"8px"}}>
+                <Col span={12} >
                     <Card>
                     <ReactECharts option={this.getProcessingTotal()}/>
                     </Card>
