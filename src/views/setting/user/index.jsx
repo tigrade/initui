@@ -76,7 +76,7 @@ class UserSettingView extends DSComponent{
                 onCancel={this.onCannel}
                 footer={null}>
                 <Tabs tabPosition={"left"} style={{height:"500px"}} >
-                    <Tabs.TabPane tab="基本信息" key={1} forceRender={true} style={{padding:16}}>
+                    <Tabs.TabPane tab="基本信息" key={1} forceRender={true} style={{padding:"16px 32px"}}>
                         <Form layout="vertical" initialValues={info} ref={this.aliasFormRef} onFinish={this.onAlias}>
                             <Form.Item name="aliasName" label="昵称" rules={[{ required: true, message: '昵称不能为空' }]}>
                                 <Input placeholder=""  autoComplete="off" />
@@ -95,7 +95,7 @@ class UserSettingView extends DSComponent{
                             </Form.Item>
                         </Form>
                     </Tabs.TabPane>    
-                    <Tabs.TabPane tab="密码设置" key={2} forceRender={true} style={{padding:16}}>
+                    <Tabs.TabPane tab="密码设置" key={2} forceRender={true} style={{padding:"16px 32px"}}>
                         <Form layout="vertical" ref={this.resetPswdFormRef} onFinish={this.onPassword}>
                             <Form.Item name="oldPassword" label="默认密码" rules={[{ required: true, message: '默认密码不能为空' }]}>
                                 <Input.Password placeholder=""  autoComplete="off" />
@@ -104,7 +104,7 @@ class UserSettingView extends DSComponent{
                                 <Input.Password placeholder=""  autoComplete="off"/>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" block={true}>更新</Button>
+                                <Button type="primary" htmlType="submit" block={true}>更新密码</Button>
                             </Form.Item>
                         </Form>
                     </Tabs.TabPane>

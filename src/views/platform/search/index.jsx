@@ -1,7 +1,7 @@
 import React,{DSComponent,post,Fragment} from 'comp/index';
 
 import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table,Avatar,Dropdown,Menu,Result} from 'antd';
-import { AppstoreOutlined,BarsOutlined,UsergroupAddOutlined,SmileOutlined,ArrowUpOutlined,ArrowDownOutlined } from '@ant-design/icons';
+import { AppstoreOutlined,BarsOutlined,UsergroupAddOutlined,SmileOutlined,ArrowUpOutlined,ArrowDownOutlined,CloseOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {message} from 'antd';
 
@@ -276,15 +276,7 @@ class SearchView extends DSComponent{
             {title: '团队名称',dataIndex:"teamName",ellipsis: true},
             {title: '创建时间',dataIndex:"createTime",ellipsis: true},
            ];
-        const userItems = (<Menu items={[{
-            key: 'a11',
-            label:"账号设置"
-          }, {
-            type: 'divider',
-          },{
-            key: 'a1w',
-            label:"退出"
-          }]}/>);
+        
         return <Layout>
         <Header className='ds-theme-header'>
         <Row wrap={false}>
@@ -307,19 +299,12 @@ class SearchView extends DSComponent{
                     </Col>
                 </Row>
             </Col>
-            <Col flex="100px">
+            <Col flex="50px">
                 <Row wrap={false}>
                     <Col style={{padding:"0px 8px"}}>
-                    <a onClick={this.onEditor}><Avatar icon={<UsergroupAddOutlined />}/></a>
-                    </Col>
-                    <Col>
-                        <Dropdown overlay={userItems} placement="bottom" overlayClassName='ds-user-menus'>
-                            <a onClick={e => e.preventDefault()}>
-                                <Avatar gap="8" style={{backgroundColor: '#87d068' }}>
-                                    {"U"}
-                                </Avatar>
-                            </a>
-                        </Dropdown>
+                        <Tooltip placement="bottom" title={"关闭页面"} color="#1890ff">
+                            <Button icon={<CloseOutlined />} onClick={()=>{window.close()}}/>
+                        </Tooltip>
                     </Col>
                 </Row>
             </Col>
