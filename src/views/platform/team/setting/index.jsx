@@ -4,6 +4,7 @@ import './index.less'
 import { List,Button,Switch,message,Breadcrumb } from 'antd';
 import TeamSettingFormView from 'views/platform/team/setting/form';
 import TeamRobotFormView from 'views/platform/team/setting/robotForm';
+import TeamRemoveFormView from 'views/platform/team/setting/removeTeamForm';
 
 class TeamSettingView extends DSComponent{   
     constructor(props){
@@ -11,6 +12,7 @@ class TeamSettingView extends DSComponent{
         const {teamView} = this.props.context;
         this.formRef = React.createRef();
         this.robotFormRef = React.createRef();
+        this.teamRemoveFormRef = React.createRef();
         this.state = {teamView:teamView,team:{}};
     }
     static defaultProps = {
@@ -63,7 +65,9 @@ class TeamSettingView extends DSComponent{
         this.formRef.current.onEditor(team);
     }
     onTransfer=()=>{
-
+        const {team} = this.state;
+        debugger
+        this.teamRemoveFormRef.current.onEditor(team.id);
     }
     onAutoAuthorize=async(e)=>{
         const {teamView} = this.state;
@@ -135,6 +139,7 @@ class TeamSettingView extends DSComponent{
         <Fragment>
             <TeamSettingFormView ref={this.formRef} reloadTable={this.reload}/>
             <TeamRobotFormView ref={this.robotFormRef} reloadTable={this.reload} key={Math.floor(Math.random() * 10000)}/>
+            <TeamRemoveFormView ref={this.teamRemoveFormRef}/>
             <div className='fl-team-setting'>
                 <Breadcrumb className='ds-crumb'>
                     <Breadcrumb.Item>团队管理</Breadcrumb.Item>

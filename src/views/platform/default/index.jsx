@@ -1,6 +1,6 @@
-import React,{DSTable,DSComponent,Fragment} from 'comp/index';
+import React,{DSComponent,Fragment} from 'comp/index';
 import './index.less'
-import {Row, Col,Button,Space, Card} from 'antd';
+import {Row, Col,Space, Card} from 'antd';
 
 import ReactECharts from 'echarts-for-react';
 
@@ -24,8 +24,18 @@ class DefaultView extends DSComponent{
 
     getMasterLawer=()=>{
         return {
-            legend: {},
-            tooltip: {},
+            title: {
+              text: '月份案件统计',
+              subtext: '根据建立档案时间来统计案件',
+              left: 'center'
+            },
+            tooltip: {
+              trigger: 'item'
+            },
+            legend: {
+              orient: 'horizontal',
+              bottom: '0'
+            },
             dataset: {
                 dimensions: ['product', '诉讼案件', '仲裁案件', '非诉案件','其他'],
                 source: [
@@ -43,8 +53,8 @@ class DefaultView extends DSComponent{
     getProcessingTotal=()=>{
         return {
             title: {
-              text: '主办律师案件汇总',
-              subtext: '处理中的案件',
+              text: '主办案件统计',
+              subtext: '正在处理中的案件',
               left: 'center'
             },
             tooltip: {
@@ -80,8 +90,8 @@ class DefaultView extends DSComponent{
     getSourceTotal=()=>{
         return {
             title: {
-              text: '本年度案源汇总',
-              subtext: '提供案件来源',
+              text: '案源统计',
+              subtext: '根据建档时间来统计有效案件',
               left: 'center'
             },
             tooltip: {
@@ -117,8 +127,8 @@ class DefaultView extends DSComponent{
     getSourceTypeTotal=()=>{
         return {
             title: {
-              text: '案件类型汇总',
-              subtext: '处理中的案件',
+              text: '案件分类统计',
+              subtext: '正在处理中的案件',
               left: 'center'
             },
             tooltip: {

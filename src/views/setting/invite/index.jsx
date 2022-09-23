@@ -82,7 +82,6 @@ class InviteFormView extends DSComponent{
     render(){
         const {dialog,formData,dialogTitle,len,copyName} = this.state;
         const {teamView,teamRole} = this.props;
-        // const {teamMemberRoleCode,lawCaseMemberRole,projectList} = formData;
         return (
         <Fragment>
             <Modal

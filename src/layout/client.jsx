@@ -6,9 +6,10 @@ import { LoginOutlined,UsergroupAddOutlined,SettingOutlined,BlockOutlined } from
 import {message} from 'antd';
 
 import './index.less';
-import InviteFormView from 'views/platform/invite/form';
-import TeamView from 'views/platform/default/team';
+import InviteFormView from 'views/setting/invite/index';
+import TeamView from 'views/setting/team/index';
 import logoGif from 'assets/imgs/logo.gif';
+import UserSettingView from 'views/setting/user/index';
 
 const { Header, Footer, Content, Sider } = Layout;
 
@@ -18,6 +19,7 @@ class PlatformLayoutView extends DSComponent{
         this.formRef = React.createRef();
         this.teamRef = React.createRef();
         this.searchRef = React.createRef();
+        this.userSettingRef = React.createRef();
         this.state = {searchData:"",menusSource:[]}
     }
     static defaultProps = {
@@ -92,24 +94,23 @@ class PlatformLayoutView extends DSComponent{
             }
         }
     }
+    onUserSetting=()=>{
+        this.userSettingRef.current.onEditor();
+    }
+    onQuite=()=>{
+        localStorage.removeItem('isLogin');
+        localStorage.removeItem('token');
+        this.props.navigate('/api/sign_up',{replace: true});
+    }
     render(){
         const {teamView,alias} = this.props;
         const {menusSource,teamRole} = this.state;
         if(teamRole===undefined)return;
-        console.log(teamRole);
-        const userItems = (<Menu items={[{
-            key: 'a11',
-            label:<DSNavigate url={DSBase.list._LoginView.path} element={<Button type="link" icon={<SettingOutlined />} >账号设置</Button>}/>
-          }, {
-            type: 'divider',
-          },{
-            key: 'a1w',
-            label:<DSNavigate url={DSBase.logout.path} element={<Button type="link" icon={<LoginOutlined />} >退出</Button>}/>
-          }]}/>);
         return (
         <Fragment>
             <InviteFormView teamView={teamView} ref={this.formRef} teamRole={teamRole}/>
             <TeamView ref={this.teamRef} {...{navigate:this.props.navigate}}/>
+            <UserSettingView  ref={this.userSettingRef}/>
             <Layout>
                 <Header className='ds-theme-header'>
                 <Row wrap={false}>
@@ -143,7 +144,7 @@ class PlatformLayoutView extends DSComponent{
                             
                         </Row>
                     </Col>
-                    <Col flex="120px">
+                    <Col flex="160px">
                         <Row wrap={false} gutter={8}>
                             <Col>
                                 <Tooltip placement="bottom" title={"切换案件"} color="#1890ff">
@@ -156,13 +157,18 @@ class PlatformLayoutView extends DSComponent{
                                 </Tooltip>
                             </Col>
                             <Col>
-                                <Dropdown overlay={userItems} placement="bottom" overlayClassName='ds-user-menus'>
-                                    <a onClick={e => e.preventDefault()}>
-                                        <Avatar gap="8" style={{backgroundColor: '#87d068' }}>
+                                <Tooltip placement="bottom" title={"账号设置"} color="#1890ff">
+                                    <Button shape="circle"  icon={<SettingOutlined />} onClick={this.onUserSetting}/>
+                                </Tooltip>
+                            </Col>
+                            <Col>
+                                <Tooltip placement="bottom" title={`退出系统`} color="#1890ff">
+                                    <a onClick={this.onQuite}>
+                                        <Avatar gap="8" style={{backgroundColor: '#1890ff' }}>
                                             {alias?alias.charAt(0).toUpperCase():"U"}
                                         </Avatar>
                                     </a>
-                                </Dropdown>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Col>
