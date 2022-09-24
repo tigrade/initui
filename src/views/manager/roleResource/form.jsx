@@ -36,17 +36,24 @@ class RoleResourceFormView extends DSComponent{
     }
     onSelectNode=(node)=>{
         this.setState(state=>{
-            state.condition = Object.assign({},state.condition,{moduleId:node[0]});
+            if(node.length>0){
+                state.condition = Object.assign({},state.condition,{moduleId:node[0]});
+            }else{
+                const {roleId} = state.condition;
+                state.condition = {roleId:roleId};
+            }
             return state;
         },()=>{
             this.onReload();
         });
     }
     onChange= async(keyList,items)=>{
+        const defaultKeys = this.ListRef.current.getDefaultData();
         const {condition} = this.state;
         const params = new FormData();
         params.append("roleId", condition.roleId);
         params.append("resourceIds", keyList);
+        params.append("defaultIds", defaultKeys);
         const response = await post("/api/authorization/role/permission/batch/save",params).catch(error => {
             message.error(error.message);
         });
@@ -65,8 +72,8 @@ class RoleResourceFormView extends DSComponent{
             <Modal
                 title={dialogTitle}
                 visible={dialog}
-                width={800}
-                bodyStyle={{height: 1000,overflowY:"auto"}}
+                width={1200}
+                bodyStyle={{minHeight: 500,overflowY:"auto"}}
                 okButtonProps={{htmlType: 'submit', form: '_form'}}
                 onCancel={this.onCannel}
                 footer={null}>

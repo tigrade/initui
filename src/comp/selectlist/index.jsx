@@ -24,6 +24,10 @@ class DSSelectList extends Component {
         }
         return null;
     }
+    getDefaultData=()=>{
+        const {dataSource} = this.state;
+        return dataSource.filter(e=>e.selected).map(e=>e.resourceId);
+    }
     reload = async() => {
         const { path } = this.props;
         const { condition } = this.state;

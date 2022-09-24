@@ -101,8 +101,11 @@ class SearchView extends DSComponent{
                 state.lawCaseItemStatusList = lawCaseItemStatusList;
                 state.sourceList = sourceList;
                 state.masterList = masterList;
-                state.createTime = results.length===0?state.createTime:createTime;
-                
+                state.createTime = results.length===0?undefined:createTime;
+                const {selectTime} = state;
+                if(results.length===0&&selectTime!==undefined&&Object.keys(selectTime).length>0){
+                    state.createTime = selectTime;
+                }
                 return state;
             },()=>{
             });
