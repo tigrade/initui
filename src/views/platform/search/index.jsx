@@ -1,6 +1,6 @@
 import React,{DSComponent,post,Fragment} from 'comp/index';
 
-import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table,Avatar,Dropdown,Menu,Result} from 'antd';
+import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table,Avatar,Dropdown,Spin,Result} from 'antd';
 import { AppstoreOutlined,BarsOutlined,UsergroupAddOutlined,SmileOutlined,ArrowUpOutlined,ArrowDownOutlined,CloseOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {message} from 'antd';
@@ -39,7 +39,7 @@ class SearchView extends DSComponent{
     loadDataSource=async()=>{
         const {pageNo,data,selectedTeamList,
             selectedCustomerList,selectedLawCaseTypeList,selectedLawCaseStatusList,selectedLawCaseItemCaseTypeList,selectedLawCaseItemStatusList,
-            selectedSourceList,selectedMasterList} = this.state;
+            selectedSourceList,selectedMasterList,createTime} = this.state;
         const params = new FormData();
         params.append('pageNo', pageNo);
         params.append('pageSize', 6);
@@ -68,6 +68,10 @@ class SearchView extends DSComponent{
         if(selectedMasterList.length>0){
             params.append('master', selectedMasterList.join());
         }
+        if(createTime!==undefined&&Object.keys(createTime).length>0){
+            params.append('createTimeList', JSON.stringify(createTime));
+        }
+        
         const response = await post('/api/lawCase/search', params).catch(error => {
             message.error(error.message);
         });
@@ -92,7 +96,7 @@ class SearchView extends DSComponent{
                 state.lawCaseItemStatusList = lawCaseItemStatusList;
                 state.sourceList = sourceList;
                 state.masterList = masterList;
-                state.createTime = results.length===0?undefined:createTime;
+                state.createTime = results.length===0?state.createTime:createTime;
                 return state;
             },()=>{
             });
@@ -218,8 +222,24 @@ class SearchView extends DSComponent{
         },()=>{
             this.loadDataSource();
         });
-        
     }
+    onDataChange=(datas)=>{
+        this.setState(state=>{
+            if(datas!==null){
+                const createTimeStart = moment(datas[0]).format("YYYY-MM-DD 00:00:01");
+                const createTimeEnd = moment(datas[1]).format("YYYY-MM-DD 00:00:01");
+                state.createTime = {min:createTimeStart,max:createTimeEnd};
+            }else{
+                state.createTime = undefined;
+            }
+            state.pageNo = 0;
+            return state;
+        },()=>{
+            this.loadDataSource();
+        });
+    }
+        
+
     hasChecked=(item,type)=>{
         if(type==='team'){
             const {selectedTeamList} = this.state;
@@ -314,14 +334,6 @@ class SearchView extends DSComponent{
             <Layout style={{padding:"0px",overflow: "auto"}}>
                 <Content style={{"padding": "12px 16px",background:"#f0f2f5",minHeight:minHeight,paddingBottom:80}} className='main-wrapper'>
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                    {/* <Breadcrumb className='ds-crumb' separator=">">
-                        <Breadcrumb.Item>查询结果【{total}】:</Breadcrumb.Item>
-                        <Breadcrumb.Item>{this.state.data}</Breadcrumb.Item>
-                    </Breadcrumb> */}
-                    {/* {results.length===0&&
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                    } */}
-                    {results.length>0&&
                     <Card>
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                         {teamList!==undefined&&teamList.length>0&&
@@ -424,30 +436,23 @@ class SearchView extends DSComponent{
                         <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
                             <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>时间范围</div></Col>
                             <Col flex="auto">
-                                <div>
-                                    <DatePicker.RangePicker key={Math.floor(Math.random() * 10000)}
+                            <DatePicker.RangePicker key={Math.floor(Math.random() * 10000)}
                                         defaultValue={[moment(createTime.min, "YYYY-MM-DD HH:mm:ss"), moment(createTime.max, "YYYY-MM-DD HH:mm:ss")]}
-                                        disabled={[false, false]}/>
-                                </div>
+                                        disabled={[false, false]} onChange={this.onDataChange}/>
                             </Col>
                         </Row>
                         }
                     </Space>
                     </Card>
-                    }
-                    {results.length===0&&
-                        <Result
-                            icon={<SmileOutlined />}
-                            title="还未创建案件，期待您的操作"
-                        />
-                    }
-                    {results.length>0&&
+                    {/* } */}
+                    
+                    {/* {results.length>0&& */}
                     <div>
                         <div style={{padding:"16px 12px",backgroundColor:"#fff",width:"100%",marginBottom:"16px"}}>
                         <Row  wrap={false} gutter={[16,16]} align="middle">
                             <Col flex="220px">
                             <Breadcrumb className='ds-crumb' separator=">">
-                                <Breadcrumb.Item>查询结果【{total}】</Breadcrumb.Item>
+                                <Breadcrumb.Item>查询结果【{total?total:0}】</Breadcrumb.Item>
                                 <Breadcrumb.Item>{this.state.data===""||this.state.data===null?"全部":this.state.data}</Breadcrumb.Item>
                             </Breadcrumb>
                             </Col>
@@ -479,10 +484,20 @@ class SearchView extends DSComponent{
                                 </Row>
                             </Col>
                         </Row>
-                        
+                        {results.length===0&&
+                        <Result
+                            icon={<SmileOutlined />}
+                            title="未找到相关数据"
+                        />
+                        }
                         </div>
                         {showStyle==="list"&&
-                        <Table columns={columns} dataSource={results} size="middle" pagination={false}/>
+                        <Table columns={columns} dataSource={results} size="middle" pagination={false} 
+                            onRow={record=>{
+                                return {onClick:event=>{
+                                    window.open(`/content/lawCase/detail?id=${record.lawCaseId}`, '_blank');
+                                }};
+                            }}/>
                         }
                         {showStyle==="card"&&
                         <Row gutter={[32, { xs: 8, sm: 16, md: 24, lg: 32 }]} type="flex">
@@ -510,7 +525,7 @@ class SearchView extends DSComponent{
                         </Row>
                         }
                     </div>
-                    }
+                    {/* } */}
                 </Space>
                 </Content>
             </Layout>
@@ -529,14 +544,14 @@ class SearchView extends DSComponent{
         return (
         <Fragment>
             <div style={{overflow:"hidden",width:"100%",height:"100%"}} ref={this.domRef}>
-            <div id="scrollableDiv" style={{overflow:"auto",width:"100%",height:"100%"}}>
+            <div id="_search" style={{overflow:"auto",width:"100%",height:"100%"}}>
             <InfiniteScroll
                     dataLength={results.length}
                     next={this.onNextLoading}
                     hasMore={results.length < total}
-                    // loader={<Spin />}
+                    loader={<Spin />}
                     // endMessage={<Divider/>}
-                    scrollableTarget="scrollableDiv"
+                    scrollableTarget="_search"
                 >
                 {this.bodyRender()}
                 </InfiniteScroll>

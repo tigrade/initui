@@ -92,7 +92,12 @@ class DefaultView extends DSComponent{
       const {monthSource} = this.state;
       return {
           title: {text: '月份案件统计',subtext: '根据建立档案时间来统计案件',left: 'center'},
-          tooltip: {trigger: 'item'},
+          tooltip: {trigger: 'item',axisPointer: {animation: true},formatter: function (params) {
+            const {marker,seriesName,name,value} = params;
+            const q = value[seriesName]+"".concat("件");
+            return seriesName+"</br>"+"<p style='margin:6px 0px 0px 0px'>"+marker+name.substring(4).concat("月")+"<span style='padding-left:60px '>"+"</span>"+q+"</p>";
+            }   
+          },
           legend: {orient: 'horizontal',bottom: '0'},
           dataset: {
               dimensions: ['time', '诉讼案件', '仲裁案件', '非诉案件','顾问服务','其他'],
