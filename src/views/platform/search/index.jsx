@@ -1,7 +1,7 @@
 import React,{DSComponent,post,Fragment} from 'comp/index';
 
-import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table,Avatar,Dropdown,Spin,Result} from 'antd';
-import { AppstoreOutlined,BarsOutlined,UsergroupAddOutlined,SmileOutlined,ArrowUpOutlined,ArrowDownOutlined,CloseOutlined } from '@ant-design/icons';
+import { Layout,Row, Col,Breadcrumb, Input,Select,Tag,Space,Card, Button,Descriptions, DatePicker,Tooltip,Table,Spin,Result} from 'antd';
+import { AppstoreOutlined,BarsOutlined,SmileOutlined,ArrowUpOutlined,ArrowDownOutlined,CloseOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {message} from 'antd';
 
@@ -18,7 +18,8 @@ class SearchView extends DSComponent{
             showStyle:"card",
             selectedTeamList:[],selectedCustomerList:[],selectedLawCaseTypeList:[],
             selectedLawCaseStatusList:[],selectedLawCaseItemCaseTypeList:[],
-            selectedLawCaseItemStatusList:[],selectedSourceList:[],selectedMasterList:[],createTime:undefined};
+            selectedLawCaseItemStatusList:[],selectedSourceList:[],selectedMasterList:[],createTime:undefined,sortType:"desc"};
+        //desc|asc
     }
     static defaultProps = {
         
@@ -39,7 +40,7 @@ class SearchView extends DSComponent{
     loadDataSource=async()=>{
         const {pageNo,data,selectedTeamList,
             selectedCustomerList,selectedLawCaseTypeList,selectedLawCaseStatusList,selectedLawCaseItemCaseTypeList,selectedLawCaseItemStatusList,
-            selectedSourceList,selectedMasterList,createTime} = this.state;
+            selectedSourceList,selectedMasterList,selectTime,sortType} = this.state;
         const params = new FormData();
         params.append('pageNo', pageNo);
         params.append('pageSize', 6);
@@ -68,9 +69,13 @@ class SearchView extends DSComponent{
         if(selectedMasterList.length>0){
             params.append('master', selectedMasterList.join());
         }
-        if(createTime!==undefined&&Object.keys(createTime).length>0){
-            params.append('createTimeList', JSON.stringify(createTime));
+        if(selectTime!==undefined&&Object.keys(selectTime).length>0){
+            params.append('createTimeList', JSON.stringify(selectTime));
         }
+        if(sortType!==undefined){
+            params.append('sortType', sortType);
+        }
+        
         
         const response = await post('/api/lawCase/search', params).catch(error => {
             message.error(error.message);
@@ -97,6 +102,7 @@ class SearchView extends DSComponent{
                 state.sourceList = sourceList;
                 state.masterList = masterList;
                 state.createTime = results.length===0?state.createTime:createTime;
+                
                 return state;
             },()=>{
             });
@@ -228,9 +234,9 @@ class SearchView extends DSComponent{
             if(datas!==null){
                 const createTimeStart = moment(datas[0]).format("YYYY-MM-DD 00:00:01");
                 const createTimeEnd = moment(datas[1]).format("YYYY-MM-DD 00:00:01");
-                state.createTime = {min:createTimeStart,max:createTimeEnd};
+                state.selectTime = {min:createTimeStart,max:createTimeEnd};
             }else{
-                state.createTime = undefined;
+                state.selectTime = undefined;
             }
             state.pageNo = 0;
             return state;
@@ -278,6 +284,15 @@ class SearchView extends DSComponent{
         this.setState(state=>{
             state.showStyle = type;
             return state;
+        });
+    }
+    onChangeSort=(v)=>{
+        this.setState(state=>{
+            state.sortType = v;
+            state.pageNo = 0;
+            return state;
+        },()=>{
+            this.loadDataSource();
         });
     }
     bodyRender=()=>{
@@ -336,6 +351,9 @@ class SearchView extends DSComponent{
                 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                     <Card>
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+                        <Breadcrumb className='ds-crumb' separator=">">
+                            <Breadcrumb.Item>筛选条件:</Breadcrumb.Item>
+                        </Breadcrumb>
                         {teamList!==undefined&&teamList.length>0&&
                         <Row  wrap={false} style={{borderBottom:"1px solid #f5f5f5"}} gutter={8} align="middle">
                             <Col flex="120px"><div style={{background:"#f0f0f0",padding:"8px 12px",fontSize:14}}>团队</div></Col>
@@ -463,12 +481,12 @@ class SearchView extends DSComponent{
                                 <Row  wrap={false} gutter={4} align="middle">
                                     <Col>
                                     <Tooltip placement="bottom" title={"按时间降序"}>
-                                        <Button  icon={<ArrowDownOutlined />}/>
+                                        <Button  icon={<ArrowDownOutlined />} onClick={this.onChangeSort.bind(this,"desc")}/>
                                     </Tooltip>
                                     </Col>
                                     <Col>
                                     <Tooltip placement="bottom" title={"按时间升序"}>
-                                        <Button  icon={<ArrowUpOutlined />}/>
+                                        <Button  icon={<ArrowUpOutlined />} onClick={this.onChangeSort.bind(this,"asc")}/>
                                     </Tooltip>
                                     </Col>
                                     <Col>
